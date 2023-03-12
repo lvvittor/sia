@@ -123,3 +123,8 @@ class PokemonFactory:
             hp = math.floor(hp_percentage * max_hp)
             new_pokemon.current_hp = hp if hp > 0 else 1
             return new_pokemon
+
+    def get_available_pokemons(
+        self
+    ) -> list:
+        return json.load(open(self._src_file, "r")).keys()
