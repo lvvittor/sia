@@ -10,7 +10,7 @@ def answer_question(question, pokemon_factory, config):
         case "1-a":
             question_1_a(pokemon_factory, config)
         case "1-b":
-            pass
+            question_1_b(pokemon_factory, config)
 
 if __name__ == "__main__":
     factory = PokemonFactory("pokemon.json")

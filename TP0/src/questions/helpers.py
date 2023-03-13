@@ -10,7 +10,7 @@ def build_dataframe_q1(pokemon_factory, config):
     attempts = config["1_a"]["catch_attempts"]
     df = pd.DataFrame(columns=["name", "pokeball", "catched", "attempts"])
     for pokemon in pokemon_factory.get_available_pokemons():
-        new_pokemon = pokemon_factory.create(pokemon, config["1_a"]["pokemons_level"], StatusEffect.NONE, config["1_a"]["pokemons_health"]/100)
+        new_pokemon = pokemon_factory.create(pokemon, config["question_1"]["pokemons_level"], StatusEffect.NONE, config["question_1"]["pokemons_health"]/100)
         for pokeball in POKEBALLS:
             catched = 0
             for _ in range(attempts):
