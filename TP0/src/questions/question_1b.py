@@ -1,4 +1,5 @@
 from src.questions.question_1a import question_1_a
+from src.questions.helpers import build_dataframe_q1
 from IPython.display import display
 import numpy as np
 import matplotlib.pyplot as plt
@@ -19,7 +20,7 @@ def question_1_b(pokemon_factory, config):
     HEAVYBALL_PROBS = [29, 3, 24, 25, 17]
     
     # Set position of bar on X axis
-    br1 = np.arange(len(IT))
+    br1 = np.arange(len(POKEBALL_PROBS))
     br2 = [x + barWidth for x in br1]
     br3 = [x + barWidth for x in br2]
     br4 = [x + barWidth for x in br3]

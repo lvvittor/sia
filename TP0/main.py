@@ -1,6 +1,7 @@
 from src.catching import attempt_catch
 from src.pokemon import PokemonFactory, StatusEffect
 from src.questions.question_1a import question_1_a
+from src.questions.question_1b import question_1_b
 from IPython.display import display
 import pandas as pd
 import json

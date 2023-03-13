@@ -19,4 +19,7 @@ def build_dataframe_q1(pokemon_factory, config):
                     catched += 1
             df.loc[len(df)] = [pokemon, pokeball, catched, attempts]
     df["accuracy"] = df.catched / df.attempts
+    print("\n")
+    display(df)
+    print("\n")
     return df
