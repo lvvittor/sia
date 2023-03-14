@@ -2,6 +2,6 @@
     "question_1": {
         "pokemons_health": 100,
         "pokemons_level": 100,
-        "catch_attempts": 100
+        "catch_attempts": 1000
     }
 }
