@@ -43,6 +43,10 @@ class StatusEffect(Enum):
     FREEZE = ("freeze", 2)
     NONE = ("none", 1)
 
+    @staticmethod
+    def get_all():
+        return [status_effect for status_effect in StatusEffect]
+
 
 class Pokemon:
     def __init__(
