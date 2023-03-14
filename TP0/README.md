@@ -30,3 +30,14 @@ para instalar las dependencias necesarias en el ambiente virtual
 pipenv run python main.py [config_file]
 ```
 
+# Run with docker
+
+Build the image:
+```
+docker build -t sia:tp0 .
+```
+
+Run a container:
+```
+docker run -v "./graphs":/graphs --rm sia:tp0 python3 main.py
+```
