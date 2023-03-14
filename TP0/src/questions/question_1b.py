@@ -41,4 +41,4 @@ def question_1_b(pokemon_factory, config):
     plt.xticks([r + barWidth for r in range(len(POKEBALL_PROBS))], pokemons)
     
     plt.legend()
-    plt.show()
+    plt.savefig("./graphs/q_1_b.png")
