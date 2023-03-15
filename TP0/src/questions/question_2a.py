@@ -16,10 +16,8 @@ def question_2_a(pokemon_factory, config):
 
     for pokeball in df["pokeball"].unique():
         df_pokeball = df[df["pokeball"] == pokeball]
-        accuracy = df_pokeball['catched']/df_pokeball['attempts']
-        plt.plot(df_pokeball['status'], accuracy, color=colors[pokeball], marker='o', label=pokeball)
-        error = np.std(accuracy)
-        plt.errorbar(df_pokeball['status'], accuracy, error, fmt='none', color=colors[pokeball], capsize=3)
+        plt.plot(df_pokeball['status'], df_pokeball['accuracy'], color=colors[pokeball], marker='o', label=pokeball)
+        plt.errorbar(df_pokeball['status'], df_pokeball['accuracy'], df_pokeball['error'], fmt='none', color=colors[pokeball], capsize=3)
 
     plt.title('accuracy vs status for '+ config["question_2"]["pokemon"], fontsize=14)
     plt.xlabel('status', fontsize=14)
