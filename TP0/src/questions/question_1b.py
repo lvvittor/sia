@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 def question_1_b(pokemon_factory, config):
     df = build_dataframe_q1(pokemon_factory, config)
 
+    # Map each pokeball to a list of the accuracies for each pokemon
     pokeballs = {}
 
     # get accuracy for each pokeball
