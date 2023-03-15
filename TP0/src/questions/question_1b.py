@@ -6,13 +6,16 @@ import matplotlib.pyplot as plt
 
 def question_1_b(pokemon_factory, config):
     df = build_dataframe_q1(pokemon_factory, config)
+    display(df)
 
     pokeballs = {}
+    errors = {}
 
     # get accuracy for each pokeball
     for pokeball in df["pokeball"].unique():
         df_pokeball = df[df["pokeball"] == pokeball]
         pokeballs[pokeball] = df_pokeball["accuracy"].values.tolist()
+        errors[pokeball] = df_pokeball["error"].values.tolist()
     
     pokemons = pokemon_factory.get_available_pokemons()
 
@@ -30,12 +33,16 @@ def question_1_b(pokemon_factory, config):
     # Make the plot
     plt.bar(br1, pokeballs["pokeball"], color ='r', width = barWidth,
             edgecolor ='grey', label ='Pokeball')
+    plt.errorbar(br1, pokeballs["pokeball"], errors["pokeball"], fmt='none', color ='darkred', capsize=3)
     plt.bar(br2, pokeballs["fastball"], color ='g', width = barWidth,
             edgecolor ='grey', label ='Fastball')
+    plt.errorbar(br2, pokeballs["fastball"], errors["fastball"], fmt='none', color ='darkgreen', capsize=3)
     plt.bar(br3, pokeballs["ultraball"], color ='b', width = barWidth,
             edgecolor ='grey', label ='Ultraball')
+    plt.errorbar(br3, pokeballs["ultraball"], errors["ultraball"], fmt='none', color ='darkblue', capsize=3)
     plt.bar(br4, pokeballs["heavyball"], color ='y', width = barWidth,
             edgecolor ='grey', label ='Heavyball')
+    plt.errorbar(br4, pokeballs["heavyball"], errors["heavyball"], fmt='none', color ='olive', capsize=3)
     
     # Adding Xticks
     plt.xlabel('Pokemons', fontweight ='bold', fontsize = 15)
