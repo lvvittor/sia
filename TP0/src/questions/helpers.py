@@ -2,26 +2,26 @@ from src.catching import attempt_catch
 from src.pokemon import PokemonFactory, StatusEffect
 from IPython.display import display
 import pandas as pd
+import numpy as np
 import json
 
 POKEBALLS = ["pokeball", "fastball", "ultraball", "heavyball"]
 
 def build_dataframe_q1(pokemon_factory, config):
     attempts = config["question_1"]["catch_attempts"]
-    df = pd.DataFrame(columns=["name", "pokeball", "catched", "attempts"])
+    df = pd.DataFrame(columns=["name", "pokeball", "accuracy", "error"])
     for pokemon in pokemon_factory.get_available_pokemons():
         new_pokemon = pokemon_factory.create(pokemon, config["question_1"]["pokemons_level"], StatusEffect.NONE, config["question_1"]["pokemons_health"]/100)
         for pokeball in POKEBALLS:
-            catched = 0
-            for _ in range(attempts):
-                attempt, rate = attempt_catch(new_pokemon, pokeball)
-                if attempt:
-                    catched += 1
-            df.loc[len(df)] = [pokemon, pokeball, catched, attempts]
-    df["accuracy"] = df.catched / df.attempts
-    print("\n")
-    display(df)
-    print("\n")
+            accuracies = []
+            for _ in range(50):
+                catched = 0
+                for _ in range(attempts):
+                    attempt, rate = attempt_catch(new_pokemon, pokeball)
+                    if attempt:
+                        catched += 1
+                accuracies.append(catched / attempts)
+            df.loc[len(df)] = [pokemon, pokeball, np.mean(accuracies), np.std(accuracies)]
     return df
 
 def build_dataframe_q2_a(pokemon_factory, config):
