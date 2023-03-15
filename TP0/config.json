@@ -7,6 +7,6 @@
     "question_2": {
         "pokemon": "mewtwo",
         "pokemons_level": 100,
-        "catch_attempts": 100
+        "catch_attempts": 1000
     }
 }
