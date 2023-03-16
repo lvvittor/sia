@@ -25,6 +25,7 @@ def question_1_a(pokemon_factory, config):
 
     ax.bar(pokeballs.keys(), [pokeballs[pokeball]["mean"] for pokeball in pokeballs.keys()], yerr=[pokeballs[pokeball]["std"] for pokeball in pokeballs.keys()], align="center", alpha=0.5, ecolor="black", capsize=10)
 
+    ax.set_ylabel("Accuracy")
     ax.grid()
     plt.savefig("./graphs/q_1_a.png")
 
