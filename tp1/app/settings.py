@@ -1,4 +1,7 @@
 from pydantic import BaseSettings
 
 class Settings(BaseSettings):
-    pass
+    M: int = 10 # number of colors
+    N: int = 10  # board of size NxN
+
+settings = Settings()
