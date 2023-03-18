@@ -35,6 +35,6 @@ run: ## Run a command inside a backend container. Usage: make run cmd='poetry ru
 		$(cmd)
 
 run-tp: ## Run a the entrypoint of a tp. Usage: make run-tp tp='path-to-tp'
-	$(MAKE) run cmd="poetry run python3 tp1/app/main.py"
+	$(MAKE) run cmd="poetry run python3 $(tp)/app/main.py"
 
 	
