@@ -154,3 +154,7 @@ data/seed_data.sql*
 
 # VS Code
 .vscode/
+
+# Output of the program
+
+output/
