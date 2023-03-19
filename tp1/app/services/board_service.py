@@ -1,6 +1,8 @@
 import pandas as pd
 import seaborn as sns
 import numpy as np
+import dataframe_image as dfi
+from settings import settings
 
 class BoardService():
     def __init__(self, board: pd.DataFrame):
@@ -21,7 +23,7 @@ class BoardService():
     def get_distinct_colors(self):
         return self.board.nunique().sum()
     
-    def get_colored_board(self):
+    def set_colored_board(self, filename: str):
         df = self.board
 
         # get unique values
@@ -36,8 +38,16 @@ class BoardService():
                         index=df.index, 
                         columns=df.columns
         ).replace(dict(enumerate(palette))).radd('background-color: ')
-    
-        return df.style.apply(reshape_df, axis=None)
+
+        df.loc[:] = ''
+
+        # apply the colors to the cells
+        def get_colors(item):
+            return reshape_df
+
+        df_styled = df.style.apply(get_colors, axis=None)
+
+        dfi.export(df_styled, f"{settings.Config.output_path}/{filename}")
 
         
          
