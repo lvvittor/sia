@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     https://jsontopydantic.com/
     """
     board: BoardSettings
+    algorithm: str
 
     class Config:
         env_file_encoding = 'utf-8'

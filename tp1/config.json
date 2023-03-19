@@ -2,5 +2,6 @@
     "board": {
         "N": 10,
         "M": 10
-    }
+    },
+    "algorithm": "dfs"
 }
