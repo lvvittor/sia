@@ -18,6 +18,18 @@ class BoardSettings(BaseModel):
     N: int # board of size NxN
 
 class Settings(BaseSettings):
+    """
+    Settings for the application.
+
+    Settings are loaded from the following sources, in order:
+    1. Environment variables
+    2. JSON file at the project's root
+    3. Secret environment variables
+
+    For more information about parsing json files, see:
+
+    https://jsontopydantic.com/
+    """
     board: BoardSettings
 
     class Config:
