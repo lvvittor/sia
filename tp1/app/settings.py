@@ -36,6 +36,7 @@ class Settings(BaseSettings):
     class Config:
         env_file_encoding = 'utf-8'
         config_path = 'tp1/config.json'
+        output_path = 'tp1/output'
 
         @classmethod
         def customise_sources(
