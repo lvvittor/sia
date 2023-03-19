@@ -1,6 +1,7 @@
 FROM python:3.10-slim-buster
 
-RUN apt-get update
+# https://stackoverflow.com/a/74566142
+RUN apt-get update && apt install -y chromium-driver 
 
 ENV PATH="/root/.local/bin:$PATH"
 
