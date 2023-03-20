@@ -1,5 +1,6 @@
 from __future__ import annotations
 import numpy as np
+import pandas as pd
 
 from region import Cell, Region, State
 
@@ -34,8 +35,6 @@ class BoardGeneratorService():
 
         # REGION ARRIBA
         top = self.state.regions[self.cells[i-1][j].region_id]
-
-        print("-------> Merging regions with id ", left.id, " and ", top.id)
 
         # ITERAR POR TODAS LAS CELDAS DE REGION TOP Y ACTUALIZAR EL ID REGION A LEFT.ID
         for top_cell in top.cells:
@@ -95,14 +94,20 @@ class BoardGeneratorService():
             self.cells.append([])
             for j in range(0, self.n):
                 new_color = np.random.randint(0, self.m)
-                print("Creating cell with color ", new_color)
                 current_region = self.get_region(new_color, i, j)
                 cell = Cell(False, new_color, i, j, current_region.id)
                 self.cells[i].append(cell)
                 current_region.cells.append(cell)
-                print("Cell in position", i, " ", j, " created in region ", current_region.id)
 
-        for region in self.state.regions.values():
-            print("Region with id ", region.id , " is adjacent to ")
-            for adjacent in region.adjacents:
-                print("        ", adjacent.id)
+        return self.state.regions
+
+    def dict_to_df(self, board: dict[int, Region]):
+        df = pd.DataFrame(data=None, index=range(self.n), columns=range(self.n))
+        for region in board.values():
+            for cell in region.cells:
+                df.loc[cell.x, cell.y] = region.color
+        return df
+
+    def update_state(self, new_color: int):
+        self.state.update_state(new_color)
+        return self.state.regions
