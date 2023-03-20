@@ -6,12 +6,18 @@ class Region():
         id: int,
         color: int,
         cells: list[Cell],
-        adjacents: list[Region]
+        adjacents: set[Region]
     ):
         self.color = color
         self.id = id
         self.cells = cells
         self.adjacents = adjacents
+
+    def __eq__(self, other):
+        return self.id == other.id
+    
+    def __hash__(self):
+        return self.id
 
     # Necesita un equals para comparar si dos regiones son iguales?
         
