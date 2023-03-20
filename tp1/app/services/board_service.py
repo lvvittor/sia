@@ -4,7 +4,7 @@ import numpy as np
 import dataframe_image as dfi
 from settings import settings
 
-class BoardService():
+class BoardService:
     def __init__(self, board: pd.DataFrame):
         self.board = board
 

@@ -32,6 +32,7 @@ class Settings(BaseSettings):
     """
     board: BoardSettings
     algorithm: str
+    visualization: bool
 
     class Config:
         env_file_encoding = 'utf-8'

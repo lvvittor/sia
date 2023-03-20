@@ -4,5 +4,6 @@
         "M": 3
     },
     "algorithm": "dfs",
+    "visualization": false,
     "heuristic": "composite"
 }

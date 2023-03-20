@@ -1,5 +1,6 @@
 from __future__ import annotations
 import numpy as np
+import pandas as pd
 
 from region import Cell, Region, State
 
@@ -9,24 +10,25 @@ class BoardGeneratorService():
         self.m = m
         self.counter = 2
         self.cells = []
+        self.old_state = None
         self.state = State({})
         
     def add_adjacent(self, region, i, j):
         # REGION IZQ EXISTE, APPENDEO A LA REGION IZQ
         if j > 0:
             left = self.state.regions[self.cells[i][j-1].region_id]
-            if region not in left.adjacents and region.color != left.color:
-                left.adjacents.append(region)
-            if left not in region.adjacents and region.color != left.color:
-                region.adjacents.append(left)
+            if region.id not in left.adjacents and region.color != left.color:
+                left.adjacents.append(region.id)
+            if left.id not in region.adjacents and region.color != left.color:
+                region.adjacents.append(left.id)
 
         # REGION TOP EXISTE, APPENDEO A LA REGION TOP
         if i > 0:
             top = self.state.regions[self.cells[i-1][j].region_id]
-            if region not in top.adjacents and region.color != top.color:
-                top.adjacents.append(region)
-            if top not in region.adjacents and region.color != top.color:
-                region.adjacents.append(top)
+            if region.id not in top.adjacents and region.color != top.color:
+                top.adjacents.append(region.id)
+            if top.id not in region.adjacents and region.color != top.color:
+                region.adjacents.append(top.id)
 
     def merge_adjacent_zones(self, i, j):
         # REGION IZQ
@@ -35,17 +37,16 @@ class BoardGeneratorService():
         # REGION ARRIBA
         top = self.state.regions[self.cells[i-1][j].region_id]
 
-        print("-------> Merging regions with id ", left.id, " and ", top.id)
-
         # ITERAR POR TODAS LAS CELDAS DE REGION TOP Y ACTUALIZAR EL ID REGION A LEFT.ID
         for top_cell in top.cells:
             top_cell.region_id = left.id
 
         # CAMBIAR EL ID DE LOS ADYACENTES DE REGION TOP POR ADYACENTE CON NUMERO LEFT.ID
-        for top_adjacent in top.adjacents:
-            top_adjacent.adjacents.remove(top)
-            if left not in top_adjacent.adjacents:
-                top_adjacent.adjacents.append(left)
+        for top_adjacent_id in top.adjacents:
+            top_adjacent = self.state.regions[top_adjacent_id]
+            top_adjacent.adjacents.remove(top.id)
+            if left.id not in top_adjacent.adjacents:
+                top_adjacent.adjacents.append(left.id)
 
         total_cells = top.cells + left.cells
         total_adjacents = list(set(top.adjacents + left.adjacents))
@@ -95,14 +96,29 @@ class BoardGeneratorService():
             self.cells.append([])
             for j in range(0, self.n):
                 new_color = np.random.randint(0, self.m)
-                print("Creating cell with color ", new_color)
                 current_region = self.get_region(new_color, i, j)
                 cell = Cell(False, new_color, i, j, current_region.id)
                 self.cells[i].append(cell)
                 current_region.cells.append(cell)
-                print("Cell in position", i, " ", j, " created in region ", current_region.id)
 
-        for region in self.state.regions.values():
-            print("Region with id ", region.id , " is adjacent to ")
-            for adjacent in region.adjacents:
-                print("        ", adjacent.id)
+        return self.state
+
+    def dict_to_df(self, board: dict[int, Region]):
+        df = pd.DataFrame(data=None, index=range(self.n), columns=range(self.n))
+        for region in board.values():
+            for cell in region.cells:
+                df.loc[cell.x, cell.y] = region.color
+        return df
+
+    def update_state(self, new_color: int):
+        self.old_state = State(self.state.regions)
+        self.state.update_state(new_color)
+        return self.state
+
+    def undo_update(self):
+        if self.old_state == None:
+            print("Can't do backtracking, there is no old state")
+            return self.state
+        self.state = self.old_state
+        self.old_state = self.old_state.old_state # This does not work, there is no old_state in old.state?
+        return self.state
