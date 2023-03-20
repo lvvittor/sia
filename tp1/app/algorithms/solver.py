@@ -1,6 +1,6 @@
 import numpy as np
 
-# Define an interface for a game solver
+# Interfaz para los algoritmos de busqueda no informados
 class Solver:
   def __init__(self, N, M):
     self.N = N
@@ -41,9 +41,8 @@ class Solver:
       # print(f"Distinto color: ({i}, {j}) {self.board[i][j]} != {color}")
       return 0
     
-    # print(f"Visitando: ({i}, {j})")
-
     if not already_visited:
+      print(f"Visitando: ({i}, {j})")
       self.visited[i][j] = 1
       self.remaining_cells -= 1
 
