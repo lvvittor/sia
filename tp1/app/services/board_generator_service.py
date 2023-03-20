@@ -16,18 +16,18 @@ class BoardGeneratorService():
         # REGION IZQ EXISTE, APPENDEO A LA REGION IZQ
         if j > 0:
             left = self.state.regions[self.cells[i][j-1].region_id]
-            if region not in left.adjacents and region.color != left.color:
-                left.adjacents.append(region)
-            if left not in region.adjacents and region.color != left.color:
-                region.adjacents.append(left)
+            if region.id not in left.adjacents and region.color != left.color:
+                left.adjacents.append(region.id)
+            if left.id not in region.adjacents and region.color != left.color:
+                region.adjacents.append(left.id)
 
         # REGION TOP EXISTE, APPENDEO A LA REGION TOP
         if i > 0:
             top = self.state.regions[self.cells[i-1][j].region_id]
-            if region not in top.adjacents and region.color != top.color:
-                top.adjacents.append(region)
-            if top not in region.adjacents and region.color != top.color:
-                region.adjacents.append(top)
+            if region.id not in top.adjacents and region.color != top.color:
+                top.adjacents.append(region.id)
+            if top.id not in region.adjacents and region.color != top.color:
+                region.adjacents.append(top.id)
 
     def merge_adjacent_zones(self, i, j):
         # REGION IZQ
@@ -41,10 +41,11 @@ class BoardGeneratorService():
             top_cell.region_id = left.id
 
         # CAMBIAR EL ID DE LOS ADYACENTES DE REGION TOP POR ADYACENTE CON NUMERO LEFT.ID
-        for top_adjacent in top.adjacents:
-            top_adjacent.adjacents.remove(top)
-            if left not in top_adjacent.adjacents:
-                top_adjacent.adjacents.append(left)
+        for top_adjacent_id in top.adjacents:
+            top_adjacent = self.state.regions[top_adjacent_id]
+            top_adjacent.adjacents.remove(top.id)
+            if left.id not in top_adjacent.adjacents:
+                top_adjacent.adjacents.append(left.id)
 
         total_cells = top.cells + left.cells
         total_adjacents = list(set(top.adjacents + left.adjacents))

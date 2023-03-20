@@ -6,7 +6,7 @@ class Region():
         id: int,
         color: int,
         cells: list[Cell],
-        adjacents: set[Region]
+        adjacents: set[int]
     ):
         self.color = color
         self.id = id
@@ -50,21 +50,21 @@ class State():
     ):
         # Updateo las celdas adyacentes
         for region_cell in region.cells:
-            region_cell.color = zone.color
             region_cell.region_id = zone.id
 
         # Los adyacentes de la region que estoy mergeando van a ser adyacentes a la region 1
-        for region_adjacent in region.adjacents:
-            region_adjacent.adjacents.remove(region)
-            if zone not in region_adjacent.adjacents:
-                region_adjacent.adjacents.append(zone)
+        for region_adjacent_id in region.adjacents:
+            region_adjacent = self.regions[region_adjacent_id]
+            region_adjacent.adjacents.remove(region.id)
+            if zone.id not in region_adjacent.adjacents and region_adjacent_id != zone.id:
+                region_adjacent.adjacents.append(zone.id)
 
         total_cells = zone.cells + region.cells
         total_adjacents = list(set(zone.adjacents + region.adjacents))
-        if zone in total_adjacents:
-            total_adjacents.remove(zone)
-        if region in total_adjacents:
-            total_adjacents.remove(region)
+
+        total_adjacents.remove(zone.id)
+        if region.id in total_adjacents:
+            total_adjacents.remove(region.id)
         new_region = Region(zone.id, zone.color, total_cells, total_adjacents)
         self.regions.pop(region.id)
         return new_region
@@ -81,16 +81,13 @@ class State():
 
         # 2° Adyacentes de la zona 1 del nuevo color mergearlos a la region 1
         adjacents = []
-
-        for adjacent in self.regions[1].adjacents:
+        zone_adjacents_copy = zone.adjacents.copy()
+        for adjacent_id in zone_adjacents_copy:
+            adjacent = self.regions[adjacent_id]
             if int(adjacent.color) == int(new_color):
                 zone = self.merge_regions(zone, adjacent)
                 adjacents.extend(adjacent.adjacents)
-        self.regions.update({1: zone})
-
-        print("Adjacents of new zone are ")
-        for adjacent in self.regions[1].adjacents:
-            print("     ", adjacent.id)
+        self.regions.update({1: zone}) 
 
         # 3° Unificar todos los adyacentes
         # zone.adjacents = list(set(adjacents))
