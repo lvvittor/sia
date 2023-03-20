@@ -3,5 +3,6 @@
         "N": 4,
         "M": 3
     },
-    "algorithm": "dfs"
+    "algorithm": "dfs",
+    "heuristic": "composite"
 }

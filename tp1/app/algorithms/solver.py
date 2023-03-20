@@ -42,7 +42,7 @@ class Solver:
       return 0
     
     if not already_visited:
-      print(f"Visitando: ({i}, {j})")
+      # print(f"Visitando: ({i}, {j})")
       self.visited[i][j] = 1
       self.remaining_cells -= 1
 

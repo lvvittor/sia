@@ -49,18 +49,18 @@ class DFS(Solver):
 
 
 # Ejemplo de uso (tamaño original: 14x14, 6 colores)
+if __name__ == "__main__":
+  N = 14 # tamaño del tablero
+  M = 6  # cantidad de colores
 
-N = 14 # tamaño del tablero
-M = 6  # cantidad de colores
+  dfs_solver = DFS(N, M)
 
-dfs_solver = DFS(N, M)
+  print("Tablero inicial:")
+  print(dfs_solver.board)
 
-print("Tablero inicial:")
-print(dfs_solver.board)
+  solution, cost = dfs_solver.solve()
 
-solution, cost = dfs_solver.solve()
+  print("Tablero solucion:")
+  print(solution)
 
-print("Tablero solucion:")
-print(solution)
-
-print(f"Costo de la solucion: {cost}")
+  print(f"Costo de la solucion: {cost}")
