@@ -10,6 +10,7 @@ class BoardGeneratorService():
         self.m = m
         self.counter = 2
         self.cells = []
+        self.old_state = None
         self.state = State({})
         
     def add_adjacent(self, region, i, j):
@@ -100,7 +101,7 @@ class BoardGeneratorService():
                 self.cells[i].append(cell)
                 current_region.cells.append(cell)
 
-        return self.state.regions
+        return self.state
 
     def dict_to_df(self, board: dict[int, Region]):
         df = pd.DataFrame(data=None, index=range(self.n), columns=range(self.n))
@@ -110,5 +111,14 @@ class BoardGeneratorService():
         return df
 
     def update_state(self, new_color: int):
+        self.old_state = State(self.state.regions)
         self.state.update_state(new_color)
-        return self.state.regions
+        return self.state
+
+    def undo_update(self):
+        if self.old_state == None:
+            print("Can't do backtracking, there is no old state")
+            return self.state
+        self.state = self.old_state
+        self.old_state = self.old_state.old_state # This does not work, there is no old_state in old.state?
+        return self.state

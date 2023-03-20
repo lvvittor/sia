@@ -40,7 +40,7 @@ class State():
         self,
         regions: dict[int, Region],
         # add parameters for heuristics
-    ):
+    ):  
         self.regions = regions
 
     def merge_regions(
@@ -93,7 +93,6 @@ class State():
         # zone.adjacents = list(set(adjacents))
         # zone.adjacents.remove(zone)
         return self
-
 
 
         
