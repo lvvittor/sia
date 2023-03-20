@@ -12,7 +12,7 @@ def get_number_of_islands(board, visited, N):
     for j in range(N):
       if _visited[i][j] == 0:
         count += 1
-        visit_neighbors(board, visited, N, i, j, board[i][j])
+        visit_neighbors(board, _visited, N, i, j, board[i][j])
         colors.add(board[i][j])
 
   return count, colors

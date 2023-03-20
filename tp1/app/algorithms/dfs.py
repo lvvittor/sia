@@ -1,8 +1,5 @@
 import numpy as np
 
-N = 20 # tamaño del tablero
-M = 5  # cantidad de colores
-
 # Ver ejemplo de uso al final del archivo
 
 class DFS():
@@ -27,16 +24,34 @@ class DFS():
     Devuelve la cantidad de vecinos nuevos visitados.
     """
     if i < 0 or i >= N or j < 0 or j >= N:
-      return 0
-    if self.visited[i][j] == 1:
-      return 0
-    if self.board[i][j] != color:
+      # print(f"Fuera de rango: ({i}, {j})")
       return 0
     
-    self.visited[i][j] = 1
-    self.remaining_cells -= 1
+    # Indica si la celda ya esta en la zona pero con otro color, en cuyo caso le actualizamos el color
+    already_visited = False
 
-    new_visited = 1
+    if self.visited[i][j] == 1:
+      if self.board[i][j] != color:
+        self.board[i][j] = color
+        already_visited = True
+      else:
+        # print(f"Ya visitado: ({i}, {j})")
+        return 0
+
+    if self.board[i][j] != color:
+      # print(f"Distinto color: ({i}, {j}) {self.board[i][j]} != {color}")
+      return 0
+    
+    # print(f"Visitando: ({i}, {j})")
+
+    if not already_visited:
+      self.visited[i][j] = 1
+      self.remaining_cells -= 1
+
+    if already_visited:
+      new_visited = 0
+    else:
+      new_visited = 1
 
     new_visited += self.visit_neighbors(i-1, j, color)
     new_visited += self.visit_neighbors(i+1, j, color)
@@ -56,6 +71,9 @@ class DFS():
       self.solution_cost = cost # guardamos el costo de la solucion
       return True
     
+    # Guardamos el estado actual del tablero en caso de que necesitemos rollbackear (i.e. actualizamos el color de toda la zona pero en realidad no habia vecinos nuevos)
+    board_copy = self.board.copy()
+    
     # Visitar vecinos de la zona
     visited = 0
     for i in range(N):
@@ -65,18 +83,36 @@ class DFS():
     
     # Si no se visitaron nuevas celdas, descartamos este camino
     if visited == 0:
+      # print(f"Pincho con color {color}")
+      self.board = board_copy # rollback
       return False
     
     # Probamos con todos los colores hasta que alguno de ellos lleve a una solucion
     for c in range(1, M+1):
-      if self.search(c, cost+1):
+      if c != color and self.search(c, cost+1):
         return True
     
     # Ningun color llevo a una solucion (no deberia pasar nunca)
     return False
 
 
-# Ejemplo de busqueda DFS
+# Ejemplo de uso (tamaño original: 14x14, 6 colores)
+
+N = 14 # tamaño del tablero
+M = 6  # cantidad de colores
+
 dfs_solver = DFS(N, M)
-dfs_solver.search(dfs_solver.initial_color, 0)
+
+print("Tablero inicial:")
+print(dfs_solver.board)
+
+# Probamos al inicio con todos los colores hasta que alguno de ellos lleve a una solucion
+for c in range(1, M+1):
+  # print(f"Probando con color {c}")
+  if dfs_solver.search(c, 0) == True:
+    break
+
+print("Tablero solucion:")
+print(dfs_solver.board)
+
 print(f"Costo de la solucion: {dfs_solver.solution_cost}")
