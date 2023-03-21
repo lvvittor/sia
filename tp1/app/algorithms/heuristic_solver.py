@@ -1,4 +1,4 @@
-import json
+import math
 
 from solver import Solver
 from settings import settings
@@ -9,11 +9,42 @@ class HeuristicSolver(Solver):
     super().__init__(N, M)
     self.heuristic = settings.heuristic
 
+
+  # Heuristica no admisible
+  def prom_distinct_regions_heuristic(self, regions, colors):
+    """Heuristica promedio de regiones distintas por color"""
+    if colors == 0:
+      return 0
+    return math.floor(regions / colors)
   
-  def get_heuristic(self):
+
+  # TODO: agregar una heuristica admisible mas
+  
+
+  def distinct_colors_heuristic(self, colors):
+    """Heuristica cantidad de colores distintos"""
+    return colors
+
+
+  def composite_heuristic(self, regions, colors):
+    """Heuristica compuesta por las otras dos"""
+    return max(
+      self.prom_distinct_regions_heuristic(regions, colors),
+      self.distinct_colors_heuristic(colors)
+    )
+
+  
+  def get_heuristic(self, next_color):
     """
-    Retorna la heuristica para el estado actual del juego.
+    Retorna la heuristica calculada para el estado que tendra el juego si se elige `next_color` en el proximo turno.
     """
+    # Hacemos una copia para restaurar el estado del juego luego de calcular la heuristica
+    _visited = self.visited.copy()
+    _board = self.board.copy()
+    _remaining_cells = self.remaining_cells
+
+    self.visit_zone_neighbors(next_color)
+
     # Cantidad de regiones y colores distintos fuera de la zona
     regions, colors = self.get_number_of_regions()
     colors = len(colors)
@@ -21,11 +52,16 @@ class HeuristicSolver(Solver):
     # Heuristica
     match self.heuristic:
       case "prom_distinct_regions":
-        h = regions / colors
+        h = self.prom_distinct_regions_heuristic(regions, colors)
       case "distinct_colors":
-        h = colors
+        h = self.distinct_colors_heuristic(colors)
       case "composite":
-        h = max(regions / colors, colors)
+        h = self.composite_heuristic(regions, colors)
+    
+    # Restauramos el estado del juego
+    self.visited = _visited
+    self.board = _board
+    self.remaining_cells = _remaining_cells
 
     return h
 
@@ -72,11 +108,19 @@ class HeuristicSolver(Solver):
 
 # Test
 if __name__ == "__main__":
-  N = 14 # tamaño del tablero
-  M = 6  # cantidad de colores
+  N = 4 # tamaño del tablero
+  M = 2  # cantidad de colores
 
   heuristic_solver = HeuristicSolver(N, M)
 
-  h = heuristic_solver.get_heuristic()
+  print("Tablero:")
+  print(heuristic_solver.board)
+
+  next_color = 1
+  h = heuristic_solver.get_heuristic(next_color)
+
+  regions, colors = heuristic_solver.get_number_of_regions()
+
+  print(f"Regiones: {regions}, Colores: {len(colors)}")
 
   print(f"h(e) = {h}")
