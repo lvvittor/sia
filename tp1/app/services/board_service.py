@@ -5,40 +5,18 @@ import dataframe_image as dfi
 from settings import settings
 
 class BoardService:
-    def __init__(self, board: pd.DataFrame):
-        self.board = board
-
-    def get_board(self):
-        return self.board
+    def __init__(self):
+        palette = sns.color_palette(None, settings.board.M).as_hex()
+        self.dict_pallete = dict(enumerate(palette))
     
-    def get_board_size(self):
-        return self.board.shape[0]
-    
-    def get_board_colors(self):
-        return np.unique(self.board.values)
-    
-    def get_board_color_count(self):
-        return len(self.get_board_colors())
-    
-    def get_distinct_colors(self):
-        return self.board.nunique().sum()
-    
-    def set_colored_board(self, filename: str):
-        df = self.board
-
-        # get unique values
-        codes, unique = pd.factorize(df.stack())
-
-        # generate a color palette with as many colors as there are unique values
-        palette = sns.color_palette(None, len(unique)).as_hex()
+    def set_colored_board(self, df: pd.DataFrame, filename: str):
 
         # map the unique values to the colors
         reshape_df = pd.DataFrame(
-                        codes.reshape(df.shape),
+                        df,
                         index=df.index, 
                         columns=df.columns
-        ).replace(dict(enumerate(palette))).radd('background-color: ')
-
+        ).replace(self.dict_pallete).radd('background-color: ')
         df.loc[:] = ''
 
         # apply the colors to the cells
