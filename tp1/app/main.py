@@ -4,6 +4,7 @@ from settings import settings
 from algorithms import DFS
 import pandas as pd
 
+
 def solve_algorithm(state: State):
     match settings.algorithm:
         case "dfs":
@@ -18,12 +19,16 @@ def solve_algorithm(state: State):
             print(solution_df)
 
             print(f"Costo de la solucion: {cost}")
+    
 
 if __name__ == "__main__":
     board_generator = BoardGeneratorService(settings.board.N, settings.board.M)
     board = board_generator.generate()
     board_service = BoardService()
+    df = board_generator.dict_to_df(board.regions)
+    print(df)
     solve_algorithm(board)
+
     # i = 0
     # while True:
     #     df = board_generator.dict_to_df(board.regions)
