@@ -81,19 +81,24 @@ class State:
 
         # 2° Adyacentes de la zona 1 del nuevo color mergearlos a la region 1
         adjacents = []
+        regions_added = 0
         zone_adjacents_copy = zone.adjacents.copy()
         for adjacent_id in zone_adjacents_copy:
             adjacent = self.regions[adjacent_id]
             if int(adjacent.color) == int(new_color):
                 zone = self.merge_regions(zone, adjacent)
+                regions_added += 1
                 adjacents.extend(adjacent.adjacents)
         self.regions.update({1: zone}) 
 
         # 3° Unificar todos los adyacentes
         # zone.adjacents = list(set(adjacents))
         # zone.adjacents.remove(zone)
-        return self
+        return self, regions_added
 
+
+    def copy(self):
+        return State(self.regions)
 
         
         
