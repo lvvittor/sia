@@ -1,6 +1,6 @@
 from __future__ import annotations 
 
-class Region():
+class Region:
     def __init__(
         self,
         id: int,
@@ -20,7 +20,7 @@ class Region():
         return self.id
         
 
-class Cell():
+class Cell:
     def __init__(
         self,
         visited: bool,
@@ -35,7 +35,7 @@ class Cell():
         self.y = y
         self.region_id = region_id
 
-class State():
+class State:
     def __init__(
         self,
         regions: dict[int, Region],

@@ -1,13 +1,13 @@
 import json
 
 from solver import Solver
+from settings import settings
 
 # Interfaz para los algoritmos de busqueda informados
 class HeuristicSolver(Solver):
   def __init__(self, N, M):
     super().__init__(N, M)
-    config = json.load(open("tp1/config.json")) # TODO: use settings instead of this hardcoded path
-    self.heuristic = config["heuristic"]
+    self.heuristic = settings.heuristic
 
   
   def get_heuristic(self):

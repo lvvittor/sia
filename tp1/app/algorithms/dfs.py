@@ -1,4 +1,4 @@
-from solver import Solver
+from algorithms.solver import Solver
 
 # Ver ejemplo de uso al final del archivo
 
