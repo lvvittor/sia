@@ -105,8 +105,8 @@ class State:
     def copy(self):
         return copy.deepcopy(self)
     
-    # def __str__(self) -> str:
-        #  return json.dumps(self.regions, default=lambda o: o.__dict__, indent=4)
+    def __str__(self) -> str:
+         return json.dumps(self.regions, default=lambda o: o.__dict__, indent=4)
 
         
         
