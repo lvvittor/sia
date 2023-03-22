@@ -13,6 +13,8 @@ class Solver:
     self.board_service = BoardService()
     # Inicializamos la zona
     self.initial_color = self.state.regions[1].color
+    self.border_nodes = 0
+    self.expanded_nodes = 0
 
   def is_solution(self):
     """

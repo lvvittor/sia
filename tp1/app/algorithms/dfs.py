@@ -19,24 +19,32 @@ class DFS(Solver):
     if len(self.state.regions) == 1:
       self.solution_cost = cost # guardamos el costo de la solucion
       return True
-    
-    # Guardamos el estado actual del tablero en caso de que necesitemos rollbackear (i.e. actualizamos el color de toda la zona pero en realidad no habia vecinos nuevos)
-    state_copy = self.state.copy()
+  
+    self.expanded_nodes += 1
+    self.border_nodes -= 1
     
     # Visitar vecinos de la zona
     expansions = self.expand_zone(color)
-    
-    # Si no se visitaron nuevas celdas, descartamos este camino
+
     if expansions == 0:
-      self.state = state_copy # rollback
-      return False
+      raise RuntimeError
     
+    self.state.steps_to_state.append(color)
+
     # Imprimir estados intermedios
-    self.output_board(f"dfs", self.state.regions, color, cost)
+    # self.output_board(f"dfs", self.state.regions, color, cost)
+
+    colors = self.state.regions[1].get_adjacent_colors(self.state)
+    self.border_nodes += len(colors)
+
+    # Si no hay adyacentes entonces es mi solucion
+    if len(colors) == 0:
+      self.solution_cost = cost + 1 # guardamos el costo de la solucion
+      return True
     
     # Probamos con todos los colores hasta que alguno de ellos lleve a una solucion
-    for c in range(0, settings.board.M):
-      if c != color and self.search(c, cost+1):
+    for c in colors:
+      if self.search(c, cost+1):
         return True
     
     # Ningun color llevo a una solucion (no deberia pasar nunca)
@@ -44,12 +52,15 @@ class DFS(Solver):
 
 
   def solve(self):
+    colors = self.state.regions[1].get_adjacent_colors(self.state)
+    self.expanded_nodes += 1
+    self.border_nodes += len(colors)
     # Probamos al inicio con todos los colores hasta que alguno de ellos lleve a una solucion
-    for c in range(0, settings.board.M):
+    for c in colors:
       if self.search(c, 0):
         break
     
-    return self.state, self.solution_cost
+    return self.state, self.solution_cost, self.expanded_nodes, self.border_nodes
 
 
 # Ejemplo de uso (tamaño original: 14x14, 6 colores)
