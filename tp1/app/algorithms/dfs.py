@@ -32,7 +32,7 @@ class DFS(Solver):
       return False
     
     # Imprimir estados intermedios
-    self.output_board(f"dfs", self.state.regions, color, cost)
+    # self.output_board(f"dfs", self.state.regions, color, cost)
     
     # Probamos con todos los colores hasta que alguno de ellos lleve a una solucion
     for c in range(0, settings.board.M):

@@ -1,63 +1,15 @@
-from region import State
+from datetime import datetime
+
 from services import BoardGeneratorService, BoardService, BenchMarkService
 from settings import settings
 from algorithms import DFS, BFS, Greedy, AStar
-import pandas as pd
 
-
-def solve_algorithm(state: State):
-    if settings.benchmarks.active == True:
-        return
-    match settings.algorithm:
-        case "dfs":
-            dfs_solver = DFS(state)
-
-            initial_df = board_generator.dict_to_df(state.regions)
-            print(initial_df)
-
-            solution, cost = dfs_solver.solve()
-            solution_df = board_generator.dict_to_df(solution.regions)
-            print("Tablero solucion:")
-            print(solution_df)
-
-            print(f"Costo de la solucion: {cost}")
-
-        case "bfs":
-            bfs_solver = BFS(state)
-
-            initial_df = board_generator.dict_to_df(state.regions)
-            #print(initial_df)
-
-            solution, cost = bfs_solver.solve()
-            solution_df = board_generator.dict_to_df(solution.regions)
-            print("Tablero solucion:")
-            print(solution_df)
-        
-        case "greedy":
-            greedy_solver = Greedy(state)
-
-            initial_df = board_generator.dict_to_df(state.regions)
-            print(initial_df)
-
-            solution, cost = greedy_solver.solve()
-            solution_df = board_generator.dict_to_df(solution.regions)
-            print("Tablero solucion:")
-            print(solution_df)
-            print(f"Costo de la solucion: {cost}")
-
-        case "a_star":
-            a_star_solver = AStar(state)
-            initial_state = state.copy()
-            initial_df = board_generator.dict_to_df(state.regions)
-            print(initial_df)
-
-            solution, cost = a_star_solver.solve()
-            solution_df = board_generator.dict_to_df(solution.regions)
-            print("Tablero solucion:")
-            print(solution_df)
-            print(f"Costo de la solucion: {cost}")
-            print(solution.steps_to_state)
-            board_service.print_solution(board_generator, initial_state, solution.steps_to_state)
+SOLVERS = {
+    "dfs": DFS,
+    "bfs": BFS,
+    "greedy": Greedy,
+    "a_star": AStar
+}
 
 if __name__ == "__main__":
     board_generator = BoardGeneratorService(settings.board.N, settings.board.M)
@@ -68,29 +20,26 @@ if __name__ == "__main__":
         board_benchmark_service = BenchMarkService(initial_state, settings.benchmarks.rounds)
         benchmark = board_benchmark_service.get_benchmark()
         board_benchmark_service.plot_time_comparing_graph(benchmark)
+    else:
+        initial_df = board_generator.dict_to_df(initial_state.regions)
+        print("\nTablero inicial:")
+        print(initial_df)
 
-    df = board_generator.dict_to_df(initial_state.regions)
-    #print(df)
-    solve_algorithm(initial_state)
-
-    # i = 0
-    # while True:
-    #     df = board_generator.dict_to_df(board.regions)
-    #     print(df)
-
-    #     # This prints will not work because i removed those methods as there is no DataFrame inside BoardService anymore.
-    #     # TODO: remove/change prints
-    #     # with pd.option_context('display.max_rows', settings.board.N, 'display.max_columns', settings.board.N):
-    #         # print(board_service.get_board())
+        solver = SOLVERS[settings.algorithm](initial_state)
         
-    #     # print(f"Board [colors={board_service.get_board_colors()}, len(colors)={board_service.get_board_color_count()}]")
+        startTime = datetime.now()
         
-    #     board_service.set_colored_board(df, f"test{i}.png")
-    #     i += 1
+        solution, cost = solver.solve()
+        
+        endTime = datetime.now()
 
-    #     new_color = input("What color do you want to change: ")
+        solution_df = board_generator.dict_to_df(solution.regions)
+        print("\nTablero solucion:")
+        print(solution_df)
 
-    #     board = board_generator.update_state(int(new_color))
-  
+        print(f"\nCosto de la solucion: {cost}")
+        print(f"Tiempo de ejecucion: {(endTime - startTime).total_seconds()} segundos\n")
 
-
+        if settings.visualization == True:
+            # TODO: save images with steps to solution
+            pass

@@ -46,11 +46,7 @@ class Solver:
     """
     raise NotImplementedError
   
-  def output_board(self, algorithm_name: str, regions: dict, color: int, cost: int):
-    # TODO: return when `visualization` config is False
+  def output_board(self, algorithm_name: str, regions: dict, color: int, cost: int):   
     board_generator = BoardGeneratorService(settings.board.N, settings.board.M)
     state_df = board_generator.dict_to_df(regions)
-    #print()
-    #print(state_df)
     self.board_service.set_colored_board(state_df, f"{algorithm_name}[cost:{cost},color:{color}].png")
-    #print()
