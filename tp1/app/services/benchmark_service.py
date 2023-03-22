@@ -38,7 +38,7 @@ class BenchMarkService:
 
         # Save the figure and show
         plt.tight_layout()
-        plt.savefig(f"{settings.Config.output_path}/time_comparation2.png")
+        plt.savefig(f"{settings.Config.output_path}/time_comparation{settings.board.N}x{settings.board.N}.png")
 
 
     def get_benchmark(self):
