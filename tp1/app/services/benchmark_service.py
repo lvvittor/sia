@@ -1,5 +1,5 @@
 from datetime import datetime
-from algorithms.dfs import DFS
+from algorithms import DFS, BFS
 import numpy as np
 import matplotlib.pyplot as plt
 from settings import settings
@@ -52,6 +52,13 @@ class BenchMarkService:
         algorithms = {
             "dfs": {
                 "class": DFS,
+                "times":[],
+                "mean": 0,
+                "std": 0,
+                "cost": []
+            },
+            "bfs": {
+                "class": BFS,
                 "times":[],
                 "mean": 0,
                 "std": 0,
