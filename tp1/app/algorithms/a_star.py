@@ -1,21 +1,17 @@
-from dataclasses import dataclass, field
-from queue import PriorityQueue
-from typing import Any
 from algorithms.heuristic_solver import HeuristicSolver
-from settings import settings
 
-
-class Greedy(HeuristicSolver):
+class AStar(HeuristicSolver):
   def __init__(self, state):
     super().__init__(state)
 
-
   def add_to_priority_queue(self, pq, state):
-    pq.put(self.PrioritizedItem(self.get_heuristic(state), state))
+    h = self.get_heuristic(state)
+    pq.put(self.PrioritizedItem((h+state.cost, h), state))
 
 
   def found_solution(self, priority):
-    return priority == 0
+    return priority[1] == 0
+
 
   def solve(self):
     if self.search():
