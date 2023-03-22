@@ -29,6 +29,7 @@ if __name__ == "__main__":
         
         startTime = datetime.now()
         
+        initial_state_copy = initial_state.copy()
         solution, cost, expanded_nodes, border_nodes = solver.solve()
         
         endTime = datetime.now()
@@ -43,5 +44,5 @@ if __name__ == "__main__":
         print(f"Cantidad de nodos frontera: {border_nodes}\n")
 
         if settings.visualization == True:
-            # TODO: save images with steps to solution
+            board_service.print_solution(board_generator, initial_state_copy, solution.steps_to_state)
             pass

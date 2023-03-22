@@ -16,5 +16,5 @@ class AStar(HeuristicSolver):
 
   def solve(self):
     if self.search():
-        return self.state, self.solution_cost
-    return None, None
+        return self.state, self.solution_cost, self.expanded_nodes, self.border_nodes
+    return None, None, 0, 0
