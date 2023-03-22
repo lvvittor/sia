@@ -29,7 +29,7 @@ if __name__ == "__main__":
         
         startTime = datetime.now()
         
-        solution, cost = solver.solve()
+        solution, cost, expanded_nodes, border_nodes = solver.solve()
         
         endTime = datetime.now()
 
@@ -38,7 +38,9 @@ if __name__ == "__main__":
         print(solution_df)
 
         print(f"\nCosto de la solucion: {cost}")
-        print(f"Tiempo de ejecucion: {(endTime - startTime).total_seconds()} segundos\n")
+        print(f"Tiempo de ejecucion: {(endTime - startTime).total_seconds()} segundos")
+        print(f"Cantidad de nodos expandidos: {expanded_nodes}")
+        print(f"Cantidad de nodos frontera: {border_nodes}\n")
 
         if settings.visualization == True:
             # TODO: save images with steps to solution

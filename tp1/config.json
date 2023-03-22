@@ -3,7 +3,7 @@
         "N": 8,
         "M": 5
     },
-    "algorithm": "a_star",
+    "algorithm": "dfs",
     "visualization": true,
     "heuristic": "farthest_region_heuristic",
     "benchmarks": {
