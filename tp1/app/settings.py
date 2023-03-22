@@ -17,6 +17,10 @@ class BoardSettings(BaseModel):
     M: int # number of colors
     N: int # board of size NxN
 
+class BenchmarkSettings(BaseModel):
+    active: bool
+    rounds: int
+
 class Settings(BaseSettings):
     """
     Settings for the application.
@@ -33,6 +37,7 @@ class Settings(BaseSettings):
     board: BoardSettings
     algorithm: str
     visualization: bool
+    benchmarks: BenchmarkSettings
     heuristic: str
 
     class Config:

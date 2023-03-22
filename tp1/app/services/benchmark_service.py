@@ -1,13 +1,15 @@
 from datetime import datetime
+from algorithms.dfs import DFS
 import numpy as np
+import matplotlib.pyplot as plt
 
 class BenchMarkService:
     """
     Get the average and standard deviation execution time of a model run method using an input data set.
     """
 
-    def __init__(self, board, times):
-        self.board = board
+    def __init__(self, state, times):
+        self.state = state
         self.times = times
 
 
@@ -16,7 +18,19 @@ class BenchMarkService:
 
 
     def plot_time_comparing_graph(benchmark):
-        pass
+        # TODO: verify figsize
+        fig = plt.figure(figsize=(10, 5))
+
+        mean_time = []
+        for key in benchmark.keys():
+            mean_time.append(benchmark[key]["mean"])
+
+        plt.bar(benchmark.keys(), mean_time, "blue", width=0.4)
+
+        plt.xlabel("Algorithms")
+        plt.ylabel("Time(ms)")
+        plt.title(f"Excecution Time for {settings.board.N}x{settings.board.N}")
+        plt.savefig(f"{settings.Config.output_path}/time_comparation.png")
 
 
 
@@ -38,15 +52,16 @@ class BenchMarkService:
             }
         }
 
-        for algorithm in algorithms.keys()
+        for algorithm in algorithms.keys():
             for _ in range(self.times):
-                solver = algorithms[algorithm]["class"](self.board)
+                aux_state = self.state.copy()
+                solver = algorithms[algorithm]["class"](aux_state)
                 start_time = datetime.now()
-                _, cost = solver.solve(self.board)
+                _, cost = solver.solve()
                 end_time = datetime.now()
-                algorithms[algorithm]["class"].append(end_time - start_time)
+                algorithms[algorithm]["times"].append((end_time - start_time).total_seconds())
                 algorithms[algorithm]["cost"].append(cost)
-            algorithms[algorithm]["mean"] = np.mean(time_list)
-            algorithms[algorithm]["std"] = np.std(time_list)
+            algorithms[algorithm]["mean"] = np.mean(algorithms[algorithm]["times"])
+            algorithms[algorithm]["std"] = np.std(algorithms[algorithm]["times"])
 
         return algorithms

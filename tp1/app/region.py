@@ -1,4 +1,5 @@
-from __future__ import annotations 
+from __future__ import annotations
+import copy
 
 class Region:
     def __init__(
@@ -98,7 +99,7 @@ class State:
 
 
     def copy(self):
-        return State(self.regions)
+        return copy.deepcopy(self)
 
         
         

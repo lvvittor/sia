@@ -2,7 +2,6 @@ import pandas as pd
 import seaborn as sns
 import numpy as np
 import dataframe_image as dfi
-import settings as settings
 from settings import settings
 
 class BoardService:
