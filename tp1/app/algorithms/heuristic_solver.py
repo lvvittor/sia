@@ -98,7 +98,6 @@ class HeuristicSolver(Solver):
   def search(self):
     pq = PriorityQueue()
 
-    # pq.put(PrioritizedItem(1, self.state))
     self.add_to_priority_queue(pq, self.state)
     while not pq.empty():
       # pq.get() son tuplas donde [0] es el valor de la heuristica, [1] es el estado.
@@ -119,13 +118,11 @@ class HeuristicSolver(Solver):
         new_state = next_state.copy()
         _, expansions = new_state.update_state(color)
 
-        # tengo que guardar el costo en el estado al tener muchos estados distintos que pueden tener distintos costos
-        # aumento de a 1 porque cada una de nuestras aristas vale 1
-        new_state.increase_cost(1)
 
         # si el estado cambio entonces lo agrego a la cola
         if expansions > 0:
-          # pq.put(PrioritizedItem(self.get_heuristic(new_state), new_state))
+          new_state.increase_cost(1)
+          new_state.steps_to_state.append(color)
           self.add_to_priority_queue(pq, new_state)
 
     # no encontro solucion

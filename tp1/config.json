@@ -1,10 +1,10 @@
 {
     "board": {
-        "N": 10,
+        "N": 8,
         "M": 5
     },
     "algorithm": "a_star",
-    "visualization": false,
+    "visualization": true,
     "heuristic": "farthest_region_heuristic",
     "benchmarks": {
         "active": false,

@@ -53,10 +53,12 @@ class State:
     def __init__(
         self,
         regions: dict[int, Region],
-        cost: int
+        cost: int,
+        steps_to_state: list[int]
     ):  
         self.regions = regions
         self.cost = cost
+        self.steps_to_state = steps_to_state
 
     def merge_regions(
         self,

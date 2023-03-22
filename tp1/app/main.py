@@ -47,7 +47,7 @@ def solve_algorithm(state: State):
 
         case "a_star":
             a_star_solver = AStar(state)
-
+            initial_state = state.copy()
             initial_df = board_generator.dict_to_df(state.regions)
             print(initial_df)
 
@@ -56,6 +56,8 @@ def solve_algorithm(state: State):
             print("Tablero solucion:")
             print(solution_df)
             print(f"Costo de la solucion: {cost}")
+            print(solution.steps_to_state)
+            board_service.print_solution(board_generator, initial_state, solution.steps_to_state)
 
 if __name__ == "__main__":
     board_generator = BoardGeneratorService(settings.board.N, settings.board.M)

@@ -1,4 +1,6 @@
 import pandas as pd
+from services.board_generator_service import BoardGeneratorService
+from region import State
 import seaborn as sns
 import numpy as np
 import dataframe_image as dfi
@@ -30,6 +32,15 @@ class BoardService:
 
         dfi.export(df_styled, f"{settings.Config.output_path}/{filename}")
 
-        
+    def print_solution(self, board_generator: BoardGeneratorService, initial_state: State, steps: list[int]):
+        state = initial_state.copy()
+        i = 0
+        for step in steps:
+            df = board_generator.dict_to_df(state.regions)
+            self.set_colored_board(df, f"solution{i}.png")
+            i += 1
+            state.update_state(step)
+        df = board_generator.dict_to_df(state.regions)
+        self.set_colored_board(df, f"solution{i}.png")
          
         
