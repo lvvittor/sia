@@ -1,5 +1,5 @@
-import math
-
+from queue import PriorityQueue
+from region import State
 from solver import Solver
 from settings import settings
 
@@ -9,102 +9,75 @@ class HeuristicSolver(Solver):
     super().__init__(N, M)
     self.heuristic = settings.heuristic
 
+  
+  def distinct_colors_heuristic(self, state: State):
+    amount_colors = 0
+    colors_visited = []
+    for region in filter(lambda region: region.id != 1, state.values()):
+      if region.color not in colors_visited:
+        colors_visited.append(region.color)
+        amount_colors += 1
+      if amount_colors == settings.board.M:
+        break
 
-  # Heuristica no admisible
-  def prom_distinct_regions_heuristic(self, regions, colors):
-    """Heuristica promedio de regiones distintas por color"""
-    if colors == 0:
-      return 0
-    return math.floor(regions / colors)
+    return amount_colors
   
 
-  # TODO: agregar una heuristica admisible mas
+  def dijkstra(state: State):
+    zone_id = 1
+    distances = {region_id:float('inf') for region_id in state.regions.keys()}
+
+    distances[zone_id] = 0
+    visited_ids = []
+    pq = PriorityQueue()
+    pq.put((0, zone_id))
+
+    while not pq.empty():
+        _, current_region_id = pq.get()
+        visited_ids.append(current_region_id)
+
+        for adjacent in state.regions.keys():
+            if adjacent in state.regions[current_region_id].adjacents:
+                distance = 1 # El costo de pasar de una region a otra es siempre 1 en nuestro caso
+                if adjacent not in visited_ids:
+                    old_cost = distances[adjacent]
+                    new_cost = distances[current_region_id] + distance
+                    if new_cost < old_cost:
+                        pq.put((new_cost, adjacent))
+                        distances[adjacent] = new_cost
+    return distances
   
 
-  def distinct_colors_heuristic(self, colors):
-    """Heuristica cantidad de colores distintos"""
-    return colors
+  def get_maximum_distance(distances):
+    return max(distances.values())
 
 
-  def composite_heuristic(self, regions, colors):
+  def farthest_region_heuristic(self, state: State):
+    return self.get_maximum_distance(self.dijkstra(state))
+
+
+  def composite_heuristic(self, state: State):
     """Heuristica compuesta por las otras dos"""
     return max(
-      self.prom_distinct_regions_heuristic(regions, colors),
-      self.distinct_colors_heuristic(colors)
+      self.farthest_region_heuristic(state),
+      self.distinct_colors_heuristic(state)
     )
 
-  
-  def get_heuristic(self, next_color):
+
+  def get_heuristic(self, state: State):
     """
-    Retorna la heuristica calculada para el estado que tendra el juego si se elige `next_color` en el proximo turno.
+    Retorna la heuristica calculada para un estado.
     """
-    # Hacemos una copia para restaurar el estado del juego luego de calcular la heuristica
-    _visited = self.visited.copy()
-    _board = self.board.copy()
-    _remaining_cells = self.remaining_cells
 
-    self.visit_zone_neighbors(next_color)
-
-    # Cantidad de regiones y colores distintos fuera de la zona
-    regions, colors = self.get_number_of_regions()
-    colors = len(colors)
-
-    # Heuristica
     match self.heuristic:
-      case "prom_distinct_regions":
-        h = self.prom_distinct_regions_heuristic(regions, colors)
+      case "farthest_region_heuristic":
+        h = self.farthest_region_heuristic(state)
       case "distinct_colors":
-        h = self.distinct_colors_heuristic(colors)
+        h = self.distinct_colors_heuristic(state)
       case "composite":
-        h = self.composite_heuristic(regions, colors)
-    
-    # Restauramos el estado del juego
-    self.visited = _visited
-    self.board = _board
-    self.remaining_cells = _remaining_cells
+        h = self.composite_heuristic(state)
 
     return h
-
-
-  def get_number_of_regions(self):
-    """
-    Retorna la cantidad de regiones fuera de la zona y los colores que las componen.
-    """
-    # Hacemos una copia para restaurar el estado del juego luego de calcular la heuristica
-    _visited = self.visited.copy()
-
-    regions = 0
-    colors = set()
-
-    for i in range(self.N):
-      for j in range(self.N):
-        if self.visited[i][j] == 0:
-          regions += 1
-          self.consume_region(i, j, self.board[i][j])
-          colors.add(self.board[i][j])
-
-    # Restauramos el estado del juego
-    self.visited = _visited
-
-    return regions, colors
-
-
-  def consume_region(self, i, j, color):
-    """Visita toda una region"""
-    if i < 0 or i >= self.N or j < 0 or j >= self.N:
-      return
-    if self.visited[i][j] == 1:
-      return
-    if self.board[i][j] != color:
-      return
-
-    self.visited[i][j] = 1
-
-    self.consume_region(i-1, j, color)
-    self.consume_region(i+1, j, color)
-    self.consume_region(i, j-1, color)
-    self.consume_region(i, j+1, color)
-
 
 # Test
 if __name__ == "__main__":
