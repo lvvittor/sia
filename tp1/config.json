@@ -1,9 +1,9 @@
 {
     "board": {
-        "N": 10,
+        "N": 5,
         "M": 3
     },
-    "algorithm": "bfs",
+    "algorithm": "greedy",
     "visualization": false,
-    "heuristic": "composite"
+    "heuristic": "farthest_region_heuristic"
 }

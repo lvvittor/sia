@@ -1,7 +1,7 @@
 from region import State
 from services import BoardGeneratorService, BoardService, BenchMarkService
 from settings import settings
-from algorithms import DFS, BFS
+from algorithms import DFS, BFS, Greedy
 import pandas as pd
 
 
@@ -30,13 +30,24 @@ def solve_algorithm(state: State):
             solution_df = board_generator.dict_to_df(solution.regions)
             print("Tablero solucion:")
             print(solution_df)
+        
+        case "greedy":
+            greedy_solver = Greedy(state)
+
+            initial_df = board_generator.dict_to_df(state.regions)
+            print(initial_df)
+
+            solution, cost = greedy_solver.solve()
+            solution_df = board_generator.dict_to_df(solution.regions)
+            print("Tablero solucion:")
+            print(solution_df)
+            print(f"Costo de la solucion: {cost}")
 
 if __name__ == "__main__":
     board_generator = BoardGeneratorService(settings.board.N, settings.board.M)
     board = board_generator.generate()
     board_service = BoardService()
     df = board_generator.dict_to_df(board.regions)
-    print(df)
     solve_algorithm(board)
 
     # i = 0
