@@ -22,6 +22,7 @@ class BFS(Solver):
         # append colors to color_queue
         color_queue = [c for c in colors]
 
+        # save pending states while expanding a level of the tree
         state_queue = [[self.state.copy(), self.solution_cost]]
 
         # output initial state
@@ -33,7 +34,8 @@ class BFS(Solver):
             # get first color
             color = color_queue.pop(0)
 
-            # if we are checking the first color, then we are checking a new state
+            # if we are checking the first color, then we are checking a new state (i.e. a new level of the tree for a given node/color)
+            # we always start from the first color, even if the parent node expanded that same color
             if color == BFS.FIRST_COLOR:
                 self.state, self.solution_cost = state_queue.pop(0)
                     
@@ -52,18 +54,19 @@ class BFS(Solver):
                 self.state = state_copy
                 continue
             else:
-                # an expansion has been made, save the state and add colors to queue
+                # an expansion has been made, save the state
                 state_queue.append([self.state.copy(), self.solution_cost+1])
 
                 file_prefix += 1
 
+                # add all the colors for this expanded state to the queue (we'll check them all when we come back to this state later)
                 for c in colors:
                     color_queue.append(c)
 
                 # output intermediate states
                 self.output_board(f"{file_prefix}-bfs", self.state.regions, color, self.solution_cost+1)
 
-                # rollback for next color check
+                # rollback to the parent state to expand the rest of the colors
                 self.state = state_copy
 
                 
