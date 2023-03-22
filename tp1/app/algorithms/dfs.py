@@ -55,13 +55,13 @@ class DFS(Solver):
 # Ejemplo de uso (tamaño original: 14x14, 6 colores)
 if __name__ == "__main__":
   board_generator = BoardGeneratorService(settings.board.N, settings.board.M)
-  board = board_generator.generate()
+  initial_state = board_generator.generate()
   board_service = BoardService()
 
-  dfs_solver = DFS(board)
+  dfs_solver = DFS(state)
 
   print("Tablero inicial:")
-  initial_df = board_generator.dict_to_df(board.regions)
+  initial_df = board_generator.dict_to_df(initial_state.regions)
   print(initial_df)
 
   solution, cost = dfs_solver.solve()

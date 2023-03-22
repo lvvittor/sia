@@ -11,6 +11,9 @@ class BoardService:
     
     def set_colored_board(self, df: pd.DataFrame, filename: str):
 
+        if settings.visualization == False:
+            return
+
         # map the unique values to the colors
         reshape_df = pd.DataFrame(
                         df,

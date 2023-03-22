@@ -5,5 +5,9 @@
     },
     "algorithm": "greedy",
     "visualization": false,
-    "heuristic": "farthest_region_heuristic"
+    "heuristic": "farthest_region_heuristic",
+    "benchmarks": {
+        "active": false,
+        "rounds": 10
+    }
 }

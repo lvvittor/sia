@@ -6,25 +6,27 @@ import pandas as pd
 
 
 def solve_algorithm(state: State):
+    if settings.benchmarks.active == True:
+        return
     match settings.algorithm:
         case "dfs":
             dfs_solver = DFS(state)
 
             initial_df = board_generator.dict_to_df(state.regions)
-            print(initial_df)
+            #print(initial_df)
 
             solution, cost = dfs_solver.solve()
-            solution_df = board_generator.dict_to_df(solution.regions)
-            print("Tablero solucion:")
-            print(solution_df)
+            #solution_df = board_generator.dict_to_df(solution.regions)
+            #print("Tablero solucion:")
+            #print(solution_df)
 
-            print(f"Costo de la solucion: {cost}")
+            #print(f"Costo de la solucion: {cost}")
 
         case "bfs":
             bfs_solver = BFS(state)
 
             initial_df = board_generator.dict_to_df(state.regions)
-            print(initial_df)
+            #print(initial_df)
 
             solution, cost = bfs_solver.solve()
             solution_df = board_generator.dict_to_df(solution.regions)
@@ -45,10 +47,17 @@ def solve_algorithm(state: State):
 
 if __name__ == "__main__":
     board_generator = BoardGeneratorService(settings.board.N, settings.board.M)
-    board = board_generator.generate()
+    initial_state = board_generator.generate()
     board_service = BoardService()
-    df = board_generator.dict_to_df(board.regions)
-    solve_algorithm(board)
+
+    if settings.benchmarks.active == True:
+        board_benchmark_service = BenchMarkService(initial_state, settings.benchmarks.rounds)
+        benchmark = board_benchmark_service.get_benchmark()
+        board_benchmark_service.plot_time_comparing_graph(benchmark)
+
+    df = board_generator.dict_to_df(initial_state.regions)
+    #print(df)
+    solve_algorithm(initial_state)
 
     # i = 0
     # while True:
