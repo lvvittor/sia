@@ -108,7 +108,9 @@ class HeuristicSolver(Solver):
       if self.found_solution(next_item.priority):
         self.state = next_state
         self.solution_cost = next_state.cost
+        self.border_nodes = pq.qsize()
         return True
+      
 
       colors = next_state.regions[1].get_adjacent_colors(next_state)
 
@@ -116,6 +118,7 @@ class HeuristicSolver(Solver):
       for color in colors:
         # hago una copia de cada estado para guardar distintos estados en la queue
         new_state = next_state.copy()
+        self.expanded_nodes += 1
         _, expansions = new_state.update_state(color)
 
 
