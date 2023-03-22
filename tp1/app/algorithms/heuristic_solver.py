@@ -96,7 +96,6 @@ class HeuristicSolver(Solver):
 
 
   def search(self):
-    colors = [i for i in range(0, settings.board.M)]
     pq = PriorityQueue()
 
     # pq.put(PrioritizedItem(1, self.state))
@@ -112,6 +111,7 @@ class HeuristicSolver(Solver):
         self.solution_cost = next_state.cost
         return True
 
+      colors = next_state.regions[1].get_adjacent_colors(next_state)
 
       # por cada color agrego un nuevo nodo a la frontera
       for color in colors:

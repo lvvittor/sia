@@ -1,11 +1,11 @@
 {
     "board": {
-        "N": 5,
-        "M": 3
+        "N": 10,
+        "M": 5
     },
-    "algorithm": "greedy",
+    "algorithm": "a_star",
     "visualization": false,
-    "heuristic": "composite",
+    "heuristic": "farthest_region_heuristic",
     "benchmarks": {
         "active": false,
         "rounds": 10

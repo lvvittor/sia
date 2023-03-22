@@ -13,14 +13,14 @@ def solve_algorithm(state: State):
             dfs_solver = DFS(state)
 
             initial_df = board_generator.dict_to_df(state.regions)
-            #print(initial_df)
+            print(initial_df)
 
             solution, cost = dfs_solver.solve()
-            #solution_df = board_generator.dict_to_df(solution.regions)
-            #print("Tablero solucion:")
-            #print(solution_df)
+            solution_df = board_generator.dict_to_df(solution.regions)
+            print("Tablero solucion:")
+            print(solution_df)
 
-            #print(f"Costo de la solucion: {cost}")
+            print(f"Costo de la solucion: {cost}")
 
         case "bfs":
             bfs_solver = BFS(state)
