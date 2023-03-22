@@ -1,8 +1,14 @@
 from datetime import datetime
-from algorithms import DFS, BFS
+from algorithms import DFS, BFS, AStar, Greedy
+import pandas as pd
 import numpy as np
+import json
+import copy
 import matplotlib.pyplot as plt
 from settings import settings
+
+ALGORITHMS = {"dfs": DFS, "bfs": BFS, "a_star": AStar, "greedy":Greedy}
+HEURISTICS = ["farthest_region_heuristic", "distinct_colors", "composite"]
 
 class BenchMarkService:
     """
@@ -40,6 +46,27 @@ class BenchMarkService:
         plt.tight_layout()
         plt.savefig(f"{settings.Config.output_path}/time_comparation{settings.board.N}x{settings.board.N}.png")
 
+    def make_experiment(self, data, algorithm, heuristic=None):
+
+        current_data = copy.deepcopy(data)
+        for _ in range(self.times):
+            aux_state = self.state.copy()
+            if heuristic:
+                solver = ALGORITHMS[algorithm](aux_state, heuristic)
+            else:
+                solver = ALGORITHMS[algorithm](aux_state)
+            start_time = datetime.now()
+            # TODO: change this to include expanded and frontier in results
+            # _, cost, expanded, frontier = solver.solve()
+            _, cost = solver.solve()
+            end_time = datetime.now()
+
+            current_data["times"].append((end_time - start_time).total_seconds())
+            current_data["cost"].append(cost)
+        current_data["mean"] = np.mean(current_data["times"])
+        current_data["std"] = np.std(current_data["times"])
+
+        return current_data
 
     def get_benchmark(self):
         """
@@ -49,33 +76,25 @@ class BenchMarkService:
         """
 
         # We should add to this dictionaty the respective classes for the algorithms
-        algorithms = {
-            "dfs": {
-                "class": DFS,
-                "times":[],
-                "mean": 0,
-                "std": 0,
-                "cost": []
-            },
-            "bfs": {
-                "class": BFS,
-                "times":[],
-                "mean": 0,
-                "std": 0,
-                "cost": []
-            }
+        data = {
+            "times":[],
+            "mean": 0,
+            "std": 0,
+            "cost": []
         }
+        results = {}
+        for algorithm in ALGORITHMS.keys():
 
-        for algorithm in algorithms.keys():
-            for _ in range(self.times):
-                aux_state = self.state.copy()
-                solver = algorithms[algorithm]["class"](aux_state)
-                start_time = datetime.now()
-                _, cost = solver.solve()
-                end_time = datetime.now()
-                algorithms[algorithm]["times"].append((end_time - start_time).total_seconds())
-                algorithms[algorithm]["cost"].append(cost)
-            algorithms[algorithm]["mean"] = np.mean(algorithms[algorithm]["times"])
-            algorithms[algorithm]["std"] = np.std(algorithms[algorithm]["times"])
+            if algorithm in ["greedy", "a_star"]:
+                for heuristic in HEURISTICS:
+                    current_data = self.make_experiment(data, algorithm, heuristic)
+                    current_data.update({"heuristic": heuristic})
+                    results.update({f"{algorithm}_{heuristic}": current_data})
+            else:
+                current_data = self.make_experiment(data, algorithm)
+                results.update({algorithm: current_data})
 
-        return algorithms
+        filename = f"{settings.Config.output_path}/benchmark-data.json"
+        with open(filename, "w") as file:
+            file.write(json.dumps(results))
+        return results

@@ -7,9 +7,9 @@ from settings import settings
 
 # Interfaz para los algoritmos de busqueda informados
 class HeuristicSolver(Solver):
-  def __init__(self, state):
+  def __init__(self, state, heuristic=settings.heuristic):
     super().__init__(state)
-    self.heuristic = settings.heuristic
+    self.heuristic = heuristic
 
   # esta clase hace falta porque el state no es comparable.
   @dataclass(order=True)

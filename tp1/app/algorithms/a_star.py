@@ -1,8 +1,9 @@
 from algorithms.heuristic_solver import HeuristicSolver
+from settings import settings
 
 class AStar(HeuristicSolver):
-  def __init__(self, state):
-    super().__init__(state)
+  def __init__(self, state, heuristic=settings.heuristic):
+    super().__init__(state, heuristic)
 
   def add_to_priority_queue(self, pq, state):
     h = self.get_heuristic(state)
