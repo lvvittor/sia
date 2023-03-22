@@ -53,7 +53,6 @@ class DFS(Solver):
 
   def solve(self):
     colors = self.state.regions[1].get_adjacent_colors(self.state)
-    self.expanded_nodes += 1
     self.border_nodes += len(colors)
     # Probamos al inicio con todos los colores hasta que alguno de ellos lleve a una solucion
     for c in colors:

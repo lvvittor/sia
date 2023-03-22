@@ -27,8 +27,6 @@ class BFS(Solver):
 
         # output initial state
         # self.output_board(f"0-bfs", self.state.regions, self.initial_color, self.solution_cost)
-
-        file_prefix = 1
         
         while color_queue:
             # get first color
@@ -42,12 +40,15 @@ class BFS(Solver):
 
             state_copy = self.state.copy()
             # try to update board state with that color
+            self.expanded_nodes += 1
             expansions = self.expand_zone(color)
+            self.state.steps_to_state.append(color)
 
             # some regions were merged, check if we found a solution
             if self.is_solution():
                 # output final state
                 self.solution_cost += 1
+                self.border_nodes = len(color_queue)
                 # self.output_board(f"{file_prefix}-bfs", self.state.regions, color, self.solution_cost)
                 return True
             elif expansions == 0: # if no new regions were merged, discard this path
@@ -56,8 +57,6 @@ class BFS(Solver):
             else:
                 # an expansion has been made, save the state
                 state_queue.append([self.state.copy(), self.solution_cost+1])
-
-                file_prefix += 1
 
                 # add all the colors for this expanded state to the queue (we'll check them all when we come back to this state later)
                 for c in colors:
@@ -79,8 +78,8 @@ class BFS(Solver):
         Genera un tablero inicial y lo resuelve.
         """
         if self.search():
-            return self.state, self.solution_cost
-        return None, None
+            return self.state, self.solution_cost, self.expanded_nodes, self.border_nodes
+        return None, None, 0 , 0
 
 # Ejemplo de uso (tamaño original: 14x14, 6 colores)
 if __name__ == "__main__":

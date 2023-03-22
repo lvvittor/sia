@@ -1,9 +1,9 @@
 {
     "board": {
-        "N": 8,
-        "M": 5
+        "N": 5,
+        "M": 3
     },
-    "algorithm": "dfs",
+    "algorithm": "bfs",
     "visualization": true,
     "heuristic": "farthest_region_heuristic",
     "benchmarks": {
