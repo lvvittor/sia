@@ -29,10 +29,11 @@ if __name__ == "__main__":
     if settings.benchmarks.active == True:
         board_benchmark_service = BenchMarkService(initial_state, settings.benchmarks.rounds)
         benchmark = board_benchmark_service.get_benchmark()
+        board_benchmark_service.plot_time_comparing_graph(benchmark)
 
     df = board_generator.dict_to_df(initial_state.regions)
     print(df)
-    #solve_algorithm(initial_state)
+    solve_algorithm(initial_state)
 
     # i = 0
     # while True:

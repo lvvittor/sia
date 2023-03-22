@@ -2,6 +2,7 @@ from datetime import datetime
 from algorithms.dfs import DFS
 import numpy as np
 import matplotlib.pyplot as plt
+from settings import settings
 
 class BenchMarkService:
     """
@@ -17,7 +18,7 @@ class BenchMarkService:
         pass
 
 
-    def plot_time_comparing_graph(benchmark):
+    def plot_time_comparing_graph(self, benchmark):
         # TODO: verify figsize
         fig = plt.figure(figsize=(10, 5))
 
@@ -25,11 +26,12 @@ class BenchMarkService:
         for key in benchmark.keys():
             mean_time.append(benchmark[key]["mean"])
 
-        plt.bar(benchmark.keys(), mean_time, "blue", width=0.4)
+        plt.bar(benchmark.keys(), mean_time, color="blue", width=0.4)
 
         plt.xlabel("Algorithms")
         plt.ylabel("Time(ms)")
         plt.title(f"Excecution Time for {settings.board.N}x{settings.board.N}")
+        print(f"{settings.Config.output_path}/time_comparation.png")
         plt.savefig(f"{settings.Config.output_path}/time_comparation.png")
 
 
@@ -44,7 +46,7 @@ class BenchMarkService:
         # We should add to this dictionaty the respective classes for the algorithms
         algorithms = {
             "dfs": {
-                "class":DFS,
+                "class": DFS,
                 "times":[],
                 "mean": 0,
                 "std": 0,
