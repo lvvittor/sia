@@ -23,11 +23,16 @@ def solve_algorithm(state: State):
 
 if __name__ == "__main__":
     board_generator = BoardGeneratorService(settings.board.N, settings.board.M)
-    board = board_generator.generate()
+    initial_state = board_generator.generate()
     board_service = BoardService()
-    df = board_generator.dict_to_df(board.regions)
+
+    if settings.benchmarks == True:
+        board_benchmark_service = BenchMarkService(initial_state, 10)
+        benchmark = board_benchmark_service.get_benchmark()
+
+    df = board_generator.dict_to_df(initial_state.regions)
     print(df)
-    solve_algorithm(board)
+    solve_algorithm(initial_state)
 
     # i = 0
     # while True:

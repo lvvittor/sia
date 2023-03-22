@@ -2,6 +2,7 @@ import pandas as pd
 import seaborn as sns
 import numpy as np
 import dataframe_image as dfi
+import settings as settings
 from settings import settings
 
 class BoardService:
@@ -10,6 +11,9 @@ class BoardService:
         self.dict_pallete = dict(enumerate(palette))
     
     def set_colored_board(self, df: pd.DataFrame, filename: str):
+
+        if settings.visualization == False:
+            return
 
         # map the unique values to the colors
         reshape_df = pd.DataFrame(
