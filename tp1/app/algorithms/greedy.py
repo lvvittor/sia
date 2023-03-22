@@ -1,4 +1,5 @@
 from algorithms.heuristic_solver import HeuristicSolver
+from settings import settings
 
 class Greedy(HeuristicSolver):
   def __init__(self, state, heuristic=settings.heuristic):
