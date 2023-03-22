@@ -26,7 +26,7 @@ class BFS(Solver):
         state_queue = [[self.state.copy(), self.solution_cost]]
 
         # output initial state
-        self.output_board(f"0-bfs", self.state.regions, self.initial_color, self.solution_cost)
+        # self.output_board(f"0-bfs", self.state.regions, self.initial_color, self.solution_cost)
 
         file_prefix = 1
         
@@ -48,7 +48,7 @@ class BFS(Solver):
             if self.is_solution():
                 # output final state
                 self.solution_cost += 1
-                self.output_board(f"{file_prefix}-bfs", self.state.regions, color, self.solution_cost)
+                # self.output_board(f"{file_prefix}-bfs", self.state.regions, color, self.solution_cost)
                 return True
             elif expansions == 0: # if no new regions were merged, discard this path
                 self.state = state_copy
@@ -64,7 +64,7 @@ class BFS(Solver):
                     color_queue.append(c)
 
                 # output intermediate states
-                self.output_board(f"{file_prefix}-bfs", self.state.regions, color, self.solution_cost+1)
+                # self.output_board(f"{file_prefix}-bfs", self.state.regions, color, self.solution_cost+1)
 
                 # rollback to the parent state to expand the rest of the colors
                 self.state = state_copy
