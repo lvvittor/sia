@@ -1,9 +1,9 @@
 {
     "board": {
-        "N": 14,
-        "M": 6
+        "N": 10,
+        "M": 3
     },
-    "algorithm": "dfs",
+    "algorithm": "bfs",
     "visualization": false,
     "heuristic": "composite"
 }

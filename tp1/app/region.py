@@ -1,4 +1,6 @@
 from __future__ import annotations 
+import json
+import copy
 
 class Region:
     def __init__(
@@ -18,6 +20,9 @@ class Region:
     
     def __hash__(self):
         return self.id
+    
+    def __str__(self) -> str:
+        return f"Region[id={self.id},color={self.color},adjacents={self.adjacents}]"
         
 
 class Cell:
@@ -98,7 +103,10 @@ class State:
 
 
     def copy(self):
-        return State(self.regions)
+        return copy.deepcopy(self)
+    
+    def __str__(self) -> str:
+         return json.dumps(self.regions, default=lambda o: o.__dict__, indent=4)
 
         
         
