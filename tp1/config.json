@@ -1,11 +1,11 @@
 {
     "board": {
-        "N": 5,
-        "M": 3
+        "N": 8,
+        "M": 4
     },
-    "algorithm": "bfs",
+    "algorithm": "a_star",
     "visualization": true,
-    "heuristic": "farthest_region_heuristic",
+    "heuristic": "composite",
     "benchmarks": {
         "active": false,
         "rounds": 10

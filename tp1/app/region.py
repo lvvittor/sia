@@ -25,7 +25,6 @@ class Region:
     def __str__(self) -> str:
         return f"Region[id={self.id},color={self.color},adjacents={self.adjacents}]"
     
-    # TODO: check if this method helps for iterating instead of using for colors in range(0, M)
     def get_adjacent_colors(self, state):
         adjacent_colors = []
         for adjacent_id in self.adjacents:
