@@ -5,6 +5,9 @@
     },
     "algorithm": "dfs",
     "visualization": false,
-    "benchmarks": true,
+    "benchmarks": {
+        "active": true,
+        "rounds": 10
+    },
     "heuristic": "composite"
 }
