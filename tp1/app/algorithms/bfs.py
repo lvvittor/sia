@@ -22,10 +22,12 @@ class BFS(Solver):
         # append colors to color_queue
         color_queue = [c for c in colors]
 
-        state_queue = [self.state.copy()]
-        
+        state_queue = [[self.state.copy(), self.solution_cost]]
+
         # output initial state
-        self.output_board("bfs", self.state.regions, self.initial_color, self.solution_cost)
+        self.output_board(f"0-bfs", self.state.regions, self.initial_color, self.solution_cost)
+
+        file_prefix = 1
         
         while color_queue:
             # get first color
@@ -33,31 +35,33 @@ class BFS(Solver):
 
             # if we are checking the first color, then we are checking a new state
             if color == BFS.FIRST_COLOR:
-                self.state = state_queue.pop(0)
-                self.solution_cost += 1
+                self.state, self.solution_cost = state_queue.pop(0)
+                    
 
             state_copy = self.state.copy()
             # try to update board state with that color
             expansions = self.expand_zone(color)
 
-
             # some regions were merged, check if we found a solution
             if self.is_solution():
                 # output final state
-                self.output_board("bfs", self.state.regions, color, self.solution_cost)
+                self.solution_cost += 1
+                self.output_board(f"{file_prefix}-bfs", self.state.regions, color, self.solution_cost)
                 return True
             elif expansions == 0: # if no new regions were merged, discard this path
                 self.state = state_copy
                 continue
             else:
                 # an expansion has been made, save the state and add colors to queue
-                state_queue.append(self.state.copy())
+                state_queue.append([self.state.copy(), self.solution_cost+1])
+
+                file_prefix += 1
 
                 for c in colors:
                     color_queue.append(c)
 
                 # output intermediate states
-                self.output_board("bfs", self.state.regions, color, self.solution_cost)
+                self.output_board(f"{file_prefix}-bfs", self.state.regions, color, self.solution_cost+1)
 
                 # rollback for next color check
                 self.state = state_copy

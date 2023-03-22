@@ -1,5 +1,6 @@
 from __future__ import annotations 
 import json
+import copy
 
 class Region:
     def __init__(
@@ -102,10 +103,9 @@ class State:
 
 
     def copy(self):
-        return State(self.regions)
+        return copy.deepcopy(self)
     
-    def __str__(self):
-        return f"State[regions={self.regions}]"
+    # def __str__(self) -> str:
         #  return json.dumps(self.regions, default=lambda o: o.__dict__, indent=4)
 
         

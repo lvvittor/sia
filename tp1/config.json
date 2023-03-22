@@ -1,6 +1,6 @@
 {
     "board": {
-        "N": 4,
+        "N": 10,
         "M": 3
     },
     "algorithm": "bfs",
