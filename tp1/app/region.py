@@ -108,9 +108,6 @@ class State:
                 adjacents.extend(adjacent.adjacents)
         self.regions.update({1: zone}) 
 
-        # 3° Unificar todos los adyacentes
-        # zone.adjacents = list(set(adjacents))
-        # zone.adjacents.remove(zone)
         return self, regions_added
 
     def increase_cost(self, increase):

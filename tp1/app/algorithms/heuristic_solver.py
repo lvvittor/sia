@@ -11,7 +11,7 @@ class HeuristicSolver(Solver):
     super().__init__(state)
     self.heuristic = heuristic
 
-  # esta clase hace falta porque el state no es comparable.
+  # Esta clase hace falta porque el state no es comparable.
   @dataclass(order=True)
   class PrioritizedItem:
     priority: int | tuple[int, int]
@@ -130,22 +130,3 @@ class HeuristicSolver(Solver):
 
     # no encontro solucion
     return False
-
-# Test
-if __name__ == "__main__":
-  N = 4 # tamaño del tablero
-  M = 2  # cantidad de colores
-
-  heuristic_solver = HeuristicSolver(N, M)
-
-  print("Tablero:")
-  print(heuristic_solver.board)
-
-  next_color = 1
-  h = heuristic_solver.get_heuristic(next_color)
-
-  regions, colors = heuristic_solver.get_number_of_regions()
-
-  print(f"Regiones: {regions}, Colores: {len(colors)}")
-
-  print(f"h(e) = {h}")

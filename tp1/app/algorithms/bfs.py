@@ -24,9 +24,6 @@ class BFS(Solver):
 
         # save pending states while expanding a level of the tree
         state_queue = [[self.state.copy(), self.solution_cost]]
-
-        # output initial state
-        # self.output_board(f"0-bfs", self.state.regions, self.initial_color, self.solution_cost)
         
         while color_queue:
             # get first color
@@ -49,7 +46,6 @@ class BFS(Solver):
                 # output final state
                 self.solution_cost += 1
                 self.border_nodes = len(color_queue)
-                # self.output_board(f"{file_prefix}-bfs", self.state.regions, color, self.solution_cost)
                 return True
             elif expansions == 0: # if no new regions were merged, discard this path
                 self.state = state_copy
@@ -62,14 +58,11 @@ class BFS(Solver):
                 for c in colors:
                     color_queue.append(c)
 
-                # output intermediate states
-                # self.output_board(f"{file_prefix}-bfs", self.state.regions, color, self.solution_cost+1)
 
                 # rollback to the parent state to expand the rest of the colors
                 self.state = state_copy
 
                 
-        
         # no solution found
         return False
 
@@ -80,20 +73,3 @@ class BFS(Solver):
         if self.search():
             return self.state, self.solution_cost, self.expanded_nodes, self.border_nodes
         return None, None, 0 , 0
-
-# Ejemplo de uso (tamaño original: 14x14, 6 colores)
-if __name__ == "__main__":
-    N = 14 # tamaño del tablero
-    M = 6  # cantidad de colores
-
-    bfs_solver = BFS(N, M)
-
-    board = BoardGeneratorService(N, M).generate()
-    print("Tablero inicial:")
-    
-    solution, cost = bfs_solver.search(board)
-
-    if solution:
-        print(f"Costo de la solucion: {cost}")
-    else:
-        print("No se encontro solucion")

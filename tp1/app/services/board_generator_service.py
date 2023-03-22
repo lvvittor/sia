@@ -13,7 +13,7 @@ class BoardGeneratorService():
         self.state = State({}, 0, [])
         
     def add_adjacent(self, region, i, j):
-        # REGION IZQ EXISTE, APPENDEO A LA REGION IZQ
+        # Si existe una region a la izquierda, agrego la adyacencia con la region izquierda.
         if j > 0:
             left = self.state.regions[self.cells[i][j-1].region_id]
             if region.id not in left.adjacents and region.color != left.color:
@@ -21,7 +21,7 @@ class BoardGeneratorService():
             if left.id not in region.adjacents and region.color != left.color:
                 region.adjacents.append(left.id)
 
-        # REGION TOP EXISTE, APPENDEO A LA REGION TOP
+        # Si existe una region arriba, agrego la adyacencia con la region de arriba.
         if i > 0:
             top = self.state.regions[self.cells[i-1][j].region_id]
             if region.id not in top.adjacents and region.color != top.color:
@@ -30,17 +30,14 @@ class BoardGeneratorService():
                 region.adjacents.append(top.id)
 
     def merge_adjacent_zones(self, i, j):
-        # REGION IZQ
         left = self.state.regions[self.cells[i][j-1].region_id]
-
-        # REGION ARRIBA
         top = self.state.regions[self.cells[i-1][j].region_id]
 
-        # ITERAR POR TODAS LAS CELDAS DE REGION TOP Y ACTUALIZAR EL ID REGION A LEFT.ID
+        # Actualizo la region de las celdas de la region superior a la celda izquierda.
         for top_cell in top.cells:
             top_cell.region_id = left.id
 
-        # CAMBIAR EL ID DE LOS ADYACENTES DE REGION TOP POR ADYACENTE CON NUMERO LEFT.ID
+        # Actualizo los adyacentes de la region de arriba a la region de la izquierda
         for top_adjacent_id in top.adjacents:
             top_adjacent = self.state.regions[top_adjacent_id]
             top_adjacent.adjacents.remove(top.id)
@@ -52,7 +49,6 @@ class BoardGeneratorService():
 
         new_region = Region(left.id, left.color, total_cells, total_adjacents)
         self.state.regions.pop(top.id)
-        # NUEVA REGION CON LAS CELDAS DE AMBAS + LA ACTUAL
         return new_region
 
     def get_region(self, new_color, i, j):
@@ -66,13 +62,11 @@ class BoardGeneratorService():
             self.state.regions.update({new_region.id: new_region})
             return new_region
         
-        # IZQUIERDA
         if j>0 and new_color == self.cells[i][j-1].color:
             region = self.state.regions[self.cells[i][j-1].region_id]
             self.add_adjacent(region, i, j)
             return region
         
-        # ARRIBA
         if i>0 and new_color == self.cells[i-1][j].color:
             region = self.state.regions[self.cells[i-1][j].region_id]
             self.add_adjacent(region, i, j)
@@ -87,10 +81,6 @@ class BoardGeneratorService():
 
         
     def generate(self):
-        # Generate a board with n rows and n columns
-        # Each cell has a random value between 0 and m-1
-        # return pd.DataFrame(np.random.randint(0, self.m, size=(self.n, self.n)))
-
         for i in range(0, self.n):
             self.cells.append([])
             for j in range(0, self.n):
@@ -102,12 +92,14 @@ class BoardGeneratorService():
 
         return self.state
 
+
     def dict_to_df(self, board: dict[int, Region]):
         df = pd.DataFrame(data=None, index=range(self.n), columns=range(self.n))
         for region in board.values():
             for cell in region.cells:
                 df.loc[cell.x, cell.y] = region.color
         return df
+
 
     def update_state(self, new_color: int):
         self.state.update_state(new_color)

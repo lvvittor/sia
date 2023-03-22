@@ -7,7 +7,6 @@ from settings import settings
 # Interfaz para los algoritmos de busqueda no informados
 class Solver:
   def __init__(self, state):
-    # Estado del juego
     self.state = state
     self.solution_cost = 0
     self.board_service = BoardService()

@@ -58,7 +58,6 @@ class BenchMarkService:
 
 
     def plot_time_comparing_graph(self, benchmark):
-        # TODO: verify figsize
         fig = plt.figure(figsize=(10, 5))
 
         mean_time = []
@@ -90,17 +89,15 @@ class BenchMarkService:
             else:
                 solver = ALGORITHMS[algorithm](aux_state)
             start_time = datetime.now()
-            # TODO: change this to include expanded and frontier in results
-            # _, cost, expanded, frontier = solver.solve()
-            _, cost, extended, border = solver.solve()
+            _, cost, expanded_nodes, border_nodes = solver.solve()
             end_time = datetime.now()
 
             current_data["times"].append((end_time - start_time).total_seconds())
             current_data["cost"].append(cost)
         current_data["mean"] = np.mean(current_data["times"])
         current_data["std"] = np.std(current_data["times"])
-        current_data["expanded"] = solver.expanded_nodes
-        current_data["border"] = solver.border_nodes
+        current_data["expanded"] = expanded_nodes
+        current_data["border"] = border_nodes
 
         return current_data
 
@@ -111,7 +108,6 @@ class BenchMarkService:
         Also, gets the standard deviation of the execution time.
         """
 
-        # We should add to this dictionaty the respective classes for the algorithms
         data = {
             "times":[],
             "mean": 0,
