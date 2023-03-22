@@ -1,9 +1,9 @@
 {
     "board": {
-        "N": 3,
+        "N": 10,
         "M": 3
     },
-    "algorithm": "dfs",
+    "algorithm": "bfs",
     "visualization": false,
     "benchmarks": {
         "active": false,

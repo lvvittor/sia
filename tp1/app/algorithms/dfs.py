@@ -24,23 +24,15 @@ class DFS(Solver):
     state_copy = self.state.copy()
     
     # Visitar vecinos de la zona
-    # print(f"Cambiando de color a {color}")
     expansions = self.expand_zone(color)
     
     # Si no se visitaron nuevas celdas, descartamos este camino
     if expansions == 0:
-      # print("Rollbackeando")
       self.state = state_copy # rollback
       return False
     
     # Imprimir estados intermedios
-    board_generator = BoardGeneratorService(settings.board.N, settings.board.M)
-    state_df = board_generator.dict_to_df(self.state.regions)
-    #print()
-    #print(state_df)
-    self.board_service.set_colored_board(state_df, f"dfs{cost}.png")
-    # print(f"Costo actual: {cost+1}")
-    #print()
+    self.output_board(f"dfs", self.state.regions, color, cost)
     
     # Probamos con todos los colores hasta que alguno de ellos lleve a una solucion
     for c in range(0, settings.board.M):
@@ -54,7 +46,6 @@ class DFS(Solver):
   def solve(self):
     # Probamos al inicio con todos los colores hasta que alguno de ellos lleve a una solucion
     for c in range(0, settings.board.M):
-      # print(f"Probando con color {c}")
       if self.search(c, 0):
         break
     
