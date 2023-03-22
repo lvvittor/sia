@@ -10,7 +10,7 @@ class BoardGeneratorService():
         self.m = m
         self.counter = 2
         self.cells = []
-        self.state = State({})
+        self.state = State({}, 0)
         
     def add_adjacent(self, region, i, j):
         # REGION IZQ EXISTE, APPENDEO A LA REGION IZQ

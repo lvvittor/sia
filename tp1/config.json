@@ -1,13 +1,13 @@
 {
     "board": {
-        "N": 10,
+        "N": 5,
         "M": 3
     },
-    "algorithm": "bfs",
+    "algorithm": "greedy",
     "visualization": false,
+    "heuristic": "farthest_region_heuristic",
     "benchmarks": {
         "active": false,
         "rounds": 10
-    },
-    "heuristic": "composite"
+    }
 }

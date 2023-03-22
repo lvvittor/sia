@@ -1,19 +1,19 @@
 from queue import PriorityQueue
 from region import State
-from solver import Solver
+from algorithms.solver import Solver
 from settings import settings
 
 # Interfaz para los algoritmos de busqueda informados
 class HeuristicSolver(Solver):
-  def __init__(self, N, M):
-    super().__init__(N, M)
+  def __init__(self, state):
+    super().__init__(state)
     self.heuristic = settings.heuristic
 
   
   def distinct_colors_heuristic(self, state: State):
     amount_colors = 0
     colors_visited = []
-    for region in filter(lambda region: region.id != 1, state.values()):
+    for region in filter(lambda region: region.id != 1, state.regions.values()):
       if region.color not in colors_visited:
         colors_visited.append(region.color)
         amount_colors += 1
@@ -23,7 +23,7 @@ class HeuristicSolver(Solver):
     return amount_colors
   
 
-  def dijkstra(state: State):
+  def dijkstra(self, state: State):
     zone_id = 1
     distances = {region_id:float('inf') for region_id in state.regions.keys()}
 
@@ -48,7 +48,7 @@ class HeuristicSolver(Solver):
     return distances
   
 
-  def get_maximum_distance(distances):
+  def get_maximum_distance(self, distances):
     return max(distances.values())
 
 

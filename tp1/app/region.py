@@ -1,4 +1,5 @@
 from __future__ import annotations 
+from settings import settings
 import json
 import copy
 
@@ -23,7 +24,15 @@ class Region:
     
     def __str__(self) -> str:
         return f"Region[id={self.id},color={self.color},adjacents={self.adjacents}]"
-        
+    
+    # TODO: check if this method helps for iterating instead of using for colors in range(0, M)
+    def get_adjacent_colors(self, state):
+        adjacent_colors = []
+        for adjacent_id in self.adjacents:
+            adjacent = state.regions[adjacent_id]
+            if adjacent.color not in adjacent_colors:
+                adjacent_colors.append(adjacent.color)
+        return adjacent_colors
 
 class Cell:
     def __init__(
@@ -44,9 +53,10 @@ class State:
     def __init__(
         self,
         regions: dict[int, Region],
-        # add parameters for heuristics
+        cost: int
     ):  
         self.regions = regions
+        self.cost = cost
 
     def merge_regions(
         self,
@@ -80,7 +90,8 @@ class State:
         new_color: int
     ):
         zone = self.regions[1]
-
+        if zone.color == new_color:
+            return self, 0
         # 1° Updatear color de tu zona
         zone.color = new_color
 
@@ -101,6 +112,8 @@ class State:
         # zone.adjacents.remove(zone)
         return self, regions_added
 
+    def increase_cost(self, increase):
+        self.cost += increase
 
     def copy(self):
         return copy.deepcopy(self)
