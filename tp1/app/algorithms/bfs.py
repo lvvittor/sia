@@ -4,6 +4,9 @@ from services.board_generator_service import BoardGeneratorService
 from services.board_service import BoardService
 
 class BFS(Solver):
+    FIRST_COLOR = 0
+
+
     def __init__(self, state):
         super().__init__(state)
     
@@ -17,52 +20,58 @@ class BFS(Solver):
         colors = [i for i in range(0, settings.board.M)]
 
         # append colors to color_queue
-        color_queue = []
-        for color in colors:
-            color_queue.append(color)
+        color_queue = [c for c in colors]
 
-        state_queue = [self.state]
-        current_state = None
+        state_queue = [self.state.copy()]
+        
+        # output initial state
+        self.output_board("bfs", self.state.regions, self.initial_color, self.solution_cost)
         
         while color_queue:
             # get first color
             color = color_queue.pop(0)
 
             # if we are checking the first color, then we are checking a new state
-            if color == 0:
-                current_state = state_queue.pop(0)
+            if color == BFS.FIRST_COLOR:
+                self.state = state_queue.pop(0)
                 self.solution_cost += 1
 
+            state_copy = self.state.copy()
             # try to update board state with that color
             expansions = self.expand_zone(color)
 
-            # if no new regions were merged, discard this path
-            if expansions == 0:
-                self.state = current_state
-                continue
 
             # some regions were merged, check if we found a solution
-            if len(self.state.regions) == 1:
+            if self.is_solution():
+                # output final state
+                self.output_board("bfs", self.state.regions, color, self.solution_cost)
                 return True
-            
-            # an expansion has been made, save the state and add colors to queue
-            state_queue.append(self.state)
-            for color in colors:
-                color_queue.append(color)
+            elif expansions == 0: # if no new regions were merged, discard this path
+                self.state = state_copy
+                continue
+            else:
+                # an expansion has been made, save the state and add colors to queue
+                state_queue.append(self.state.copy())
 
-            # print intermediate states
-            board_generator = BoardGeneratorService(settings.board.N, settings.board.M)
-            state_df = board_generator.dict_to_df(self.state.regions)
-            print()
-            print(state_df)
-            self.board_service.set_colored_board(state_df, f"bfs{self.solution_cost}-{color}.png")
-            print()
+                for c in colors:
+                    color_queue.append(c)
 
-            # rollback for next color check
-            self.state = current_state
+                # output intermediate states
+                self.output_board("bfs", self.state.regions, color, self.solution_cost)
+
+                # rollback for next color check
+                self.state = state_copy
+
+                
         
         # no solution found
         return False
+    
+    def _check_dict_diff(self, d1, d2):
+        """
+        Checks if two dictionaries are different
+        """
+        return set(d1.items()) ^ set(d2.items())
 
     def solve(self):
         """
