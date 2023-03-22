@@ -6,19 +6,21 @@ import pandas as pd
 
 
 def solve_algorithm(state: State):
+    if settings.benchmarks.active == True:
+        return
     match settings.algorithm:
         case "dfs":
             dfs_solver = DFS(state)
 
             initial_df = board_generator.dict_to_df(state.regions)
-            print(initial_df)
+            #print(initial_df)
 
             solution, cost = dfs_solver.solve()
             solution_df = board_generator.dict_to_df(solution.regions)
-            print("Tablero solucion:")
-            print(solution_df)
+            #print("Tablero solucion:")
+            #print(solution_df)
 
-            print(f"Costo de la solucion: {cost}")
+            #print(f"Costo de la solucion: {cost}")
     
 
 if __name__ == "__main__":
@@ -32,7 +34,7 @@ if __name__ == "__main__":
         board_benchmark_service.plot_time_comparing_graph(benchmark)
 
     df = board_generator.dict_to_df(initial_state.regions)
-    print(df)
+    #print(df)
     solve_algorithm(initial_state)
 
     # i = 0

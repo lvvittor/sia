@@ -36,11 +36,11 @@ class DFS(Solver):
     # Imprimir estados intermedios
     board_generator = BoardGeneratorService(settings.board.N, settings.board.M)
     state_df = board_generator.dict_to_df(self.state.regions)
-    print()
-    print(state_df)
+    #print()
+    #print(state_df)
     self.board_service.set_colored_board(state_df, f"dfs{cost}.png")
     # print(f"Costo actual: {cost+1}")
-    print()
+    #print()
     
     # Probamos con todos los colores hasta que alguno de ellos lleve a una solucion
     for c in range(0, settings.board.M):

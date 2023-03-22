@@ -23,17 +23,22 @@ class BenchMarkService:
         fig = plt.figure(figsize=(10, 5))
 
         mean_time = []
+        std_time = []
         for key in benchmark.keys():
             mean_time.append(benchmark[key]["mean"])
+            std_time.append(benchmark[key]["std"])
 
-        plt.bar(benchmark.keys(), mean_time, color="blue", width=0.4)
+        fig, ax = plt.subplots()
+        ax.bar(benchmark.keys(), mean_time, yerr=std_time, align='center', alpha=0.5, ecolor='black', capsize=10, color="blue")
+        ax.set_ylabel('Time(s)')
+        ax.set_xticks(mean_time)
+        ax.set_xticklabels(benchmark.keys())
+        ax.set_title(f"Excecution Time for {settings.board.N}x{settings.board.N}")
+        ax.yaxis.grid(True)
 
-        plt.xlabel("Algorithms")
-        plt.ylabel("Time(ms)")
-        plt.title(f"Excecution Time for {settings.board.N}x{settings.board.N}")
-        print(f"{settings.Config.output_path}/time_comparation.png")
-        plt.savefig(f"{settings.Config.output_path}/time_comparation.png")
-
+        # Save the figure and show
+        plt.tight_layout()
+        plt.savefig(f"{settings.Config.output_path}/time_comparation2.png")
 
 
     def get_benchmark(self):
