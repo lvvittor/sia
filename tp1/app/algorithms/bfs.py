@@ -70,12 +70,6 @@ class BFS(Solver):
         
         # no solution found
         return False
-    
-    def _check_dict_diff(self, d1, d2):
-        """
-        Checks if two dictionaries are different
-        """
-        return set(d1.items()) ^ set(d2.items())
 
     def solve(self):
         """
