@@ -30,8 +30,26 @@ class BenchMarkService:
         self.times = times
 
 
-    def plot_box_graph(benchmark):
-        pass
+    def plot_steps_comparing_graph(self, benchmark):
+        fig = plt.figure(figsize=(10, 5))
+
+        costs = []
+        for key in benchmark.keys():
+            costs.append(benchmark[key]["cost"])
+
+        xaxis = np.arange(len(LABELS))
+        plt.bar(xaxis, costs, 0.4)
+
+        plt.xticks(xaxis, LABELS.values(), rotation=45)
+        plt.xlabel("Algorithms")
+        plt.ylabel("Nodes")
+        plt.title(f"Expanded and Border Nodes for board {settings.board.N}x{settings.board.N}")
+        plt.legend()
+        plt.grid(axis="y")
+        plt.tight_layout()
+        plt.savefig(f"{settings.Config.output_path}/node_comparation{settings.board.N}x{settings.board.N}.png")
+        plt.close()
+
 
     def plot_node_comparing_graph(self, benchmark):
         fig = plt.figure(figsize=(10, 5))
@@ -39,8 +57,7 @@ class BenchMarkService:
         expanded_nodes = []
         border_nodes = []
         for key in benchmark.keys():
-            expanded_nodes.append(benchmark[key]["expanded"])
-            border_nodes.append(benchmark[key]["border"])
+            expanded_nodes.append(np.mean(benchmark[key]["cost"]))
 
         xaxis = np.arange(len(LABELS))
         plt.bar(xaxis - 0.2, expanded_nodes, 0.4, label="Expanded nodes")
