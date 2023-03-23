@@ -3,7 +3,6 @@ from algorithms import DFS, BFS, AStar, Greedy
 import pandas as pd
 import numpy as np
 import json
-import copy
 import matplotlib.pyplot as plt
 from settings import settings
 
@@ -20,9 +19,11 @@ LABELS = {
     "a_star_farthest_region_heuristic": "A*(h1)",
     "a_star_distinct_colors": "A*(h2)",
     "a_star_composite": "A*(h3)",
+    "a_star_cells_outside_zone": "A*(h4)",
     "greedy_farthest_region_heuristic": "Greedy(h1)",
     "greedy_distinct_colors": "Greedy(h2)",
     "greedy_composite": "Greedy(h3)",
+    "greedy_cells_outside_zone": "Greedy(h4)",
 }
 
 class BenchMarkService:

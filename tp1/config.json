@@ -1,6 +1,6 @@
 {
     "board": {
-        "N": 10,
+        "N": 8,
         "M": 3
     },
     "algorithm": "a_star",
@@ -8,6 +8,6 @@
     "heuristic": "composite",
     "benchmarks": {
         "active": true,
-        "rounds": 10
+        "rounds": 5
     }
 }
