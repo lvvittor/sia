@@ -157,4 +157,5 @@ data/seed_data.sql*
 
 # Output of the program
 
-output/
+tp1/output/*
+!tp1/output/.gitkeep
