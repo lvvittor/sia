@@ -18,10 +18,10 @@ if __name__ == "__main__":
 
     if settings.benchmarks.active == True:
         board_benchmark_service = BenchMarkService(initial_state, settings.benchmarks.rounds)
-        benchmark = board_benchmark_service.get_benchmark()
-        board_benchmark_service.plot_time_comparing_graph(benchmark)
+        benchmark = board_benchmark_service.get_benchmark(board_generator)
+        """ board_benchmark_service.plot_time_comparing_graph(benchmark)
         board_benchmark_service.plot_node_comparing_graph(benchmark)
-        board_benchmark_service.plot_steps_comparing_graph(benchmark)
+        board_benchmark_service.plot_steps_comparing_graph(benchmark) """
     else:
         initial_df = board_generator.dict_to_df(initial_state.regions)
         print("\nTablero inicial:")

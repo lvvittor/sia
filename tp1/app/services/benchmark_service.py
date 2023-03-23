@@ -11,7 +11,7 @@ ALGORITHMS = {"dfs": DFS, "bfs": BFS, "a_star": AStar, "greedy":Greedy}
 HEURISTICS = ["farthest_region_heuristic", "distinct_colors", "composite"]
 LABELS = {
     "dfs": "DFS",
-    "BFS": "BFS",
+    "bfs": "BFS",
     "a_star_farthest_region_heuristic": "A*(h1)",
     "a_star_distinct_colors": "A*(h2)",
     "a_star_composite": "A*(h3)",
@@ -96,59 +96,70 @@ class BenchMarkService:
         plt.savefig(f"{settings.Config.output_path}/time_comparation{settings.board.N}x{settings.board.N}.png")
         plt.close()
 
-    def make_experiment(self, data, algorithm, heuristic=None):
+    def make_experiment(self, algorithm, heuristic=None):
+        aux_state = self.state.copy()
+        if heuristic:
+            solver = ALGORITHMS[algorithm](aux_state, heuristic)
+        else:
+            solver = ALGORITHMS[algorithm](aux_state)
+        start_time = datetime.now()
+        _, cost, expanded_nodes, border_nodes = solver.solve()
+        end_time = datetime.now()
 
-        current_data = copy.deepcopy(data)
-        for _ in range(self.times):
-            aux_state = self.state.copy()
-            if heuristic:
-                solver = ALGORITHMS[algorithm](aux_state, heuristic)
-            else:
-                solver = ALGORITHMS[algorithm](aux_state)
-            start_time = datetime.now()
-            _, cost, expanded_nodes, border_nodes = solver.solve()
-            end_time = datetime.now()
+        return {
+            "time": (end_time - start_time).total_seconds(),
+            "cost": cost,
+            "expanded": expanded_nodes,
+            "border": border_nodes
+        }
 
-            current_data["times"].append((end_time - start_time).total_seconds())
-            current_data["cost"].append(cost)
-        current_data["mean"] = np.mean(current_data["times"])
-        current_data["std"] = np.std(current_data["times"])
-        current_data["expanded"] = expanded_nodes
-        current_data["border"] = border_nodes
-
-        return current_data
-
-    def get_benchmark(self):
+    def get_benchmark(self, board_generator):
         """
         Run the benchmark and get the average execution time.
 
         Also, gets the standard deviation of the execution time.
         """
-
-        data = {
-            "times":[],
-            "mean": 0,
-            "std": 0,
-            "cost": [],
-            "expanded": 0,
-            "border": 0
-        }
-        results = {}
         counter = 0
-        for algorithm in ALGORITHMS.keys():
 
-            if algorithm in ["greedy", "a_star"]:
-                for heuristic in HEURISTICS:
-                    current_data = self.make_experiment(data, algorithm, heuristic)
-                    current_data.update({"heuristic": heuristic})
-                    results.update({f"{algorithm}_{heuristic}": current_data})
-                    print(f"Round {counter} ended: {algorithm} - {heuristic}")
-                    counter += 1
-            else:
-                current_data = self.make_experiment(data, algorithm)
-                results.update({algorithm: current_data})
+        results = {}
+
+        for key in LABELS.keys():
+            results[key] = {
+                "times": [],
+                "costs": [],
+                "expanded_nodes": [],
+                "border_nodes": []
+            }
+
+
+        # N tableros distintos
+        # Corremos cada algoritmo, 1 vez para cada tablero distinto
+        # No corremos el mismo algoritmo con el mismo tablero mas de una vez
+        for _ in range(self.times):
+            # Generamos un nuevo tablero
+            self.state = board_generator.generate()
+            for algorithm in LABELS.keys():
+                # Resolvemos el mismo tablero, con todos los algoritmos
+                if "greedy" in algorithm or "a_star" in algorithm:
+                    # substract the `greedy_` or `a_star_` part from the algorithm name
+                    heuristic = algorithm[7:]
+                    _algorithm = algorithm[:6]         
+                    result = self.make_experiment(_algorithm, heuristic)
+                    results[algorithm]["heuristic"] = heuristic
+                else:
+                    result = self.make_experiment(algorithm)
+                
+                results[algorithm]["times"].append(result["time"])
+                results[algorithm]["costs"].append(result["cost"])
+                results[algorithm]["expanded_nodes"].append(result["expanded"])
+                results[algorithm]["border_nodes"].append(result["border"])
+
                 print(f"Round {counter} ended: {algorithm}")
                 counter += 1
+        
+        # Calcular mean y std para todos los algoritmos, una vez resueltos todos los mapas distintos
+
+        # Graficar
 
         filename = f"{settings.Config.output_path}/benchmark-data.json"
         with open(filename, "w") as file:
