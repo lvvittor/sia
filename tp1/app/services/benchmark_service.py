@@ -106,7 +106,7 @@ class BenchMarkService:
             else:
                 solver = ALGORITHMS[algorithm](aux_state)
             start_time = datetime.now()
-            _, cost, expanded_nodes, border_nodes = solver.solve()Stashed changes
+            _, cost, expanded_nodes, border_nodes = solver.solve()
             end_time = datetime.now()
 
             current_data["times"].append((end_time - start_time).total_seconds())
