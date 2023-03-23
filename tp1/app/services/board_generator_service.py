@@ -81,6 +81,9 @@ class BoardGeneratorService():
 
         
     def generate(self):
+        self.counter = 2
+        self.cells = []
+        self.state = State({}, 0, [])
         for i in range(0, self.n):
             self.cells.append([])
             for j in range(0, self.n):
