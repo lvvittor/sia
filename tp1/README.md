@@ -35,6 +35,7 @@ You'll find a `config.json` file in this folder, which looks something like this
     - Could be `dfs`, `bfs`, `greedy` or `a_star`.
 - `visualization`: whether or not to create images in `tp1/output` to show the steps to the solution.
 - `heuristic`: what heuristic to use with the `a_star` and `greedy` algorithms.
+  - Could be `farthest_region_heuristic`, `distinct_colors`, `composite` or `cells_outside_zone`.
 - `benchmarks.active`: whether or not to run benchmarks and plots for **all** the algorithms.
 - `benchmarks.rounds`: amount of different boards to test each algorithm.
   - Note that each algorithm runs `rounds` time for each of the different `rounds` boards, to make a more accurate time estimation.
