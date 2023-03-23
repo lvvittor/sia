@@ -1,38 +1,40 @@
-# Sia
+# Artificial Intelligence Systems
+
+## Running the projects with Docker
 
 
-## See possible commands
+ See possible commands:
 
 ```bash
 make
 ```
 
-## Build backend image
+Build backend image:
 
 ```bash
 make build
 ```
 
 
-## Start backend container
+Start backend container:
 
 ```
 make up
 ```
 
-## Run specific entrypoint of a tp
+Run specific entrypoint of a tp:
 
 ```bash
 make run-tp tp="path-to-tp"
 ```
 
-## Clean
+Clean up containers:
 
 ```
 make down
 ```
 
-## Poetry
+## Running the projects with Poetry
 
 > Use instead of the docker image, or to install new packages.
 
