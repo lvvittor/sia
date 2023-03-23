@@ -1,0 +1,13 @@
+{
+    "board": {
+        "N": 8,
+        "M": 3
+    },
+    "algorithm": "a_star",
+    "visualization": true,
+    "heuristic": "composite",
+    "benchmarks": {
+        "active": true,
+        "rounds": 5
+    }
+}
