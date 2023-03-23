@@ -55,6 +55,9 @@ class HeuristicSolver(Solver):
                         distances[adjacent] = new_cost
     return distances
   
+  def cells_outside_zone(self, state):
+    return settings.board.N*settings.board.N - len(state.regions[1].cells)
+
 
   def get_maximum_distance(self, distances):
     return max(distances.values())
@@ -84,6 +87,8 @@ class HeuristicSolver(Solver):
         h = self.distinct_colors_heuristic(state)
       case "composite":
         h = self.composite_heuristic(state)
+      case "cells_outside_zone":
+        h = self.cells_outside_zone(state)
 
     return h
   
