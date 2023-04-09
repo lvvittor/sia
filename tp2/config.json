@@ -1,0 +1,16 @@
+{
+    "color_palette": [
+        [1, 0, 0, 1],
+        [0, 0, 1, 1],
+        [0, 1, 0, 1]
+    ],
+    "target_color": [0, 0.9, 0.3, 0],
+    "algorithm": {
+        "individuals": 8,
+        "selection_method": "tournament",
+        "mutation_rate": 0.1
+    },
+    "visualization": {
+        "display_interval": 100
+    }
+}
