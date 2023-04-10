@@ -4,12 +4,14 @@ import matplotlib.pyplot as plt
 
 from settings import settings
 from colors import mix_cmyk_colors, display_cmyk_colors
+from selection import elite_selection
 
 def main() -> None:
   # Load settings
   color_palette = tuple(settings.color_palette)
   target_color = tuple(settings.target_color)
   individuals_amt = settings.algorithm.individuals
+  selection_method = settings.algorithm.selection_method
   display_interval = settings.visualization.display_interval
 
   # Initialize random population. Each individual is a 1D array of proportions for each color in the palette.
@@ -29,7 +31,7 @@ def main() -> None:
     # Calculate fitness for each individual in the population
     fitnesses = get_fitnesses(population, color_palette, target_color)
 
-    # TODO: Selection
+    population = selection(selection_method, population, fitnesses, individuals_amt)
 
     # Display the best individual of the current population
     if iteration % display_interval == 0:
@@ -63,7 +65,7 @@ def init_population(individuals_amt: int, colors_amt: int):
 
 def get_fitnesses(population: np.ndarray, color_palette: list[tuple], target_color: tuple) -> np.ndarray[float]:
   """Calculate the fitness for each individual in the population"""
-  fitnesses = np.zeros(population.shape[0])
+  fitnesses = np.zeros(len(population))
 
   for i, individual in enumerate(population):
     # Mix the colors together with the given proportions of the individual
@@ -101,8 +103,17 @@ def display_best_individual(result_color_rect, population, fitnesses, color_pale
     plt.pause(0.0001)
   except ValueError:
     # If the proportions are invalid, the color will be invalid
-    print(f"Invalid color: {result_color}")
-    exit(1)
+    raise ValueError(f"Invalid color: {result_color}")
+  
+
+def selection(selection_method: str, population: list[list[float]], fitnesses: list[float], k: int):
+  """Select the k best individuals from the population"""
+  match selection_method:
+    case "elite":
+      return elite_selection(population, fitnesses, k)
+    # TODO: add other selection methods
+    case _:
+      raise ValueError(f"Invalid selection method: {selection_method}")
 
 
 if __name__ == "__main__":

@@ -7,7 +7,7 @@
     "target_color": [0, 0.9, 0.3, 0],
     "algorithm": {
         "individuals": 8,
-        "selection_method": "tournament",
+        "selection_method": "elite",
         "mutation_rate": 0.1
     },
     "visualization": {
