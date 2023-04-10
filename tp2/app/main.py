@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 from settings import settings
 from colors import mix_cmyk_colors, display_cmyk_colors
-from selection import elite_selection
+from selection import elite_selection, roulette_selection
 
 def main() -> None:
   # Load settings
@@ -50,7 +50,7 @@ def init_population(individuals_amt: int, colors_amt: int):
       # Pick a random color from the palette
       color_idx = np.random.randint(colors_amt)
       # Pick a random proportion to distribute to the color
-      proportion = np.random.rand()
+      proportion = np.random.random()
 
       if proportion > proportion_to_distribute:
         proportion = proportion_to_distribute
@@ -111,6 +111,8 @@ def selection(selection_method: str, population: list[list[float]], fitnesses: l
   match selection_method:
     case "elite":
       return elite_selection(population, fitnesses, k)
+    case "roulette":
+      return roulette_selection(population, fitnesses, k)
     # TODO: add other selection methods
     case _:
       raise ValueError(f"Invalid selection method: {selection_method}")
