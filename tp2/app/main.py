@@ -71,12 +71,12 @@ def get_fitnesses(population: np.ndarray, color_palette: list[tuple], target_col
     # Mix the colors together with the given proportions of the individual
     result_color = mix_cmyk_colors(color_palette, individual)
     # Calculate the fitness for each individual
-    fitnesses[i] = fitnessFn(result_color, target_color)
+    fitnesses[i] = fitness_fn(result_color, target_color)
 
   return fitnesses
 
 
-def fitnessFn(color: tuple, target_color: tuple) -> float:
+def fitness_fn(color: tuple, target_color: tuple) -> float:
   """Calculate the fitness of a color"""
   max_dist = math.sqrt(1**2 + 1**2 + 1**2 + 1**2)  # max distance between any two CMYK colors
 
