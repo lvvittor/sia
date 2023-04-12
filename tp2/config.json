@@ -15,6 +15,7 @@
   },
   "constraints": {
     "max_generations": 10000,
-    "max_seconds": 60
+    "max_seconds": 60,
+    "acceptable_fitness": 0.95
   }
 }

@@ -18,13 +18,21 @@ def run_genetic_algorithm(population, result_color_rect) -> bool:
     # TODO: Mutation
 
     # Calculate fitness for each individual in the population
-    fitnesses = get_fitnesses(population, settings.color_palette, settings.target_color)
+    fitnesses = get_population_fitness(population)
 
-    population = selection(settings.algorithm.selection_method, population, fitnesses, settings.algorithm.individuals)
+    population = selection(population, fitnesses)
+
+    # The acceptable fitness is reached, stop the algorithm (TODO: maybe compare floats with math.isclose)
+    if get_fitness(get_best_color(population, fitnesses), settings.target_color) > settings.constraints.acceptable_fitness:
+      return True
+
+
+    # if get_best_color(population, fitnesses) == settings.target_color:
+    #   return True
 
     # Display the best individual of the current population
     if generation % settings.visualization.display_interval == 0:
-      display_best_individual(result_color_rect, population, fitnesses, settings.color_palette)
+      display_best_individual(result_color_rect, population, fitnesses)
   
   return True
 
@@ -59,21 +67,21 @@ def init_population(individuals_amt: int, colors_amt: int):
   return population
 
 
-def get_fitnesses(population: np.ndarray, color_palette: list[tuple], target_color: tuple) -> np.ndarray[float]:
+def get_population_fitness(population: np.ndarray) -> np.ndarray[float]:
   """Calculate the fitness for each individual in the population"""
   fitnesses = np.zeros(len(population))
 
   for i, individual in enumerate(population):
     # Mix the colors together with the given proportions of the individual
-    mixed_color = mix_cmyk_colors(color_palette, individual)
+    mixed_color = mix_cmyk_colors(settings.color_palette, individual)
 
     # Calculate the fitness for each individual
-    fitnesses[i] = get_fitness_of_color(mixed_color, target_color)
+    fitnesses[i] = get_fitness(mixed_color,  settings.target_color)
 
   return fitnesses
 
 
-def get_fitness_of_color(color: tuple, target_color: tuple) -> float:
+def get_fitness(color: tuple, target_color: tuple) -> float:
   """Calculate the fitness of a color"""
   # Max distance between any two CMYK colors (is a constant of number 2)
   max_dist = math.dist((0, 0, 0, 0), (1, 1, 1, 1)) 
@@ -86,8 +94,7 @@ def get_fitness_of_color(color: tuple, target_color: tuple) -> float:
 
   return fitness
 
-
-def display_best_individual(result_color_rect, population, fitnesses, color_palette) -> None:
+def get_best_color(population, fitnesses):
   # Get the index of the individual with the highest fitness
   best_individual_idx = np.argmax(fitnesses)
   
@@ -95,34 +102,31 @@ def display_best_individual(result_color_rect, population, fitnesses, color_pale
   best_individual = population[best_individual_idx]
 
   # Mix the colors together with the given proportions of the best individual
-  result_color = mix_cmyk_colors(color_palette, best_individual)
+  mixed_color = mix_cmyk_colors(settings.color_palette, best_individual)
+
+  return mixed_color
+
+def display_best_individual(result_color_rect, population, fitnesses) -> None:
+  best_color = get_best_color(population, fitnesses)
 
   # Display the best individual
   try:
-    result_color_rect.set_facecolor(result_color)
+    result_color_rect.set_facecolor(best_color)
     plt.pause(0.0001)
   except ValueError:
     # If the proportions are invalid, the color will be invalid
-    raise ValueError(f"Invalid color: {result_color}")
-  
+    raise ValueError(f"Invalid color: {best_color}")
 
-def selection(selection_method: str, population: list[list[float]], fitnesses: list[float], k: int):
+def selection(population: list[list[float]], fitnesses: list[float]):
   """Select the k best individuals from the population"""
-  match selection_method:
+  match settings.algorithm.selection_method:
     case "elite":
-      return elite_selection(population, fitnesses, k)
+      return elite_selection(population, fitnesses, k=settings.algorithm.individuals)
     case "roulette":
-      return roulette_selection(population, fitnesses, k)
+      return roulette_selection(population, fitnesses, k=settings.algorithm.individuals)
     # TODO: add other selection methods
     case _:
-      raise ValueError(f"Invalid selection method: {selection_method}")
-
-
-def stop_condition():
-  """
-  Returns True if the genetic algorithm should stop, False otherwise.
-  """
-  return False
+      raise ValueError(f"Invalid selection method: {settings.algorithm.selection_method}")
 
 if __name__ == "__main__":
   # Initialize random population. Each individual is a 1D array of proportions for each color in the palette.

@@ -27,6 +27,7 @@ class VisualizationSettings(BaseModel):
 class ConstraintsSettings(BaseModel):
     max_generations: int
     max_seconds: int
+    acceptable_fitness: float
 
 
 class Settings(BaseSettings):
