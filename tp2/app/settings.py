@@ -3,6 +3,7 @@ from pydantic import BaseSettings, BaseModel
 from pathlib import Path
 import json
 
+
 def json_config_settings_source(settings: BaseSettings) -> dict[str, Any]:
     """
     A simple settings source that loads variables from a JSON file
@@ -18,8 +19,15 @@ class AlgorithmSettings(BaseModel):
     selection_method: str
     mutation_rate: float
 
+
 class VisualizationSettings(BaseModel):
     display_interval: int
+
+
+class ConstraintsSettings(BaseModel):
+    max_generations: int
+    max_seconds: int
+
 
 class Settings(BaseSettings):
     """
@@ -34,15 +42,17 @@ class Settings(BaseSettings):
 
     https://jsontopydantic.com/
     """
+
     color_palette: list[list[float]]
     target_color: list[float]
     algorithm: AlgorithmSettings
     visualization: VisualizationSettings
+    constraints: ConstraintsSettings
 
     class Config:
-        env_file_encoding = 'utf-8'
-        config_path = 'tp2/config.json'
-        output_path = 'tp2/output'
+        env_file_encoding = "utf-8"
+        config_path = "tp2/config.json"
+        output_path = "tp2/output"
 
         @classmethod
         def customise_sources(
