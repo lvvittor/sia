@@ -113,7 +113,10 @@ def selection(selection_method: str, population: list[list[float]], fitnesses: l
       return elite_selection(population, fitnesses, k)
     case "roulette":
       return roulette_selection(population, fitnesses, k)
-    # TODO: add other selection methods
+    case "universal":
+      return universal_selection(population, fitnesses, k)
+    case "ranking":
+      return ranking_selection(population, fitnesses, k)
     case _:
       raise ValueError(f"Invalid selection method: {selection_method}")
 
