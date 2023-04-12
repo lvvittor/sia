@@ -26,10 +26,6 @@ def run_genetic_algorithm(population, result_color_rect) -> bool:
     if get_fitness(get_best_color(population, fitnesses), settings.target_color) > settings.constraints.acceptable_fitness:
       return True
 
-
-    # if get_best_color(population, fitnesses) == settings.target_color:
-    #   return True
-
     # Display the best individual of the current population
     if generation % settings.visualization.display_interval == 0:
       display_best_individual(result_color_rect, population, fitnesses)
