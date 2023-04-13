@@ -55,10 +55,16 @@ def anular_crossover(parent1, parent2, point: int = None, length: int = None):
         point = np.random.randint(len(parent1))
 
     if length is None:
-        length = np.random.randint(1, len(parent1))
+        length = np.random.randint(1, np.ceil(len(parent1) / 2))
 
     child1 = np.concatenate((parent1[:point], parent2[point:point+length], parent1[point+length:]))
     child2 = np.concatenate((parent2[:point], parent1[point:point+length], parent2[point+length:]))
+
+    if point + length > len(parent1):
+        offset = len(parent1) - point
+        length = length - offset
+        child1 = np.concatenate((parent2[:length], child1[length:]))
+        child2 = np.concatenate((parent1[:length], child2[length:]))
 
     return child1, child2
 
@@ -73,7 +79,9 @@ def uniform_crossover(parent1, parent2, probability: float = 0.5):
     Returns:
         A tuple of two children.
     """
-    child1 = np.where(np.random.random(len(parent1)) < probability, parent1, parent2)
-    child2 = np.where(np.random.random(len(parent1)) < probability, parent1, parent2)
+    mask = np.random.random(len(parent1)) < probability
+
+    child1 = np.where(mask, parent1, parent2)
+    child2 = np.where(mask, parent2, parent1)
 
     return child1, child2
