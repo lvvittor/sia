@@ -6,6 +6,7 @@ from settings import settings
 from colors import mix_cmyk_colors, display_cmyk_colors
 from selection import elite_selection, roulette_selection
 from crossover import one_point_crossover, two_point_crossover, anular_crossover, uniform_crossover
+from mutation import limited_mutation, uniform_mutation, complete_mutation
 
 def main() -> None:
   # Load settings
@@ -15,6 +16,7 @@ def main() -> None:
   selection_method = settings.algorithm.selection_method
   display_interval = settings.visualization.display_interval
   crossover_method = settings.algorithm.crossover_method
+  mutation_method = settings.algorithm.mutation_method
 
   # Initialize random population. Each individual is a 1D array of proportions for each color in the palette.
   population = init_population(individuals_amt, len(color_palette))
@@ -30,6 +32,7 @@ def main() -> None:
     children = crossover(crossover_method, population)
 
     # TODO: Mutation
+    children = mutation(mutation_method, children)
 
     # Calculate fitness for each individual in the population
     fitnesses = get_fitnesses(population, color_palette, target_color)
@@ -141,6 +144,21 @@ def crossover(crossover_method: str, population: list[list[float]]):
         raise ValueError(f"Invalid crossover method: {crossover_method}")
   
   return children
+
+def mutation(mutation_method: str, population: list[list[float]]):
+  """Mutate each individual of the population"""
+  for i in range(len(population)):
+    match mutation_method:
+      case "limited":
+        population[i] = limited_mutation(population[i])
+      case "uniform":
+        population[i] = uniform_mutation(population[i])
+      case "complete":
+        population[i] = complete_mutation(population[i])
+      case _:
+        raise ValueError(f"Invalid mutation method: {mutation_method}")
+  
+  return population
 
 
 if __name__ == "__main__":
