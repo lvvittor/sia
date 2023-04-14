@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from settings import settings
 from colors import mix_cmyk_colors, display_cmyk_colors
 from selection import elite_selection, roulette_selection
+from crossover import one_point_crossover, two_point_crossover, anular_crossover, uniform_crossover
 
 def main() -> None:
   # Load settings
@@ -13,6 +14,7 @@ def main() -> None:
   individuals_amt = settings.algorithm.individuals
   selection_method = settings.algorithm.selection_method
   display_interval = settings.visualization.display_interval
+  crossover_method = settings.algorithm.crossover_method
 
   # Initialize random population. Each individual is a 1D array of proportions for each color in the palette.
   population = init_population(individuals_amt, len(color_palette))
@@ -25,6 +27,7 @@ def main() -> None:
     print(f"{iteration=}")
 
     # TODO: Crossover
+    children = crossover(crossover_method, population)
 
     # TODO: Mutation
 
@@ -119,6 +122,25 @@ def selection(selection_method: str, population: list[list[float]], fitnesses: l
       return ranking_selection(population, fitnesses, k)
     case _:
       raise ValueError(f"Invalid selection method: {selection_method}")
+
+def crossover(crossover_method: str, population: list[list[float]]):
+  """Crossover the population"""
+  children = []
+
+  for i in range(0, len(population), 2):
+    match crossover_method:
+      case "one_point":
+        children.extend(one_point_crossover(population[i], population[i+1]))
+      case "two_point":
+        children.extend(two_point_crossover(population[i], population[i+1]))
+      case "anular":
+        children.extend(anular_crossover(population[i], population[i+1]))
+      case "uniform":
+        children.extend(uniform_crossover(population[i], population[i+1]))
+      case _:
+        raise ValueError(f"Invalid crossover method: {crossover_method}")
+  
+  return children
 
 
 if __name__ == "__main__":
