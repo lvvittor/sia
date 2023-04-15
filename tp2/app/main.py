@@ -10,6 +10,9 @@ from utils import timeout
 
 @timeout(seconds=settings.constraints.max_seconds)
 def run_genetic_algorithm(population, result_color_rect) -> bool:
+  """Run the genetic algorithm"""
+  no_change_counter = 0
+  previous_best_fitness = np.max(get_population_fitness(population))
   for generation in range(settings.constraints.max_generations):
     print(f"{generation=}")
 
@@ -22,9 +25,21 @@ def run_genetic_algorithm(population, result_color_rect) -> bool:
 
     population = selection(population, fitnesses)
 
+    current_best_fitness = np.max(fitnesses)
+
+    # Check if the best fitness doesn't change for the next 10 generations
+    if math.isclose(current_best_fitness, previous_best_fitness, rel_tol=1e-9, abs_tol=0.0):
+      no_change_counter += 1
+    else:
+      no_change_counter = 0
+      previous_best_fitness = current_best_fitness
+
+    if no_change_counter >= settings.constraints.acceptable_fitness_stagnation:
+      break
+    
     # The acceptable fitness is reached, stop the algorithm (TODO: maybe compare floats with math.isclose)
-    if get_fitness(get_best_color(population, fitnesses), settings.target_color) > settings.constraints.acceptable_fitness:
-      return True
+    if math.isclose(get_fitness(get_best_color(population, fitnesses), settings.target_color), settings.constraints.acceptable_fitness, rel_tol=1e-9, abs_tol=0.0):
+      break
 
     # Display the best individual of the current population
     if generation % settings.visualization.display_interval == 0:

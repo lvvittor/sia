@@ -28,6 +28,7 @@ class ConstraintsSettings(BaseModel):
     max_generations: int
     max_seconds: int
     acceptable_fitness: float
+    acceptable_fitness_stagnation: int
 
 
 class Settings(BaseSettings):
