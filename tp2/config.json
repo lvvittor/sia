@@ -8,6 +8,7 @@
   "algorithm": {
     "individuals": 8,
     "selection_method": "elite",
+    "crossover_method": "one_point",
     "mutation_rate": 0.1
   },
   "visualization": {

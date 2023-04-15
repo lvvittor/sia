@@ -17,6 +17,7 @@ def json_config_settings_source(settings: BaseSettings) -> dict[str, Any]:
 class AlgorithmSettings(BaseModel):
     individuals: int
     selection_method: str
+    crossover_method: str
     mutation_rate: float
 
 

@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 
 from settings import settings
 from colors import mix_cmyk_colors, display_cmyk_colors
-from selection import elite_selection, roulette_selection
+from selection import elite_selection, ranking_selection, roulette_selection, universal_selection
+from crossover import one_point_crossover, two_point_crossover, anular_crossover, uniform_crossover
 
 from utils import timeout
 
@@ -17,6 +18,7 @@ def run_genetic_algorithm(population, result_color_rect) -> bool:
     print(f"{generation=}")
 
     # TODO: Crossover
+    children = crossover(population)
 
     # TODO: Mutation
 
@@ -135,9 +137,32 @@ def selection(population: list[list[float]], fitnesses: list[float]):
       return elite_selection(population, fitnesses, k=settings.algorithm.individuals)
     case "roulette":
       return roulette_selection(population, fitnesses, k=settings.algorithm.individuals)
-    # TODO: add other selection methods
+    case "universal":
+      return universal_selection(population, fitnesses, k=settings.algorithm.individuals)
+    case "ranking":
+      return ranking_selection(population, fitnesses, k=settings.algorithm.individuals)
     case _:
       raise ValueError(f"Invalid selection method: {settings.algorithm.selection_method}")
+
+def crossover(population: list[list[float]]):
+  """Crossover the population"""
+  children = []
+
+  for i in range(0, len(population), 2):
+    match settings.algorithm.crossover_method:
+      case "one_point":
+        children.extend(one_point_crossover(population[i], population[i+1]))
+      case "two_point":
+        children.extend(two_point_crossover(population[i], population[i+1]))
+      case "anular":
+        children.extend(anular_crossover(population[i], population[i+1]))
+      case "uniform":
+        children.extend(uniform_crossover(population[i], population[i+1]))
+      case _:
+        raise ValueError(f"Invalid crossover method: {settings.algorithm.crossover_method}")
+  
+  return children
+
 
 if __name__ == "__main__":
   # Initialize random population. Each individual is a 1D array of proportions for each color in the palette.
