@@ -159,3 +159,13 @@ data/seed_data.sql*
 
 tp1/output/*
 !tp1/output/.gitkeep
+tp2/output/*
+!tp2/output/.gitkeep
+tp3/output/*
+!tp3/output/.gitkeep
+tp4/output/*
+!tp4/output/.gitkeep
+tp5/output/*
+!tp5/output/.gitkeep
+tp6/output/*
+!tp6/output/.gitkeep
