@@ -17,7 +17,11 @@ def one_point_crossover(parent1, parent2, point: int = None):
     child1 = np.concatenate((parent1[:point], parent2[point:]))
     child2 = np.concatenate((parent2[:point], parent1[point:]))
 
+    child1 = fix_incorrect_crossover(child1)
+    child2 = fix_incorrect_crossover(child2)
+
     return child1, child2
+
 
 def two_point_crossover(parent1, parent2, points: tuple[int, int] = None):
     """Two point crossover between two parents.
@@ -37,7 +41,11 @@ def two_point_crossover(parent1, parent2, points: tuple[int, int] = None):
     child1 = np.concatenate((parent1[:points[0]], parent2[points[0]:points[1]], parent1[points[1]:]))
     child2 = np.concatenate((parent2[:points[0]], parent1[points[0]:points[1]], parent2[points[1]:]))
 
+    child1 = fix_incorrect_crossover(child1)
+    child2 = fix_incorrect_crossover(child2)
+
     return child1, child2
+
 
 def anular_crossover(parent1, parent2, point: int = None, length: int = None):
     """Anular crossover between two parents.
@@ -66,7 +74,11 @@ def anular_crossover(parent1, parent2, point: int = None, length: int = None):
         child1 = np.concatenate((parent2[:length], child1[length:]))
         child2 = np.concatenate((parent1[:length], child2[length:]))
 
+    child1 = fix_incorrect_crossover(child1)
+    child2 = fix_incorrect_crossover(child2)
+
     return child1, child2
+
 
 def uniform_crossover(parent1, parent2, probability: float = 0.5):
     """Uniform crossover between two parents.
@@ -84,4 +96,27 @@ def uniform_crossover(parent1, parent2, probability: float = 0.5):
     child1 = np.where(mask, parent1, parent2)
     child2 = np.where(mask, parent2, parent1)
 
+    child1 = fix_incorrect_crossover(child1)
+    child2 = fix_incorrect_crossover(child2)
+
     return child1, child2
+
+
+def fix_incorrect_crossover(child):
+    """Fixes a child that has incorrect proportions.
+
+    Args:
+        child (list): A list of proportions for each color in the palette.
+
+    Returns:
+        A list of proportions for each color in the palette.
+    """
+    proportion_sum = np.sum(child)
+
+    if proportion_sum != 1:
+        if proportion_sum == 0:
+            child = np.ones(len(child)) / len(child)
+        else:
+            child = child / proportion_sum
+
+    return child
