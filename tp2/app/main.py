@@ -51,22 +51,23 @@ def run_genetic_algorithm(population, result_color_rect, result_text) -> bool:
 
     # Display the best individual of the current generation
     if iteration % settings.visualization.display_interval == 0:
-      display_best_individual(result_color_rect, result_text, population, fitnesses)
+      display_best_individual(result_color_rect, result_text, population, fitnesses, iteration)
 
     # Select the "best" individuals to form the next generation
     population = selection(settings.algorithm.selection_method, population, fitnesses, settings.algorithm.individuals)
     sanity_check(population, "selection")
+  display_best_individual(result_color_rect, result_text, population, fitnesses, 10000)
   return True
 
 
-def display_best_individual(result_color_rect, result_text, population, fitnesses) -> None:
+def display_best_individual(result_color_rect, result_text, population, fitnesses, iteration) -> None:
   best_color = get_best_color(population, fitnesses)
-
   # Display the best individual
   try:
-    result_color_rect.set_facecolor([round(p, 5) for p in best_color])
-    result_text.set_text(str(tuple(round(c, 2) for c in best_color)))
-    plt.pause(0.0001)
+    display_cmyk_colors(color_palette, [round(p, 5) for p in best_color], target_color, iteration)
+    # result_color_rect.set_facecolor([round(p, 5) for p in best_color])
+    # result_text.set_text(str(tuple(round(c, 2) for c in best_color)))
+    # plt.pause(0.0001)
   except ValueError:
     # If the proportions are invalid, the color will be invalid
     raise ValueError(f"invalid_color={best_color}")
@@ -86,7 +87,7 @@ if __name__ == "__main__":
     sanity_check(population, "init_population")
 
     # Get the result color rectangle to be updated during the genetic algorithm visualization
-    result_color_rect, result_text = display_cmyk_colors(color_palette, (0,0,0,0), target_color)
+    result_color_rect, result_text = display_cmyk_colors(color_palette, (0,0,0,0), target_color, 0)
     if run_genetic_algorithm(population, result_color_rect, result_text):
       print("Genetic algorithm finished successfully")
     else:

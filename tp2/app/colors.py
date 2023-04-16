@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from settings import settings
 
 def mix_cmyk_colors(colors: list[tuple], proportions: list[float]) -> tuple[float, float, float, float]:
   """Mixes a list of CMYK colors together using the given proportions.
@@ -17,7 +18,7 @@ def mix_cmyk_colors(colors: list[tuple], proportions: list[float]) -> tuple[floa
   return tuple(result_color)
 
 
-def display_cmyk_colors(colors: list[tuple], result_color: tuple, target_color: tuple):
+def display_cmyk_colors(colors: list[tuple], result_color: tuple, target_color: tuple, iteration: int):
   """Displays a list of CMYK colors"""
   num_colors = len(colors)
   num_columns = min(num_colors, 4) # display up to 4 columns
@@ -63,6 +64,8 @@ def display_cmyk_colors(colors: list[tuple], result_color: tuple, target_color: 
 
   # Display the plot
   plt.show(block=False)
+  plt.tight_layout()
+  plt.savefig(f"{settings.Config.output_path}/colors{iteration}.png")
 
   # Return the rectangle to be updated
   return result_color_rect, result_text
