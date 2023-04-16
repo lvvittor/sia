@@ -3,7 +3,7 @@ import json
 import matplotlib.pyplot as plt
 
 from datetime import datetime
-from utils import init_population, crossover, selection, get_fitnesses
+from utils import init_population, crossover, selection, get_fitnesses, mutation, sanity_check
 from settings import settings
 
 LABELS = {
@@ -19,10 +19,10 @@ LABELS = {
     "universal_two_point": "Universal and two point",
     "universal_anular": "Universal and anular",
     "universal_uniform": "Universal and uniform",
-    # "ranking_one_point": "Ranking and one point",
-    # "ranking_two_point": "Ranking and two point",
-    # "ranking_anular": "Ranking and anular",
-    # "ranking_uniform": "Ranking and uniform",
+    "ranking_one_point": "Ranking and one point",
+    "ranking_two_point": "Ranking and two point",
+    "ranking_anular": "Ranking and anular",
+    "ranking_uniform": "Ranking and uniform",
 }
 
 class BenchmarkService:

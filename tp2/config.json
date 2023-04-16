@@ -18,7 +18,7 @@
     },
     "benchmarks": {
         "individuals": 8,
-        "active": false,
+        "active": true,
         "rounds": 5
     }
 }

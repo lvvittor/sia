@@ -45,8 +45,6 @@ def ranking_selection(population, fitness, k):
 
     ranked = sorted(fitness, reverse=True)
     selected = []
-
     for i in range(len(fitness)):
-        selected[i] = (len(fitness) - ranked.index(fitness[i]) + 1)/len(fitness)
-
+        selected.append(np.float64((len(fitness) - ranked.index(fitness[i]) + 1)/len(fitness)))
     return roulette_selection(population, selected, k)
