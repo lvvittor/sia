@@ -24,6 +24,12 @@ class AlgorithmSettings(BaseModel):
 class VisualizationSettings(BaseModel):
     display_interval: int
     
+class ConstraintsSettings(BaseModel):
+    max_generations: int
+    max_seconds: int
+    acceptable_fitness: float
+    acceptable_fitness_stagnation: int
+
 class Benchmarks(BaseModel):
     individuals: int
     active: bool
@@ -46,6 +52,7 @@ class Settings(BaseSettings):
     target_color: list[float]
     algorithm: AlgorithmSettings
     visualization: VisualizationSettings
+    constraints: ConstraintsSettings
     benchmarks: Benchmarks
 
     class Config:

@@ -1,10 +1,33 @@
 import numpy as np
 import math
+import func_timeout
 
+from functools import wraps
 from crossover import one_point_crossover, two_point_crossover, anular_crossover, uniform_crossover
 from selection import elite_selection, roulette_selection, ranking_selection, universal_selection
 from mutation import limited_mutation, uniform_mutation, complete_mutation
 from colors import mix_cmyk_colors
+from settings import settings
+
+def timeout(seconds: int):
+    """
+    A decorator that times out a function after a given amount of seconds
+    and returns False if the function times out.
+    """
+
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            try:
+                return func_timeout.func_timeout(
+                    seconds, func, args=args, kwargs=kwargs
+                )
+            except func_timeout.FunctionTimedOut:
+                return False
+
+        return wrapper
+
+    return decorator
 
 def init_population(individuals_amt: int, colors_amt: int):
   """Initialize a random population of individuals"""
@@ -66,25 +89,26 @@ def crossover(crossover_method: str, population: list[list[float]]):
 
 
 
-def get_fitnesses(population: np.ndarray, color_palette: list[tuple], target_color: tuple) -> np.ndarray[float]:
+def get_population_fitness(population: np.ndarray) -> np.ndarray[float]:
   """Calculate the fitness for each individual in the population"""
   fitnesses = np.zeros(len(population))
 
   for i, individual in enumerate(population):
     # Mix the colors together with the given proportions of the individual
-    result_color = mix_cmyk_colors(color_palette, individual)
+    mixed_color = mix_cmyk_colors(settings.color_palette, individual)
     # Calculate the fitness for each individual
-    fitnesses[i] = fitness_fn(result_color, target_color)
+    fitnesses[i] = get_fitness(mixed_color,  settings.target_color)
 
   return fitnesses
 
 
-def fitness_fn(color: tuple, target_color: tuple) -> float:
+def get_fitness(color: tuple, target_color: tuple) -> float:
   """Calculate the fitness of a color"""
-  max_dist = math.sqrt(1**2 + 1**2 + 1**2 + 1**2)  # max distance between any two CMYK colors
+  # Max distance between any two CMYK colors (is a constant of number 2)
+  max_dist = math.dist((0, 0, 0, 0), (1, 1, 1, 1)) 
 
   # Compute Euclidean distance between the two colors
-  dist = math.sqrt(sum([(a - b) ** 2 for a, b in zip(color, target_color)]))
+  dist = math.dist(color, target_color)
 
   # Normalize distance to a range between 0 and 1
   fitness = 1 - (dist / max_dist)
@@ -114,3 +138,15 @@ def mutation(mutation_method: str, population: list[list[float]]):
         raise ValueError(f"Invalid mutation method: {mutation_method}")
 
   return population
+
+def get_best_color(population, fitnesses):
+  # Get the index of the individual with the highest fitness
+  best_individual_idx = np.argmax(fitnesses)
+
+  # Get the best individual
+  best_individual = population[best_individual_idx]
+
+  # Mix the colors together with the given proportions of the best individual
+  mixed_color = mix_cmyk_colors(settings.color_palette, best_individual)
+
+  return mixed_color

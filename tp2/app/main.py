@@ -3,11 +3,75 @@ import math
 import matplotlib.pyplot as plt
 
 from settings import settings
-from colors import mix_cmyk_colors, display_cmyk_colors
+from colors import display_cmyk_colors
 from benchmark_service import BenchmarkService
-from utils import init_population, crossover, selection, get_fitnesses, mutation, sanity_check
+from utils import init_population, crossover, selection, get_fitness, mutation, sanity_check, timeout, get_population_fitness, get_best_color
 
-def main() -> None:
+@timeout(seconds=settings.constraints.max_seconds)
+def run_genetic_algorithm(population, result_color_rect, result_text) -> bool:
+
+  no_change_counter = 0
+  previous_best_fitness = np.max(get_population_fitness(population))
+
+  # Run genetic algorithm
+  for iteration in range(settings.constraints.max_generations):
+    print(f"{iteration=}")
+
+    # Crossover current population
+    children = crossover(settings.algorithm.crossover_method, population)
+
+    sanity_check(children, "crossover")
+
+    # Mutate children
+    children = mutation(settings.algorithm.mutation_method, children)
+
+    sanity_check(children, "mutation")
+
+    # Add the children to the population
+    population = np.concatenate((population, children))
+
+    # Calculate fitness for each individual in the population
+    fitnesses = get_population_fitness(population)
+
+    current_best_fitness = np.max(fitnesses)
+
+    # Check if the best fitness doesn't change for the next 10 generations
+    if math.isclose(current_best_fitness, previous_best_fitness, rel_tol=1e-9, abs_tol=0.0):
+      no_change_counter += 1
+    else:
+      no_change_counter = 0
+      previous_best_fitness = current_best_fitness
+
+    if no_change_counter >= settings.constraints.acceptable_fitness_stagnation:
+      break
+
+    # The acceptable fitness is reached, stop the algorithm (TODO: maybe compare floats with math.isclose)
+    if math.isclose(get_fitness(get_best_color(population, fitnesses), settings.target_color), settings.constraints.acceptable_fitness, rel_tol=1e-9, abs_tol=0.0):
+      break
+
+    # Display the best individual of the current generation
+    if iteration % settings.visualization.display_interval == 0:
+      display_best_individual(result_color_rect, result_text, population, fitnesses)
+
+    # Select the "best" individuals to form the next generation
+    population = selection(settings.algorithm.selection_method, population, fitnesses, settings.algorithm.individuals)
+    sanity_check(population, "selection")
+  return True
+
+
+def display_best_individual(result_color_rect, result_text, population, fitnesses) -> None:
+  best_color = get_best_color(population, fitnesses)
+
+  # Display the best individual
+  try:
+    result_color_rect.set_facecolor([round(p, 5) for p in best_color])
+    result_text.set_text(str(tuple(round(c, 2) for c in best_color)))
+    plt.pause(0.0001)
+  except ValueError:
+    # If the proportions are invalid, the color will be invalid
+    raise ValueError(f"invalid_color={best_color}")
+
+if __name__ == "__main__":
   # Load settings
   color_palette = tuple(settings.color_palette)
   target_color = tuple(settings.target_color)
@@ -16,70 +80,14 @@ def main() -> None:
     benchmarkService = BenchmarkService(color_palette, target_color, settings.benchmarks.rounds, settings.benchmarks.individuals)
     result = benchmarkService.get_benchmark()
     benchmarkService.plot_time_comparing_graph(result)
-    return
+  else:
+    # Initialize random population. Each individual is a 1D array of proportions for each color in the palette.
+    population = init_population(settings.algorithm.individuals, len(color_palette))
+    sanity_check(population, "init_population")
 
-  individuals_amt = settings.algorithm.individuals
-  selection_method = settings.algorithm.selection_method
-  display_interval = settings.visualization.display_interval
-  crossover_method = settings.algorithm.crossover_method
-  mutation_method = settings.algorithm.mutation_method
-
-  # Initialize random population. Each individual is a 1D array of proportions for each color in the palette.
-  population = init_population(individuals_amt, len(color_palette))
-
-  sanity_check(population, "init_population")
-
-  # Get the result color rectangle to be updated during the genetic algorithm visualization
-  result_color_rect, result_text = display_cmyk_colors(color_palette, (0,0,0,0), target_color)
-
-  # Run genetic algorithm
-  for iteration in range(100_000): # TODO: add stopping condition
-    print(f"{iteration=}")
-
-    # Crossover current population
-    children = crossover(crossover_method, population)
-
-    sanity_check(children, "crossover")
-
-    # Mutate children
-    children = mutation(mutation_method, children)
-
-    sanity_check(children, "mutation")
-
-    # Add the children to the population
-    population = np.concatenate((population, children))
-
-    # Calculate fitness for each individual in the population
-    fitnesses = get_fitnesses(population, color_palette, target_color)
-
-    # Display the best individual of the current generation
-    if iteration % display_interval == 0:
-      display_best_individual(result_color_rect, result_text, population, fitnesses, color_palette)
-
-    # Select the "best" individuals to form the next generation
-    population = selection(selection_method, population, fitnesses, individuals_amt)
-
-    sanity_check(population, "selection")
-
-
-def display_best_individual(result_color_rect, result_text, population, fitnesses, color_palette) -> None:
-  # Get the index of the individual with the highest fitness
-  best_individual_idx = np.argmax(fitnesses)
-  # Get the best individual
-  best_individual = population[best_individual_idx]
-  # Mix the colors together with the given proportions of the best individual
-  result_color = mix_cmyk_colors(color_palette, best_individual)
-
-  print(f"Best fitness: {np.max(fitnesses)}")
-
-  # Display the best individual
-  try:
-    result_color_rect.set_facecolor([round(p, 5) for p in result_color])
-    result_text.set_text(str(tuple(round(c, 2) for c in result_color)))
-    plt.pause(0.0001)
-  except ValueError:
-    # If the proportions are invalid, the color will be invalid
-    raise ValueError(f"{best_individual=} ; invalid_color={result_color}")
-
-if __name__ == "__main__":
-  main()
+    # Get the result color rectangle to be updated during the genetic algorithm visualization
+    result_color_rect, result_text = display_cmyk_colors(color_palette, (0,0,0,0), target_color)
+    if run_genetic_algorithm(population, result_color_rect, result_text):
+      print("Genetic algorithm finished successfully")
+    else:
+      print("Genetic algorithm timed out")
