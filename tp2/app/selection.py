@@ -44,9 +44,17 @@ def universal_selection(population, fitness, k):
 def ranking_selection(population, fitness, k):
 
     ranked = sorted(fitness, reverse=True)
+    print(f"ranked = {ranked}")
     selected = []
-
+    print(f"fitness = {fitness}")
+    print(f"len de fitness = {len(fitness)} and k = {k}")
     for i in range(len(fitness)):
-        selected[i] = (len(fitness) - ranked.index(fitness[i]) + 1)/len(fitness)
+        print(f"i={i} and fitness[i]={fitness[i]}")
+        print(f"indice en ranked del valor {fitness[i]}= {ranked.index(fitness[i])}")
+        selected.append(np.float64((len(fitness) - ranked.index(fitness[i]) + 1)/len(fitness)))
 
+    print(f"selected = {selected}")
+    print(f"Tipo de respuesta = {type(selected[0])}")
+    print(f"Tipo de ranking = {type(ranked[0])}")
+    print(f"Tipo de fitness = {type(fitness[0])}")
     return roulette_selection(population, selected, k)
