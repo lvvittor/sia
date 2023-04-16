@@ -7,11 +7,19 @@ from colors import mix_cmyk_colors, display_cmyk_colors
 from selection import elite_selection, roulette_selection
 from crossover import one_point_crossover, two_point_crossover, anular_crossover, uniform_crossover
 from mutation import limited_mutation, uniform_mutation, complete_mutation
+from benchmark_service import BenchmarkService
 
 def main() -> None:
   # Load settings
   color_palette = tuple(settings.color_palette)
   target_color = tuple(settings.target_color)
+  
+  if settings.benchmarks.active == True:
+    benchmarkService = BenchmarkService(color_palette, target_color, settings.benchmarks.rounds, settings.benchmarks.individuals)
+    result = benchmarkService.get_benchmark()
+    benchmarkService.plot_time_comparing_graph(result)
+    return
+
   individuals_amt = settings.algorithm.individuals
   selection_method = settings.algorithm.selection_method
   display_interval = settings.visualization.display_interval

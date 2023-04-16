@@ -1,0 +1,74 @@
+{
+    "elite_one_point": {
+        "times": {
+            "mean": 0.01010336,
+            "std": 0.0007109733992210961
+        }
+    },
+    "elite_two_point": {
+        "times": {
+            "mean": 0.014811359999999999,
+            "std": 0.0004819389903296898
+        }
+    },
+    "elite_anular": {
+        "times": {
+            "mean": 0.01230916,
+            "std": 0.0002864539725680193
+        }
+    },
+    "elite_uniform": {
+        "times": {
+            "mean": 0.009532279999999999,
+            "std": 0.00035260987167122835
+        }
+    },
+    "roulette_one_point": {
+        "times": {
+            "mean": 0.01310428,
+            "std": 0.001561948253176143
+        }
+    },
+    "roulette_two_point": {
+        "times": {
+            "mean": 0.01740504,
+            "std": 0.0011535067257714645
+        }
+    },
+    "roulette_anular": {
+        "times": {
+            "mean": 0.01488108,
+            "std": 0.0004283840631956333
+        }
+    },
+    "roulette_uniform": {
+        "times": {
+            "mean": 0.01151904,
+            "std": 0.0003937637951869111
+        }
+    },
+    "universal_one_point": {
+        "times": {
+            "mean": 0.012618040000000002,
+            "std": 0.0012718148758368878
+        }
+    },
+    "universal_two_point": {
+        "times": {
+            "mean": 0.01789988,
+            "std": 0.0014212869525890965
+        }
+    },
+    "universal_anular": {
+        "times": {
+            "mean": 0.01600816,
+            "std": 0.002229241109974424
+        }
+    },
+    "universal_uniform": {
+        "times": {
+            "mean": 0.013577919999999999,
+            "std": 0.002992971902574429
+        }
+    }
+}
