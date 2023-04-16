@@ -1,75 +1,99 @@
 import numpy as np
 from settings import settings
 
-def limited_mutation(individual, amt):
-    """Mutation of amt amount of genes from an individual, with probability mutation_rate.
+def limited_mutation(individual):
+    """Selects a random amount of genes, to mutate all of them with probability mutation_rate.
 
     Args:
         individual (list): A list of proportions for each color in the palette.
-        mutation_rate (float): The probability of mutating the gene.
-        amt (int): Amount of genes to mutate.
 
     Returns:
         The mutated individual.
     """
 
-    indexes = np.random.choice(len(individual), amt, replace=False)
+    if not (np.random.random() < settings.algorithm.mutation_rate):
+        return individual
     
-    accumulated = 0
+    gene_amt = np.random.randint(1, len(individual))
 
-    for i in indexes[:-1]:
-        if np.random.random() < settings.algorithm.mutation_rate:
-            delta = np.random.uniform(-settings.algorithm.mutation_delta, settings.algorithm.mutation_delta)
-            individual[i] += delta
-            accumulated += delta
+    # The locus are chosen randomly
+    indexes = np.random.choice(len(individual), gene_amt, replace=False)
 
-    individual[indexes[-1]] -= accumulated
-    
+    # Grab pairs (g1, g2) of genes, add the delta to g1 and substract it from g2.
+    for i in range(0, len(indexes), 2):
+        g1 = indexes[i]
+        g2 = indexes[i + 1]
+        delta = np.random.uniform(-settings.algorithm.mutation_delta, settings.algorithm.mutation_delta)
+
+        # Make sure the genes are not negative nor above 1
+        if delta < 0:
+            delta = -1 * min(abs(delta), individual[g1], 1-individual[g2])
+        else:
+            delta = min(delta, 1-individual[g1], individual[g2])
+
+        individual[g1] += delta
+        individual[g2] -= delta
+
     return individual
 
-def uniform_mutation(individual):
-    """Mutation of an individual. Each gene has a mutation_rate probability of being mutated.
-
-    Args:
-        individual (list): A list of proportions for each color in the palette.
-        mutation_rate (float): The probability of mutating the gene.
-
-    Returns:
-        The mutated individual.
-    """
-
-    accumulated = 0
-
-    for i in range(len(individual)):
-        if np.random.random() < settings.algorithm.mutation_rate:
-            delta = np.random.uniform(-settings.algorithm.mutation_delta, settings.algorithm.mutation_delta)
-            individual[i] += delta
-            accumulated += delta
-
-    index = np.random.randint(len(individual))
-    individual[index] -= accumulated
-
-    return individual
 
 def complete_mutation(individual):
     """Mutation of an individual. With probability mutation_rate, all of the genes are mutated.
 
     Args:
         individual (list): A list of proportions for each color in the palette.
-        mutation_rate (float): The probability of mutating the gene.
 
     Returns:
         The mutated individual.
     """
 
-    if np.random.random() < settings.algorithm.mutation_rate:
-        accumulated = 0
-        for i in range(len(individual)) - 1:
-            delta = np.random.uniform(-settings.algorithm.mutation_delta, settings.algorithm.mutation_delta)
-            individual[i] += delta
-            accumulated += delta
-        individual[-1] -= accumulated
+    if not (np.random.random() < settings.algorithm.mutation_rate):
+        return individual
+
+    # Grab pairs (g1, g2) of genes, add the delta to g1 and substract it from g2.
+    for i in range(0, len(individual), 2):
+        g1 = i
+        g2 = i + 1
+        delta = np.random.uniform(-settings.algorithm.mutation_delta, settings.algorithm.mutation_delta)
+
+        # Make sure the genes are not negative nor above 1
+        if delta < 0:
+            delta = -1 * min(abs(delta), individual[g1], 1-individual[g2])
+        else:
+            delta = min(delta, 1-individual[g1], individual[g2])
+
+        individual[g1] += delta
+        individual[g2] -= delta
 
     return individual
 
 
+def uniform_mutation(individual):
+    """Mutation of an individual. Each PAIR of genes has a mutation_rate probability of being mutated.
+
+    Args:
+        individual (list): A list of proportions for each color in the palette.
+
+    Returns:
+        The mutated individual.
+    """
+
+    # Grab pairs (g1, g2) of genes, add the delta to g1 and substract it from g2.
+    for i in range(0, len(individual), 2):
+        if not (np.random.random() < settings.algorithm.mutation_rate):
+            continue
+
+        g1 = i
+        g2 = i + 1
+        delta = np.random.uniform(-settings.algorithm.mutation_delta, settings.algorithm.mutation_delta)
+
+        # Make sure the genes are not negative nor above 1
+        if delta < 0:
+            delta = -1 * min(abs(delta), individual[g1], 1-individual[g2])
+        else:
+            delta = min(delta, 1-individual[g1], individual[g2])
+
+        individual[g1] += delta
+        individual[g2] -= delta
+
+    return individual

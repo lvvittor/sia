@@ -28,10 +28,8 @@ def main() -> None:
   for iteration in range(10_000): # TODO: add stopping condition
     print(f"{iteration=}")
 
-    # TODO: Crossover
     children = crossover(crossover_method, population)
 
-    # TODO: Mutation
     children = mutation(mutation_method, children)
 
     # Calculate fitness for each individual in the population
