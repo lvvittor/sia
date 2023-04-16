@@ -22,6 +22,11 @@ class AlgorithmSettings(BaseModel):
 class VisualizationSettings(BaseModel):
     display_interval: int
 
+class Benchmarks(BaseModel):
+    individuals: int
+    active: bool
+    rounds: int
+
 class Settings(BaseSettings):
     """
     Settings for the application.
@@ -39,6 +44,7 @@ class Settings(BaseSettings):
     target_color: list[float]
     algorithm: AlgorithmSettings
     visualization: VisualizationSettings
+    benchmarks: Benchmarks
 
     class Config:
         env_file_encoding = 'utf-8'

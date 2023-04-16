@@ -13,5 +13,10 @@
     },
     "visualization": {
         "display_interval": 100
+    },
+    "benchmarks": {
+        "individuals": 8,
+        "active": true,
+        "rounds": 5
     }
 }
