@@ -17,11 +17,12 @@ class AlgorithmSettings(BaseModel):
     individuals: int
     selection_method: str
     crossover_method: str
+    mutation_method: str
     mutation_rate: float
 
 class VisualizationSettings(BaseModel):
     display_interval: int
-
+    
 class Benchmarks(BaseModel):
     individuals: int
     active: bool
