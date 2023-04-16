@@ -29,25 +29,47 @@ def main() -> None:
   # Initialize random population. Each individual is a 1D array of proportions for each color in the palette.
   population = init_population(individuals_amt, len(color_palette))
 
+  sanity_check(population, "init_population")
+
   # Get the result color rectangle to be updated during the genetic algorithm visualization
-  result_color_rect = display_cmyk_colors(color_palette, (0,0,0,0), target_color)
+  result_color_rect, result_text = display_cmyk_colors(color_palette, (0,0,0,0), target_color)
 
   # Run genetic algorithm
-  for iteration in range(10_000): # TODO: add stopping condition
+  for iteration in range(100_000): # TODO: add stopping condition
     print(f"{iteration=}")
 
+    # Crossover current population
     children = crossover(crossover_method, population)
 
+    sanity_check(children, "crossover")
+
+    # Mutate children
     children = mutation(mutation_method, children)
+
+    sanity_check(children, "mutation")
+
+    # Add the children to the population
+    population = np.concatenate((population, children))
 
     # Calculate fitness for each individual in the population
     fitnesses = get_fitnesses(population, color_palette, target_color)
 
+    # Display the best individual of the current generation
+    if iteration % display_interval == 0:
+      display_best_individual(result_color_rect, result_text, population, fitnesses, color_palette)
+
+    # Select the "best" individuals to form the next generation
     population = selection(selection_method, population, fitnesses, individuals_amt)
 
-    # Display the best individual of the current population
-    if iteration % display_interval == 0:
-      display_best_individual(result_color_rect, population, fitnesses, color_palette)
+    sanity_check(population, "selection")
+
+
+def sanity_check(population, step: str) -> None:
+  for individual in population:
+    if not math.isclose(sum(individual), 1):
+      print(f"{individual=}")
+      print(f"ERROR: individual proportions don't sum up to 1, at step **{step}**")
+      exit(1)
 
 
 def init_population(individuals_amt: int, colors_amt: int):
@@ -101,7 +123,7 @@ def fitness_fn(color: tuple, target_color: tuple) -> float:
   return fitness
 
 
-def display_best_individual(result_color_rect, population, fitnesses, color_palette) -> None:
+def display_best_individual(result_color_rect, result_text, population, fitnesses, color_palette) -> None:
   # Get the index of the individual with the highest fitness
   best_individual_idx = np.argmax(fitnesses)
   # Get the best individual
@@ -109,13 +131,16 @@ def display_best_individual(result_color_rect, population, fitnesses, color_pale
   # Mix the colors together with the given proportions of the best individual
   result_color = mix_cmyk_colors(color_palette, best_individual)
 
+  print(f"Best fitness: {np.max(fitnesses)}")
+
   # Display the best individual
   try:
-    result_color_rect.set_facecolor(result_color)
+    result_color_rect.set_facecolor([round(p, 5) for p in result_color])
+    result_text.set_text(str(tuple(round(c, 2) for c in result_color)))
     plt.pause(0.0001)
   except ValueError:
     # If the proportions are invalid, the color will be invalid
-    raise ValueError(f"Invalid color: {result_color}")
+    raise ValueError(f"{best_individual=} ; invalid_color={result_color}")
   
 
 def selection(selection_method: str, population: list[list[float]], fitnesses: list[float], k: int):

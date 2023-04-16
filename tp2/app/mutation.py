@@ -15,9 +15,8 @@ def limited_mutation(individual):
         return individual
     
     gene_amt = np.random.randint(1, len(individual))
-
-    # The locus are chosen randomly
-    indexes = np.random.choice(len(individual), gene_amt, replace=False)
+    
+    indexes = get_mutation_locus(len(individual), gene_amt)
 
     # Grab pairs (g1, g2) of genes, add the delta to g1 and substract it from g2.
     for i in range(0, len(indexes), 2):
@@ -50,10 +49,14 @@ def complete_mutation(individual):
     if not (np.random.random() < settings.algorithm.mutation_rate):
         return individual
 
+    gene_amt = len(individual)
+    
+    indexes = get_mutation_locus(len(individual), gene_amt)
+
     # Grab pairs (g1, g2) of genes, add the delta to g1 and substract it from g2.
-    for i in range(0, len(individual), 2):
-        g1 = i
-        g2 = i + 1
+    for i in range(0, len(indexes), 2):
+        g1 = indexes[i]
+        g2 = indexes[i + 1]
         delta = np.random.uniform(-settings.algorithm.mutation_delta, settings.algorithm.mutation_delta)
 
         # Make sure the genes are not negative nor above 1
@@ -78,8 +81,12 @@ def uniform_mutation(individual):
         The mutated individual.
     """
 
+    gene_amt = len(individual)
+
+    indexes = get_mutation_locus(len(individual), gene_amt)
+
     # Grab pairs (g1, g2) of genes, add the delta to g1 and substract it from g2.
-    for i in range(0, len(individual), 2):
+    for i in range(0, len(indexes), 2):
         if not (np.random.random() < settings.algorithm.mutation_rate):
             continue
 
@@ -97,3 +104,15 @@ def uniform_mutation(individual):
         individual[g2] -= delta
 
     return individual
+
+
+def get_mutation_locus(chromosome_len: int, gene_amt: int) -> list[int]:
+    # Make sure the amount of genes is even
+    if gene_amt % 2 == 1:
+        gene_amt -= 1
+    
+    # The locus are chosen randomly.
+    # Note that the same locus can't be chosen multiple times due to `raplace=False`.
+    indexes = np.random.choice(chromosome_len, gene_amt, replace=False)
+    
+    return indexes
