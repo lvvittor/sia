@@ -3,7 +3,7 @@ import json
 import matplotlib.pyplot as plt
 
 from datetime import datetime
-from utils import init_population, crossover, selection, get_fitnesses
+from utils import init_population, crossover, selection, get_fitnesses, mutation, sanity_check
 from settings import settings
 
 LABELS = {

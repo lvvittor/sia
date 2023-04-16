@@ -3,6 +3,7 @@ import math
 
 from crossover import one_point_crossover, two_point_crossover, anular_crossover, uniform_crossover
 from selection import elite_selection, roulette_selection, ranking_selection, universal_selection
+from mutation import limited_mutation, uniform_mutation, complete_mutation
 from colors import mix_cmyk_colors
 
 def init_population(individuals_amt: int, colors_amt: int):
@@ -89,3 +90,27 @@ def fitness_fn(color: tuple, target_color: tuple) -> float:
   fitness = 1 - (dist / max_dist)
 
   return fitness
+  
+
+def sanity_check(population, step: str) -> None:
+  for individual in population:
+    if not math.isclose(sum(individual), 1):
+      print(f"{individual=}")
+      print(f"ERROR: individual proportions don't sum up to 1, at step **{step}**")
+      exit(1)
+
+
+def mutation(mutation_method: str, population: list[list[float]]):
+  """Mutate each individual of the population"""
+  for i in range(len(population)):
+    match mutation_method:
+      case "limited":
+        population[i] = limited_mutation(population[i])
+      case "uniform":
+        population[i] = uniform_mutation(population[i])
+      case "complete":
+        population[i] = complete_mutation(population[i])
+      case _:
+        raise ValueError(f"Invalid mutation method: {mutation_method}")
+
+  return population
