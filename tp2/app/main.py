@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 from settings import settings
 from colors import mix_cmyk_colors, display_cmyk_colors
-from selection import elite_selection, roulette_selection
+from selection import elite_selection, roulette_selection, universal_selection, ranking_selection
 from crossover import one_point_crossover, two_point_crossover, anular_crossover, uniform_crossover
 from mutation import limited_mutation, uniform_mutation, complete_mutation
 from benchmark_service import BenchmarkService
