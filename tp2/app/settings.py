@@ -19,6 +19,7 @@ class AlgorithmSettings(BaseModel):
     crossover_method: str
     mutation_method: str
     mutation_rate: float
+    mutation_delta: float
 
 class VisualizationSettings(BaseModel):
     display_interval: int

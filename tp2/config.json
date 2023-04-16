@@ -7,18 +7,18 @@
     "target_color": [0, 0.9, 0.3, 1],
     "algorithm": {
         "individuals": 8,
-        "selection_method": "elite",
+        "selection_method": "universal",
         "crossover_method": "one_point",
-        "mutation_method": "complete",
-        "mutation_rate": 0.1,
-        "mutation_delta": 0.1
+        "mutation_method": "limited",
+        "mutation_rate": 0.05,
+        "mutation_delta": 0.25
     },
     "visualization": {
         "display_interval": 100
     },
     "benchmarks": {
         "individuals": 8,
-        "active": true,
+        "active": false,
         "rounds": 5
     }
 }

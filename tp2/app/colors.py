@@ -53,7 +53,7 @@ def display_cmyk_colors(colors: list[tuple], result_color: tuple, target_color: 
       axs[num_rows, i].add_patch(result_color_rect)
       axs[num_rows, i].set_title("Best Approx.")
       # display the color tuple below the rectangle, rounded to 2 decimal places
-      axs[num_rows, i].set_xlabel(str(tuple(round(c, 2) for c in result_color)))
+      result_text = axs[num_rows, i].set_xlabel(str(tuple(round(c, 2) for c in result_color)))
     elif i == target_col:
       axs[num_rows, i].add_patch(plt.Rectangle((0, 0), 1, 1, facecolor=target_color))
       axs[num_rows, i].set_title("Target")
@@ -65,7 +65,7 @@ def display_cmyk_colors(colors: list[tuple], result_color: tuple, target_color: 
   plt.show(block=False)
 
   # Return the rectangle to be updated
-  return result_color_rect
+  return result_color_rect, result_text
 
 
 # Test when calling as a script
