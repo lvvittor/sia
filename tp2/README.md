@@ -1,4 +1,10 @@
-# Running the project
+# CMYK Color Combinator
+
+Given a color palette, mixes different proportions of each color to create another color, similar to a target color.
+
+![](https://github.com/lvvittor/sia/blob/master/tp2/output/demo_75p_fitness.gif)
+
+## Running the project
 
 Please follow the instructions on the `README.md` located in the parent folder to run the project using either `Docker` or `Poetry`.
 
