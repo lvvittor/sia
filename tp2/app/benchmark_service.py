@@ -20,10 +20,10 @@ LABELS = {
     # "universal_two_point_limited": "Universal, two point and limited",
     # "universal_anular_limited": "Universal, anular and limited",
     # "universal_uniform_limited": "Universal, uniform and limited",
-    "ranking_one_point_limited": "Ranking, one point and limited",
-    "ranking_two_point_limited": "Ranking, two point and limited",
-    "ranking_anular_limited": "Ranking, anular and limited",
-    "ranking_uniform_limited": "Ranking, uniform and limited",
+    "ranking_one_point_limited": "One point and limited",
+    "ranking_two_point_limited": "Two point and limited",
+    "ranking_anular_limited": "Anular and limited",
+    "ranking_uniform_limited": "Uniform and limited",
     # "elite_one_point_uniform": "Elite, one point and uniform",
     # "elite_two_point_uniform": "Elite, two point and uniform",
     # "elite_anular_uniform": "Elite, anular and uniform",
@@ -36,10 +36,10 @@ LABELS = {
     # "universal_two_point_uniform": "Universal, two point and uniform",
     # "universal_anular_uniform": "Universal, anular and uniform",
     # "universal_uniform_uniform": "Universal, uniform and uniform",
-    "ranking_one_point_uniform": "Ranking, one point and uniform",
-    "ranking_two_point_uniform": "Ranking, two point and uniform",
-    "ranking_anular_uniform": "Ranking, anular and uniform",
-    "ranking_uniform_uniform": "Ranking, uniform and uniform",
+    "ranking_one_point_uniform": "One point and uniform",
+    "ranking_two_point_uniform": "Two point and uniform",
+    "ranking_anular_uniform": "Anular and uniform",
+    "ranking_uniform_uniform": "Uniform and uniform",
     # "elite_one_point_complete": "Elite, one point and complete",
     # "elite_two_point_complete": "Elite, two point and complete",
     # "elite_anular_complete": "Elite, anular and complete",
@@ -52,10 +52,10 @@ LABELS = {
     # "universal_two_point_complete": "Universal, two point and complete",
     # "universal_anular_complete": "Universal, anular and complete",
     # "universal_uniform_complete": "Universal, uniform and complete",
-    "ranking_one_point_complete": "Ranking, one point and complete",
-    "ranking_two_point_complete": "Ranking, two point and complete",
-    "ranking_anular_complete": "Ranking, anular and complete",
-    "ranking_uniform_complete": "Ranking, uniform and complete",
+    "ranking_one_point_complete": "One point and complete",
+    "ranking_two_point_complete": "Two point and complete",
+    "ranking_anular_complete": "Anular and complete",
+    "ranking_uniform_complete": "Uniform and complete",
 }
 
 class BenchmarkService:
@@ -65,6 +65,47 @@ class BenchmarkService:
     self.times = times
     self.individuals = individuals
 
+  def plot_generation_comparing_graph(self, benchmark):
+    fig = plt.figure(figsize=(10, 5))
+
+    mean_fitness = []
+    std_fitness = []
+    for key in benchmark.keys():
+        mean_fitness.append(benchmark[key]["fitness"]["mean_fitness"])
+        std_fitness.append(benchmark[key]["fitness"]["std_fitness"])
+
+    xaxis = np.arange(len(LABELS))
+    plt.xticks(xaxis, LABELS.values(), rotation=45)
+    plt.bar(xaxis, mean_fitness, 0.4 ,yerr=std_fitness, align='center', alpha=0.5, ecolor='black', capsize=10, color="blue")
+    plt.xlabel("Combinations")
+    plt.ylabel('Fitness')
+    plt.grid(axis="y")
+
+    # Save the figure and show
+    plt.tight_layout()
+    plt.savefig(f"{settings.Config.output_path}/fitness_comparation.png")
+    plt.close()
+
+  def plot_fitness_comparing_graph(self, benchmark):
+    fig = plt.figure(figsize=(10, 5))
+
+    mean_generation = []
+    std_generation = []
+    for key in benchmark.keys():
+        mean_generation.append(benchmark[key]["generations"]["mean_generation"])
+        std_generation.append(benchmark[key]["generations"]["std_generation"])
+
+    xaxis = np.arange(len(LABELS))
+    plt.xticks(xaxis, LABELS.values(), rotation=45)
+    plt.bar(xaxis, mean_generation, 0.4 ,yerr=std_generation, align='center', alpha=0.5, ecolor='black', capsize=10, color="blue")
+    plt.xlabel("Combinations")
+    plt.ylabel('Generations')
+    plt.grid(axis="y")
+
+    # Save the figure and show
+    plt.tight_layout()
+    plt.savefig(f"{settings.Config.output_path}/generation_comparation.png")
+    plt.close()
 
   def plot_time_comparing_graph(self, benchmark):
       fig = plt.figure(figsize=(10, 5))
@@ -72,15 +113,14 @@ class BenchmarkService:
       mean_time = []
       std_time = []
       for key in benchmark.keys():
-          mean_time.append(benchmark[key]["times"]["mean"])
-          std_time.append(benchmark[key]["times"]["std"])
+          mean_time.append(benchmark[key]["times"]["mean_time"])
+          std_time.append(benchmark[key]["times"]["std_time"])
 
       xaxis = np.arange(len(LABELS))
       plt.xticks(xaxis, LABELS.values(), rotation=45)
       plt.bar(xaxis, mean_time, 0.4 ,yerr=std_time, align='center', alpha=0.5, ecolor='black', capsize=10, color="blue")
       plt.xlabel("Combinations")
       plt.ylabel('Time(s)')
-      plt.title(f"Excecution Time")
       plt.grid(axis="y")
 
       # Save the figure and show
@@ -92,8 +132,11 @@ class BenchmarkService:
   def make_experiment(self, selection_method, crossover_method, mutation_method, population):
     start_time = datetime.now()
     no_change_counter = 0
+    generations = 0
     previous_best_fitness = np.max(get_population_fitness(population))
-    for _ in range(settings.constraints.max_generations):
+    for iteration in range(settings.constraints.max_generations):
+      # print(f"{iteration=}")
+      generations += 1
       children = crossover(crossover_method, population) 
 
       sanity_check(children, "crossover")
@@ -131,7 +174,8 @@ class BenchmarkService:
 
     return {
       "time": (end_time - start_time).total_seconds(),
-      "best_candidate": population[np.argmax(fitnesses)]
+      "highest_fitness": fitnesses[np.argmax(fitnesses)],
+      "amount_generations": generations
     }
 
 
@@ -141,7 +185,8 @@ class BenchmarkService:
     for key in LABELS.keys():
       results[key] = {
         "times": [],
-        "best_candidates": []
+        "generations": [],
+        "fitnesses": []
       }
     
     # N poblaciones distintas
@@ -149,15 +194,40 @@ class BenchmarkService:
     for _ in range(self.times):
       population = init_population(self.individuals, len(self.color_palette))
       for algorithm in LABELS.keys():
-        times = []
-        best_candidates = []
+        times = [] 
+        fitnesses = [] 
+        generations = []
+        min_time = max_time = min_generation = max_generation = min_fitness = max_fitness = 0
         selection_method, crossover_method, mutation_method = [algorithm.split("_", 1)[0], algorithm.split("_", 1)[1].rsplit("_", 1)[0], algorithm.split("_", 1)[1].rsplit("_", 1)[1]]
         for _ in range(self.times):
           result = self.make_experiment(selection_method, crossover_method, mutation_method, population)
+          if min_time == 0 or min_time > result["time"]:
+            min_time = result["time"]
+          if max_time == 0 or max_time < result["time"]:
+            max_time = result["time"]
+
+          if min_generation == 0 or min_generation > result["amount_generations"]:
+            min_generation = result["amount_generations"]
+          if max_generation == 0 or max_generation < result["amount_generations"]:
+            max_generation = result["amount_generations"]
+
+          if min_fitness == 0 or min_fitness > result["highest_fitness"]:
+            min_fitness = result["highest_fitness"]
+          if max_fitness == 0 or max_fitness < result["highest_fitness"]:
+            max_fitness = result["highest_fitness"]
+            
           times.append(result["time"])
-          best_candidates.append(result["best_candidate"])
+          fitnesses.append(result["highest_fitness"])
+          generations.append(result["amount_generations"])
         results[algorithm]["times"].append(np.mean(times))
-        # results[algorithm]["best_candidates"].append(best_candidates)
+        results[algorithm]["max_time"] = max_time
+        results[algorithm]["min_time"] = min_time
+        results[algorithm]["generations"].append(np.mean(generations))
+        results[algorithm]["min_generation"] = min_generation
+        results[algorithm]["max_generation"] = max_generation
+        results[algorithm]["fitnesses"].append(np.mean(fitnesses))
+        results[algorithm]["min_fitness"] = min_fitness
+        results[algorithm]["max_fitness"] = max_fitness
         
         print(f"Round {counter} ended: {algorithm}")
         counter += 1
@@ -166,11 +236,24 @@ class BenchmarkService:
     for algorithm in results.keys():
       results[algorithm] = { 
         "times": {
-          "mean": np.mean(results[algorithm]["times"]),
-          "std": np.std(results[algorithm]["times"])
+          "mean_time": np.mean(results[algorithm]["times"]),
+          "std_time": np.std(results[algorithm]["times"]),
+          # "max_time": results[algorithm]["max_time"],
+          # "min_time": results[algorithm]["min_time"],
+        },
+        "generations": {
+          "mean_generation": np.mean(results[algorithm]["generations"]),
+          "std_generation": np.std(results[algorithm]["generations"]),
+          # "min_generation": results[algorithm]["min_generation"],
+          # "max_generation": results[algorithm]["max_generation"],
+        },
+        "fitness": {
+          "mean_fitness": np.mean(results[algorithm]["fitnesses"]),
+          "std_fitness": np.std(results[algorithm]["fitnesses"]),
+          # "min_fitness": results[algorithm]["min_fitness"],
+          # "max_fitness": results[algorithm]["max_fitness"],
         }
       }
-      # TODO: que hacer con best_candidates
     
     filename = f"{settings.Config.output_path}/benchmark-data.json"
     with open(filename, "w") as file:

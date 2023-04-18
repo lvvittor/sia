@@ -46,7 +46,7 @@ def run_genetic_algorithm(population, result_color_rect, result_text) -> bool:
       break
 
     # The acceptable fitness is reached, stop the algorithm (TODO: maybe compare floats with math.isclose)
-    if math.isclose(get_fitness(get_best_color(population, fitnesses), settings.target_color), settings.constraints.acceptable_fitness, rel_tol=1e-9, abs_tol=0.0):
+    if current_best_fitness >= settings.constraints.acceptable_fitness:
       break
 
     # Display the best individual of the current generation
@@ -81,6 +81,8 @@ if __name__ == "__main__":
     benchmarkService = BenchmarkService(color_palette, target_color, settings.benchmarks.rounds, settings.benchmarks.individuals)
     result = benchmarkService.get_benchmark()
     benchmarkService.plot_time_comparing_graph(result)
+    benchmarkService.plot_generation_comparing_graph(result)
+    benchmarkService.plot_fitness_comparing_graph(result)
   else:
     # Initialize random population. Each individual is a 1D array of proportions for each color in the palette.
     population = init_population(settings.algorithm.individuals, len(color_palette))
