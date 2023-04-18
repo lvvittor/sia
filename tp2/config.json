@@ -8,10 +8,10 @@
     "algorithm": {
         "individuals": 8,
         "selection_method": "roulette",
-        "crossover_method": "anular",
-        "mutation_method": "complete",
+        "crossover_method": "uniform",
+        "mutation_method": "limited",
         "mutation_rate": 0.05,
-        "mutation_delta": 0.25
+        "mutation_delta": 0.1
     },
     "visualization": {
         "display_interval": 100
