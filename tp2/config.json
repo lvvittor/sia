@@ -7,10 +7,24 @@
     "target_color": [0, 0.9, 0.3, 1],
     "algorithm": {
         "individuals": 8,
-        "selection_method": "elite",
-        "mutation_rate": 0.1
+        "selection_method": "roulette",
+        "crossover_method": "uniform",
+        "mutation_method": "limited",
+        "mutation_rate": 0.05,
+        "mutation_delta": 0.1
     },
     "visualization": {
         "display_interval": 100
+    },
+    "constraints": {
+        "max_generations": 5000,
+        "max_seconds": 60,
+        "acceptable_fitness": 0.95,
+        "acceptable_fitness_stagnation": 5000
+    },
+    "benchmarks": {
+        "individuals": 8,
+        "active": true,
+        "rounds": 2
     }
 }

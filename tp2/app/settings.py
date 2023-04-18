@@ -16,10 +16,24 @@ def json_config_settings_source(settings: BaseSettings) -> dict[str, Any]:
 class AlgorithmSettings(BaseModel):
     individuals: int
     selection_method: str
+    crossover_method: str
+    mutation_method: str
     mutation_rate: float
+    mutation_delta: float
 
 class VisualizationSettings(BaseModel):
     display_interval: int
+    
+class ConstraintsSettings(BaseModel):
+    max_generations: int
+    max_seconds: int
+    acceptable_fitness: float
+    acceptable_fitness_stagnation: int
+
+class Benchmarks(BaseModel):
+    individuals: int
+    active: bool
+    rounds: int
 
 class Settings(BaseSettings):
     """
@@ -38,6 +52,8 @@ class Settings(BaseSettings):
     target_color: list[float]
     algorithm: AlgorithmSettings
     visualization: VisualizationSettings
+    constraints: ConstraintsSettings
+    benchmarks: Benchmarks
 
     class Config:
         env_file_encoding = 'utf-8'
