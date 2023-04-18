@@ -7,11 +7,11 @@
     "target_color": [0, 0.9, 0.3, 1],
     "algorithm": {
         "individuals": 8,
-        "selection_method": "ranking",
-        "crossover_method": "one_point",
+        "selection_method": "roulette",
+        "crossover_method": "uniform",
         "mutation_method": "limited",
         "mutation_rate": 0.05,
-        "mutation_delta": 0.05
+        "mutation_delta": 0.1
     },
     "visualization": {
         "display_interval": 100

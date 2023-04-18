@@ -63,7 +63,7 @@ def display_cmyk_colors(colors: list[tuple], result_color: tuple, target_color: 
       axs[num_rows, i].set_visible(False)
 
   # Display the plot
-  plt.show(block=False)
+  # plt.show(block=False)
   plt.tight_layout()
   plt.savefig(f"{settings.Config.output_path}/colors{iteration}.png")
 

@@ -15,8 +15,6 @@ def run_genetic_algorithm(population, result_color_rect, result_text) -> bool:
 
   # Run genetic algorithm
   for iteration in range(settings.constraints.max_generations):
-    print(f"{iteration=}")
-
     # Crossover current population
     children = crossover(settings.algorithm.crossover_method, population)
 
@@ -34,6 +32,8 @@ def run_genetic_algorithm(population, result_color_rect, result_text) -> bool:
     fitnesses = get_population_fitness(population)
 
     current_best_fitness = np.max(fitnesses)
+
+    print(f"{iteration=} ; current_best_fitness{round(current_best_fitness, 2)}")
 
     # Check if the best fitness doesn't change for the next 10 generations
     if math.isclose(current_best_fitness, previous_best_fitness, rel_tol=1e-9, abs_tol=0.0):
@@ -55,8 +55,9 @@ def run_genetic_algorithm(population, result_color_rect, result_text) -> bool:
 
     # Select the "best" individuals to form the next generation
     population = selection(settings.algorithm.selection_method, population, fitnesses, settings.algorithm.individuals)
+
     sanity_check(population, "selection")
-  display_best_individual(result_color_rect, result_text, population, fitnesses, 10000)
+
   return True
 
 
