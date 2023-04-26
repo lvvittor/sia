@@ -146,6 +146,8 @@ def get_best_color(population, fitnesses):
   # Get the best individual
   best_individual = population[best_individual_idx]
 
+  print(f"Best individual: {best_individual}")
+
   # Mix the colors together with the given proportions of the best individual
   mixed_color = mix_cmyk_colors(settings.color_palette, best_individual)
 

@@ -14,13 +14,13 @@
         "mutation_delta": 0.05
     },
     "visualization": {
-        "display_interval": 100
+        "display_interval": 500
     },
     "constraints": {
-        "max_generations": 5000,
-        "max_seconds": 60,
-        "acceptable_fitness": 0.95,
-        "acceptable_fitness_stagnation": 5000
+        "max_generations": 10000,
+        "max_seconds": 90,
+        "acceptable_fitness": 0.8,
+        "acceptable_fitness_stagnation": 1000
     },
     "benchmarks": {
         "individuals": 8,

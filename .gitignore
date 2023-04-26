@@ -161,6 +161,7 @@ tp1/output/*
 !tp1/output/.gitkeep
 tp2/output/*
 !tp2/output/.gitkeep
+!tp2/output/demo_75p_fitness.gif
 tp3/output/*
 !tp3/output/.gitkeep
 tp4/output/*

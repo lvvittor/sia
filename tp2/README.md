@@ -1,10 +1,12 @@
-# CMYK vs RGB color models
+# CMYK Color Combinator
 
-The CMYK model is better than the RGB model for mixing colors when it comes to printing or painting, because it is a subtractive color model. In the subtractive color model, when we mix colors, the result becomes darker because the pigments absorb more light.
+Given a color palette, mixes different proportions of each color to create another color, similar to a target color.
 
-In contrast, the RGB model is an additive color model, which is used in digital devices like computer screens and TVs. In the additive color model, when we mix colors, the result becomes brighter because the colors emit light.
+![](https://github.com/lvvittor/sia/blob/master/tp2/output/demo_75p_fitness.gif)
 
-Therefore, the CMYK model is more appropriate for mixing colors in printing or painting because it represents how the pigments interact with light. RGB is more appropriate for digital devices because it represents how light is emitted from a screen.
+## Running the project
+
+Please follow the instructions on the `README.md` located in the parent folder to run the project using either `Docker` or `Poetry`.
 
 ## Configuration
 
@@ -37,7 +39,7 @@ You'll find a `config.json` file in this folder, which looks something like this
     },
     "benchmarks": {
         "individuals": 8,
-        "active": true,
+        "active": false,
         "rounds": 2
     }
 }
@@ -45,10 +47,10 @@ You'll find a `config.json` file in this folder, which looks something like this
 
 > **Important**: the `algorithm.individuals` parameter should always be an even number.
 
-- `color_palette`: A list of color values represented as a list of four elements. Each element represents the CYMK values (cyan, yellow, magenta, and key) for a color. The program will combine these colors to create the individuals.
+- `color_palette`: A list of color values represented as a list of four elements. Each element represents the CYMK values (cyan, yellow, magenta, and key) for a color.
 - `target_color`: A list of four elements representing the CYMK values of the target color that the program will try to generate.
-- `algorithm.individuals`: An integer specifying the number of individuals in the population..
-- `algortihm.selection_method`: A string specifying the selection method used by the genetic algorithm. Possible values are "elite" (selects the best individuals), "roulette" (selects individuals based on fitness and randomly), "universal" (selects individuals using a distribution based on their fitness) and "ranking" (selects individuals based on a ranking of their fitness
+- `algorithm.individuals`: An integer specifying the number of individuals in the population.
+- `algortihm.selection_method`: A string specifying the selection method used by the genetic algorithm. Possible values are "elite" (selects the best individuals), "roulette" (selects individuals based on fitness and randomly), "universal" (selects individuals using a distribution based on their fitness) and "ranking" (selects individuals based on a ranking of their fitness)
 - `algorithm.crossover_method`: A string specifying the crossover method used by the genetic algorithm. Possible values are "one_point" (swaps only one gene), "two_point" (swaps all genes from a given range), "anular" (swaps a number of genes from a starting point) and "uniform" (swaps all genes).
 - `algorithm.mutation_method`: A string specifying the mutation method ussed by the genetic algorithm. Possible values are "limited" (an amount of genes are selected for mutation), "uniform" (all genes are selected individually for mutation), "complete" (all genes as a whole are selected for mutation).
 - `algortihm.mutation_rate`: A float specifying the mutation rate for the genetic algorithm. This determines the probability of a mutation occurring with the selected genes using the mutation method during the evolution process.
@@ -62,6 +64,10 @@ You'll find a `config.json` file in this folder, which looks something like this
 - `benchmarks.active`: A boolean specifying whether or not to run the benchmark.
 - `benchmarks.rounds`: An integer specifying the number of rounds to run the benchmark for.
 
-## Running the project
+# CMYK vs RGB color models
 
-Please follow the instructions on the `README.md` located in the parent folder to run the project using either `Docker` or `Poetry`.
+The CMYK model is better than the RGB model for mixing colors when it comes to printing or painting, because it is a subtractive color model. In the subtractive color model, when we mix colors, the result becomes darker because the pigments absorb more light.
+
+In contrast, the RGB model is an additive color model, which is used in digital devices like computer screens and TVs. In the additive color model, when we mix colors, the result becomes brighter because the colors emit light.
+
+Therefore, the CMYK model is more appropriate for mixing colors in printing or painting because it represents how the pigments interact with light. RGB is more appropriate for digital devices because it represents how light is emitted from a screen.
