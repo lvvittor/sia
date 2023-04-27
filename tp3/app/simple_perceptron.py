@@ -53,19 +53,7 @@ class SimplePerceptron:
             int: Return 1 if the perceptron predicts a positive output, -1 otherwise
         """
 
-        return np.where(self._sum(X, w) >= 0, 1, -1)
-
-    def _sum(self, X: np.array, w: np.array):
-        """Compute the sum of the product of the inputs and the weights
-
-        Args:
-            X (np.array): The data sample of shape (m_features,)
-            w (np.array): The weights array of shape (m_features,)
-
-        Returns:
-            int: The sum of the product of the inputs and the weights
-        """
-        return np.sum(np.dot(X, w))
+        return np.where(np.dot(X, w) >= 0, 1, -1)
 
     def _accuracy(self, y: np.ndarray, y_hat: np.ndarray):
         """Calculate the accuracy of predictions for a given epoch.
