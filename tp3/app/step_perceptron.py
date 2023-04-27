@@ -9,10 +9,9 @@ class StepPerceptron(Perceptron):
   
   def get_outputs(self):
     """Returns the perceptron's output for each input"""
-    bias = self.weights[0]
-    # Compute the perceptron's excitation for each input, and substract the bias.
-    # Substract 2 * bias instead of just `bias` to account for the bias present in the `weights`.
-    excitations = np.dot(self.inputs, self.weights) - 2 * bias
+
+    # Compute the perceptron's excitation for each input, including the sum of the bias
+    excitations = np.dot(self.inputs, self.weights)
 
     # Apply the activation function to each element of the array
     return np.vectorize(self.activation_func)(excitations)
