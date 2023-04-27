@@ -34,9 +34,9 @@ class SimplePerceptron:
                 predicted.append(y_hat)
 
                 for j, _ in enumerate(weights):
-                    delta = self.eta * (y[i] - y_hat)
-                    delta = delta * sample[j - 1]
-                    weights[j - 1] = weights[j - 1] + delta
+                    delta = self.eta * (y[i] - y_hat) * sample[j - 1]
+                    weights[j - 1] += delta
+
             print(f"delta={delta}, weights={weights}")
             print(f"Epoch {epoch}: accuracy={self._accuracy(y, predicted)}")
 
