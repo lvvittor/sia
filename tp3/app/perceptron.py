@@ -4,15 +4,17 @@ class Perceptron():
 
   def __init__(self, learning_rate, inputs, expected_outputs):
     self.learning_rate = learning_rate
-    self.inputs = [[1, *x] for x in inputs] # add bias
+    self.inputs = np.array([[1, *x] for x in inputs]) # add bias
     self.expected_outputs = expected_outputs
     self.weights = np.zeros(len(self.inputs[0]))
 
   
   def train(self, epochs=1000):
     for epoch in range(epochs):
-      print(f"{epoch=}")
+      print(f"{epoch=} ; weights={self.weights} ; output={self.get_outputs()} ; error={self.get_absolute_error()}")
+
       self.update_weights()
+      
       if self.get_absolute_error() == 0:
         break
 
