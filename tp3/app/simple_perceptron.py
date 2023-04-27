@@ -23,9 +23,10 @@ class SimplePerceptron:
         Returns:
             int, bool: The number of epochs needed to train the perceptron, and whether the perceptron converged or not
         """
-        weights = np.random.rand(
-            X.shape[1],
-        )  # Initialize weights
+        X = np.insert(
+            X, 0, 1, axis=1
+        )  # Add bias to the input data (Without these spare bias weights, our model has quite limited “movement” while searching through solution space.)
+        weights = np.zeros(X.shape[1])
 
         for epoch in range(self.epochs):
             predicted = []
@@ -37,8 +38,14 @@ class SimplePerceptron:
                     delta = self.eta * (y[i] - y_hat) * sample[j - 1]
                     weights[j - 1] += delta
 
-            print(f"delta={delta}, weights={weights}")
-            print(f"Epoch {epoch}: accuracy={self._accuracy(y, predicted)}")
+            printable_metadata = {
+                "epoch": epoch,
+                "weights": weights,
+                "y": y,
+                "y_hat": predicted,
+                "accuracy": self._accuracy(y, predicted),
+            }
+            print(f"{printable_metadata}")
 
     def predict(self, X: np.ndarray, w: np.ndarray):
         """Predict the output of the perceptron for a given input
@@ -75,5 +82,4 @@ class SimplePerceptron:
         Returns:
             float: The accuracy of the perceptron
         """
-        print(y, y_hat)
         return np.sum(y == y_hat) / y.shape[0]
