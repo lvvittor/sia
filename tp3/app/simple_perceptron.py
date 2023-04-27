@@ -29,21 +29,16 @@ class SimplePerceptron:
         weights = np.zeros(X.shape[1])
 
         for epoch in range(self.epochs):
-            predicted = []
-            for i, sample in enumerate(X):
-                y_hat = self.predict(sample, weights)
-                predicted.append(y_hat)
+            y_hat = self.predict(X, weights)
 
-                for j, _ in enumerate(weights):
-                    delta = self.eta * (y[i] - y_hat) * sample[j - 1]
-                    weights[j - 1] += delta
+            delta = self.eta * np.dot((y - y_hat), X)
+            weights += delta
 
             printable_metadata = {
                 "epoch": epoch,
                 "weights": weights,
-                "y": y,
-                "y_hat": predicted,
-                "accuracy": self._accuracy(y, predicted),
+                "y == y_hat": y == y_hat,
+                "accuracy": self._accuracy(y, y_hat),
             }
             print(f"{printable_metadata}")
 
@@ -70,7 +65,7 @@ class SimplePerceptron:
         Returns:
             int: The sum of the product of the inputs and the weights
         """
-        return np.sum(np.dot(X, np.transpose(w)))
+        return np.sum(np.dot(X, w))
 
     def _accuracy(self, y: np.ndarray, y_hat: np.ndarray):
         """Calculate the accuracy of predictions for a given epoch.
