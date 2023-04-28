@@ -2,7 +2,7 @@ import csv
 from settings import settings
 
 def parse_csv():
-  with open(f"{settings.Config.data_path}/TP3-ej2-conjunto.csv", newline='') as csv_file:
+  with open(f"{settings.Config.data_path}/regression_data.csv", newline='') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     next(csv_reader)
     result = []
