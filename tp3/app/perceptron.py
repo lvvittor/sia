@@ -1,5 +1,4 @@
 import numpy as np
-import math
 
 class Perceptron:
     def __init__(self, learning_rate: float, inputs: np.array, expected_outputs: float):
@@ -20,18 +19,21 @@ class Perceptron:
 
     def train(self, epochs: int = 1000):
         for epoch in range(epochs):
-          print(f"{epoch=} ; weights={self.weights} ; output={self.get_outputs()} ; error={self.get_absolute_error()}")
+          print(f"{epoch=} ; weights={self.weights} ; output={self.get_outputs()} ; error={self.get_error()}")
 
           self.update_weights()
           
-          if math.isclose(self.get_absolute_error(), 0, abs_tol=1e-5):
+          if self.is_converged():
             break
 
         return epoch + 1
     
 
-    def get_absolute_error(self):
-        return np.sum(abs(self.expected_outputs - self.get_outputs()))
+    def get_error(self):
+        raise NotImplementedError
+    
+    def is_converged(self):
+        raise NotImplementedError
 
     def activation_func(self, value):
         raise NotImplementedError

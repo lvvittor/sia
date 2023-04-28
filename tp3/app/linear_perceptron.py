@@ -1,10 +1,10 @@
 import numpy as np
 from perceptron import Perceptron
 
-class StepPerceptron(Perceptron):
+class LinearPerceptron(Perceptron):
 
   def activation_func(self, value):
-    return 1 if value >= 0 else -1 # step function
+    return value # identity function
   
   
   def get_outputs(self):
@@ -29,8 +29,11 @@ class StepPerceptron(Perceptron):
 
 
   def get_error(self):
-    return np.sum(abs(self.expected_outputs - self.get_outputs()))
+    # Mean Square Error - MSE
+    p = self.inputs.shape[0]
+    output_errors = self.expected_outputs - self.get_outputs()
+    return np.power(output_errors, 2).sum() / p
   
   
   def is_converged(self):
-    return self.get_error() == 0
+    return self.get_error() < 0.05
