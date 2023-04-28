@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     env_file_encoding = 'utf-8'
     config_path = 'tp3/config.json'
     output_path = 'tp3/output'
+    data_path = 'tp3/data'
 
     @classmethod
     def customise_sources(

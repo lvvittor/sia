@@ -3,6 +3,7 @@ import numpy as np
 from step_perceptron import StepPerceptron
 from settings import settings
 from utils import logical_and, logical_xor
+from file_parser import parse_csv
 
 if __name__ == "__main__":
   inputs = np.array([[-1, 1], [1, -1], [-1, -1], [1, 1]])
