@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from settings import settings
 
 def visualize_2d(X, Y, weights: list[float, float] = []):
   # Create a 2D scatter plot
@@ -13,8 +14,7 @@ def visualize_2d(X, Y, weights: list[float, float] = []):
     line = weights[1] * X + weights[0]
     plt.plot(X, line, c='b')
 
-  # Show the plot
-  plt.show()
+  plt.savefig(f"{settings.Config.output_path}/visualize2d.png")
 
 
 def visualize_3d(inputs):
