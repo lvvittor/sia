@@ -1,9 +1,17 @@
 {
   "learning_rate": 0.001,
   "accuracy": 1.0,
-  "epochs": 30,
-  "exercise": 1,
+  "exercise": 3,
+  "step_perceptron": {
+    "convergence_threshold": 0,
+    "epochs": 30
+  },
   "linear_perceptron": {
-    "convergence_threshold": 0.05
+    "convergence_threshold": 0.05,
+    "epochs": 10000
+  },
+  "non_linear_perceptron": {
+    "convergence_threshold": 0.05,
+    "epochs": 10000
   }
 }

@@ -15,8 +15,19 @@ def json_config_settings_source(settings: BaseSettings) -> dict[str, Any]:
     return json.loads(Path(config_path).read_text(encoding))
 
 
+class StepPerceptron(BaseModel):
+    convergence_threshold: float
+    epochs: int
+
+
 class LinearPerceptron(BaseModel):
     convergence_threshold: float
+    epochs: int
+
+
+class NonLinearPerceptron(BaseModel):
+    convergence_threshold: float
+    epochs: int
 
 
 class Settings(BaseSettings):
@@ -35,9 +46,10 @@ class Settings(BaseSettings):
 
     learning_rate: float
     accuracy: float
-    epochs: int
     exercise: int
+    step_perceptron: StepPerceptron
     linear_perceptron: LinearPerceptron
+    non_linear_perceptron: NonLinearPerceptron
 
     class Config:
         env_file_encoding = "utf-8"
