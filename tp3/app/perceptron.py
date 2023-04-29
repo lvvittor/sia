@@ -39,9 +39,9 @@ class Perceptron:
             self.update_weights()
 
             if self.is_converged():
-                return epoch + 1, True
+                break
 
-        return epoch + 1, False
+        return epoch + 1, self.is_converged()
 
     def get_outputs(self):
         """Returns the perceptron's output for each input"""

@@ -44,30 +44,21 @@ def exercise_1():
 
 
 def exercise_2():
-    inputs, expected_outputs = parse_csv(
-        f"{settings.Config.data_path}/test_data.csv", 1
-    )
-
-    # visualize_2d(inputs, expected_outputs)
+    inputs, expected_outputs = parse_csv(f"{settings.Config.data_path}/regression_data.csv")
 
     point_amt = expected_outputs.shape[0]
 
-    # w_1 x + w_2 y + w_0 = 0
-
     print(f"\nInputs: {inputs[:point_amt]}\n")
-    print(f"Expected Output: {expected_outputs[:point_amt]}\n\n")
 
     # Test linear perceptron
     # linear_perceptron = LinearPerceptron(settings.learning_rate, inputs[:point_amt], expected_outputs[:point_amt])
 
-    # visualize_2d(inputs[:point_amt], expected_outputs[:point_amt], [0, 0])
-
-    # epochs = linear_perceptron.train(10000)
-
-    # visualize_2d(inputs[:point_amt], expected_outputs[:point_amt], linear_perceptron.weights)
+    # epochs = linear_perceptron.train(10)
 
     # print(f"Finished learning at {epochs} epochs")
-    # print("Output: ", linear_perceptron.get_outputs())
+    # print(f"Expected - Actual")
+    # for expected, actual in zip(expected_outputs[:point_amt], linear_perceptron.get_outputs()):
+    #   print(f"{expected:<10} {actual}")
     # print("Weights: ", linear_perceptron.weights)
 
     # Test non-linear perceptron
@@ -87,13 +78,12 @@ def exercise_2():
         sigmoid_func_derivative=sigmoid_func_derivative,
     )
 
-    visualize_2d(
-        inputs[:point_amt], expected_outputs[:point_amt], non_linear_perceptron.weights
-    )
     epochs = non_linear_perceptron.train(1000)
 
     print(f"\nFinished learning at {epochs} epochs")
-    print("Output: ", non_linear_perceptron.get_outputs())
+    print(f"Expected - Actual")
+    for expected, actual in zip(expected_outputs[:point_amt], non_linear_perceptron.get_scaled_outputs()):
+      print(f"{expected:<10} {actual}")
     print("Weights: ", non_linear_perceptron.weights)
 
 
