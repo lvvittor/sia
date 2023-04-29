@@ -1,13 +1,17 @@
+from typing import Optional
 import numpy as np
 
+
 class Perceptron:
-    def __init__(self, learning_rate: float, inputs: np.array, expected_outputs: float):
+    def __init__(
+        self, learning_rate: float, inputs: np.array, expected_outputs: np.array
+    ):
         """Constructor method
 
         Args:
             learning_rate (float): learning rate of the perceptron
             inputs (np.array): inputs of the perceptron (x_1, x_2, ..., x_n)
-            expected_outputs (_type_): expected outputs of the perceptron (y_1, y_2, ..., y_n)
+            expected_outputs (np.array): expected outputs of the perceptron (y_1, y_2, ..., y_n)
         """
         self.learning_rate = learning_rate
         # add bias x_0 = 1 to each input => (1, x_1, x_2, ..., x_n)
@@ -16,18 +20,28 @@ class Perceptron:
         # first weight is the bias => (w_0, w_1, w_2, ..., w_n)
         self.weights = np.zeros(self.inputs.shape[1])
 
+    def train(self, epochs: Optional[int] = 1000):
+        """
+        Trains the perceptron for a given number of epochs
 
-    def train(self, epochs: int = 1000):
+        Args:
+            epochs (Optional[int]): number of epochs to train the perceptron. Defaults to 1000.
+
+        Returns:
+            int: number of epochs needed to converge
+            bool: whether the perceptron converged or not
+        """
         for epoch in range(epochs):
-          print(f"{epoch=} ; weights={self.weights} ; output={self.get_outputs()} ; error={self.get_error()}")
+            print(
+                f"{epoch=} ; weights={self.weights} ; output={self.get_outputs()} ; error={self.get_error()}"
+            )
 
-          self.update_weights()
-          
-          if self.is_converged():
-            break
+            self.update_weights()
 
-        return epoch + 1
+            if self.is_converged():
+                return epoch + 1, True
 
+        return epoch + 1, False
 
     def get_outputs(self):
         """Returns the perceptron's output for each input"""
@@ -37,11 +51,10 @@ class Perceptron:
 
         # Apply the activation function to each element of the array
         return np.vectorize(self.activation_func)(excitations)
-    
 
     def get_error(self):
         raise NotImplementedError
-    
+
     def is_converged(self):
         raise NotImplementedError
 

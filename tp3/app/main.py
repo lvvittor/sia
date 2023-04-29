@@ -7,89 +7,102 @@ from non_linear_perceptron import NonLinearPerceptron
 from settings import settings
 from utils import logical_and, logical_xor, parse_csv
 
-def main():
-  # Run excercise 1
-  # exercise_1()
-
-  # Run excercise 2
-  exercise_2()
-
 
 def exercise_1():
-  inputs = np.array([[-1, 1], [1, -1], [-1, -1], [1, 1]])
+    inputs = np.array([[-1, 1], [1, -1], [-1, -1], [1, 1]])
 
-  # Test logical AND
-  expected_outputs = np.apply_along_axis(logical_and, axis=1, arr=inputs)
+    # Test logical AND
+    expected_outputs = np.apply_along_axis(logical_and, axis=1, arr=inputs)
 
-  step_perceptron = StepPerceptron(settings.learning_rate, inputs, expected_outputs)
+    step_perceptron = StepPerceptron(settings.learning_rate, inputs, expected_outputs)
 
-  epochs = step_perceptron.train(30)
+    epochs, converged = step_perceptron.train(settings.epochs)
 
-  print(f"Finished learning AND at {epochs} epochs")
-  print("Output: ", step_perceptron.get_outputs())
-  print("Weights: ", step_perceptron.weights)
+    if not converged:
+        print("Did not converge")
+    else:
+      print(f"Finished learning AND at {epochs} epochs")
+      print("Output: ", step_perceptron.get_outputs())
+      print("Weights: ", step_perceptron.weights)
 
-  print("\n")
+      print("\n")
 
-  # Test logical XOR
-  expected_outputs = np.apply_along_axis(logical_xor, axis=1, arr=inputs)
+    # Test logical XOR
+    expected_outputs = np.apply_along_axis(logical_xor, axis=1, arr=inputs)
 
-  step_perceptron = StepPerceptron(settings.learning_rate, inputs, expected_outputs)
+    step_perceptron = StepPerceptron(settings.learning_rate, inputs, expected_outputs)
 
-  epochs = step_perceptron.train(30)
+    epochs, converged = step_perceptron.train(settings.epochs)
 
-  print(f"Finished learning XOR at {epochs} epochs")
-  print("Output: ", step_perceptron.get_outputs())
-  print("Weights: ", step_perceptron.weights)
+
+    if not converged:
+        print("Did not converge")
+    else:
+      print(f"Finished learning XOR at {epochs} epochs")
+      print("Output: ", step_perceptron.get_outputs())
+      print("Weights: ", step_perceptron.weights)
 
 
 def exercise_2():
-  inputs, expected_outputs = parse_csv(f"{settings.Config.data_path}/test_data.csv", 1)
+    inputs, expected_outputs = parse_csv(
+        f"{settings.Config.data_path}/test_data.csv", 1
+    )
 
-  # visualize_2d(inputs, expected_outputs)
+    # visualize_2d(inputs, expected_outputs)
 
-  point_amt = expected_outputs.shape[0]
+    point_amt = expected_outputs.shape[0]
 
-  # w_1 x + w_2 y + w_0 = 0
+    # w_1 x + w_2 y + w_0 = 0
 
-  print(f"\nInputs: {inputs[:point_amt]}\n")
-  print(f"Expected Output: {expected_outputs[:point_amt]}\n\n")
+    print(f"\nInputs: {inputs[:point_amt]}\n")
+    print(f"Expected Output: {expected_outputs[:point_amt]}\n\n")
 
-  # Test linear perceptron
-  # linear_perceptron = LinearPerceptron(settings.learning_rate, inputs[:point_amt], expected_outputs[:point_amt])
+    # Test linear perceptron
+    # linear_perceptron = LinearPerceptron(settings.learning_rate, inputs[:point_amt], expected_outputs[:point_amt])
 
-  # visualize_2d(inputs[:point_amt], expected_outputs[:point_amt], [0, 0])
+    # visualize_2d(inputs[:point_amt], expected_outputs[:point_amt], [0, 0])
 
-  # epochs = linear_perceptron.train(10000)
+    # epochs = linear_perceptron.train(10000)
 
-  # visualize_2d(inputs[:point_amt], expected_outputs[:point_amt], linear_perceptron.weights)
+    # visualize_2d(inputs[:point_amt], expected_outputs[:point_amt], linear_perceptron.weights)
 
-  # print(f"Finished learning at {epochs} epochs")
-  # print("Output: ", linear_perceptron.get_outputs())
-  # print("Weights: ", linear_perceptron.weights)
+    # print(f"Finished learning at {epochs} epochs")
+    # print("Output: ", linear_perceptron.get_outputs())
+    # print("Weights: ", linear_perceptron.weights)
 
-  # Test non-linear perceptron
-  sigmoid_beta = 1
-  sigmoid_func = lambda value: np.tanh(sigmoid_beta * value) # tanh
-  sigmoid_func_img = (-1, 1)
-  sigmoid_func_derivative = lambda value: sigmoid_beta * (1 - sigmoid_func(value) ** 2)
+    # Test non-linear perceptron
+    sigmoid_beta = 1
+    sigmoid_func = lambda value: np.tanh(sigmoid_beta * value)  # tanh
+    sigmoid_func_img = (-1, 1)
+    sigmoid_func_derivative = lambda value: sigmoid_beta * (
+        1 - sigmoid_func(value) ** 2
+    )
 
-  non_linear_perceptron = NonLinearPerceptron(
-    settings.learning_rate,
-    inputs[:point_amt],
-    expected_outputs[:point_amt],
-    sigmoid_func=sigmoid_func,
-    sigmoid_func_img=sigmoid_func_img,
-    sigmoid_func_derivative=sigmoid_func_derivative
-  )
+    non_linear_perceptron = NonLinearPerceptron(
+        settings.learning_rate,
+        inputs[:point_amt],
+        expected_outputs[:point_amt],
+        sigmoid_func=sigmoid_func,
+        sigmoid_func_img=sigmoid_func_img,
+        sigmoid_func_derivative=sigmoid_func_derivative,
+    )
 
-  visualize_2d(inputs[:point_amt], expected_outputs[:point_amt], non_linear_perceptron.weights)
-  epochs = non_linear_perceptron.train(1000)
+    visualize_2d(
+        inputs[:point_amt], expected_outputs[:point_amt], non_linear_perceptron.weights
+    )
+    epochs = non_linear_perceptron.train(1000)
 
-  print(f"\nFinished learning at {epochs} epochs")
-  print("Output: ", non_linear_perceptron.get_outputs())
-  print("Weights: ", non_linear_perceptron.weights)
+    print(f"\nFinished learning at {epochs} epochs")
+    print("Output: ", non_linear_perceptron.get_outputs())
+    print("Weights: ", non_linear_perceptron.weights)
 
 
 if __name__ == "__main__":
-  main()
+    match settings.exercise:
+        case 1:
+          exercise_1()
+        case 2:
+          exercise_2()
+        case _:
+          raise ValueError("Invalid exercise number")
+
