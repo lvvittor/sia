@@ -21,6 +21,7 @@ def exercise_1():
     if not converged:
         print("Did not converge")
     else:
+      step_perceptron.visualize()
       print(f"Finished learning AND at {epochs} epochs")
       print("Output: ", step_perceptron.get_outputs())
       print("Weights: ", step_perceptron.weights)
@@ -32,7 +33,7 @@ def exercise_1():
 
     step_perceptron = StepPerceptron(settings.learning_rate, inputs, expected_outputs)
 
-    epochs, converged = step_perceptron.train(settings.epochs)
+    epochs, converged = step_perceptron.train(settings.step_perceptron.epochs)
 
 
     if not converged:
