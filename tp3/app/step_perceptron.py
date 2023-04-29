@@ -1,5 +1,6 @@
 import numpy as np
 from perceptron import Perceptron
+from settings import settings
 
 
 class StepPerceptron(Perceptron):
@@ -20,4 +21,4 @@ class StepPerceptron(Perceptron):
         return np.sum(abs(self.expected_outputs - self.get_outputs()))
 
     def is_converged(self):
-        return self.get_error() == 0
+        return self.get_error() == settings.step_perceptron.convergence_threshold

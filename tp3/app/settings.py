@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Any
-from pydantic import BaseSettings
+from pydantic import BaseSettings, BaseModel
 from pathlib import Path
 import json
 
@@ -13,6 +13,21 @@ def json_config_settings_source(settings: BaseSettings) -> dict[str, Any]:
     encoding = settings.__config__.env_file_encoding
     config_path = settings.__config__.config_path
     return json.loads(Path(config_path).read_text(encoding))
+
+
+class StepPerceptron(BaseModel):
+    convergence_threshold: float
+    epochs: int
+
+
+class LinearPerceptron(BaseModel):
+    convergence_threshold: float
+    epochs: int
+
+
+class NonLinearPerceptron(BaseModel):
+    convergence_threshold: float
+    epochs: int
 
 
 class Settings(BaseSettings):
@@ -31,8 +46,10 @@ class Settings(BaseSettings):
 
     learning_rate: float
     accuracy: float
-    epochs: int
     exercise: int
+    step_perceptron: StepPerceptron
+    linear_perceptron: LinearPerceptron
+    non_linear_perceptron: NonLinearPerceptron
 
     class Config:
         env_file_encoding = "utf-8"

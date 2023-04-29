@@ -32,9 +32,9 @@ class Perceptron:
             bool: whether the perceptron converged or not
         """
         for epoch in range(epochs):
-            print(
-                f"{epoch=} ; weights={self.weights} ; output={self.get_outputs()} ; error={self.get_error()}"
-            )
+            # print(
+            #     f"{epoch=} ; weights={self.weights} ; output={self.get_outputs()} ; error={self.get_error()}"
+            # )
 
             self.update_weights()
 
