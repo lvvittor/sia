@@ -1,6 +1,6 @@
 import numpy as np
 
-from visualization import visualize_3d
+from visualization import visualize_3d, visualize_2d
 from step_perceptron import StepPerceptron
 from linear_perceptron import LinearPerceptron
 from non_linear_perceptron import NonLinearPerceptron
@@ -44,44 +44,50 @@ def exercise_1():
 
 
 def exercise_2():
-  inputs, expected_outputs = parse_csv(f"{settings.Config.data_path}/regression_data.csv")
+  inputs, expected_outputs = parse_csv(f"{settings.Config.data_path}/test_data.csv", 1)
 
-  # visualize_3d(inputs)
+  # visualize_2d(inputs, expected_outputs)
 
   point_amt = expected_outputs.shape[0]
+
+  # w_1 x + w_2 y + w_0 = 0
 
   print(f"\nInputs: {inputs[:point_amt]}\n")
   print(f"Expected Output: {expected_outputs[:point_amt]}\n\n")
 
   # Test linear perceptron
-  # linear_perceptron = LinearPerceptron(settings.learning_rate, inputs[:point_amt], expected_outputs[:point_amt])
+  linear_perceptron = LinearPerceptron(settings.learning_rate, inputs[:point_amt], expected_outputs[:point_amt])
 
-  # epochs = linear_perceptron.train(10)
+  visualize_2d(inputs[:point_amt], expected_outputs[:point_amt], [0, 0])
 
-  # print(f"Finished learning at {epochs} epochs")
-  # print("Output: ", linear_perceptron.get_outputs())
-  # print("Weights: ", linear_perceptron.weights)
+  epochs = linear_perceptron.train(10000)
+
+  visualize_2d(inputs[:point_amt], expected_outputs[:point_amt], linear_perceptron.weights)
+
+  print(f"Finished learning at {epochs} epochs")
+  print("Output: ", linear_perceptron.get_outputs())
+  print("Weights: ", linear_perceptron.weights)
 
   # Test non-linear perceptron
-  sigmoid_beta = 1
-  sigmoid_func = lambda value: np.tanh(sigmoid_beta * value) # tanh
-  sigmoid_func_img = (-1, 1)
-  sigmoid_func_derivative = lambda value: sigmoid_beta * (1 - sigmoid_func(value) ** 2)
+  # sigmoid_beta = 1
+  # sigmoid_func = lambda value: np.tanh(sigmoid_beta * value) # tanh
+  # sigmoid_func_img = (-1, 1)
+  # sigmoid_func_derivative = lambda value: sigmoid_beta * (1 - sigmoid_func(value) ** 2)
 
-  non_linear_perceptron = NonLinearPerceptron(
-    settings.learning_rate,
-    inputs[:point_amt],
-    expected_outputs[:point_amt],
-    sigmoid_func=sigmoid_func,
-    sigmoid_func_img=sigmoid_func_img,
-    sigmoid_func_derivative=sigmoid_func_derivative
-  )
+  # non_linear_perceptron = NonLinearPerceptron(
+  #   settings.learning_rate,
+  #   inputs[:point_amt],
+  #   expected_outputs[:point_amt],
+  #   sigmoid_func=sigmoid_func,
+  #   sigmoid_func_img=sigmoid_func_img,
+  #   sigmoid_func_derivative=sigmoid_func_derivative
+  # )
 
-  epochs = non_linear_perceptron.train(10)
+  # epochs = non_linear_perceptron.train(10)
 
-  print(f"\nFinished learning at {epochs} epochs")
-  print("Output: ", non_linear_perceptron.get_outputs())
-  print("Weights: ", non_linear_perceptron.weights)
+  # print(f"\nFinished learning at {epochs} epochs")
+  # print("Output: ", non_linear_perceptron.get_outputs())
+  # print("Weights: ", non_linear_perceptron.weights)
 
 
 if __name__ == "__main__":

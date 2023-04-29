@@ -1,5 +1,22 @@
 import matplotlib.pyplot as plt
 
+def visualize_2d(X, Y, weights: list[float, float] = []):
+  # Create a 2D scatter plot
+  plt.scatter(X, Y, c='r', marker='o')
+
+  # Set axis labels
+  plt.xlabel('x')
+  plt.ylabel('y')
+
+  # Plot the line
+  if len(weights) > 0:
+    line = weights[1] * X + weights[0]
+    plt.plot(X, line, c='b')
+
+  # Show the plot
+  plt.show()
+
+
 def visualize_3d(inputs):
   # Extract x, y, z coordinates from inputs
   x1 = []
