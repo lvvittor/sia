@@ -3,6 +3,7 @@ import numpy as np
 from visualization import visualize_3d
 from step_perceptron import StepPerceptron
 from linear_perceptron import LinearPerceptron
+from non_linear_perceptron import NonLinearPerceptron
 from settings import settings
 from utils import logical_and, logical_xor, parse_csv
 
@@ -47,19 +48,41 @@ def exercise_2():
 
   # visualize_3d(inputs)
 
-  point_amt = 5
+  point_amt = expected_outputs.shape[0]
 
-  print(f"{inputs[:point_amt]=}")
-  print(f"{expected_outputs[:point_amt]=}\n\n")
+  print(f"\nInputs: {inputs[:point_amt]}\n")
+  print(f"Expected Output: {expected_outputs[:point_amt]}\n\n")
 
-  linear_perceptron = LinearPerceptron(settings.learning_rate, inputs[:point_amt], expected_outputs[:point_amt])
+  # Test linear perceptron
+  # linear_perceptron = LinearPerceptron(settings.learning_rate, inputs[:point_amt], expected_outputs[:point_amt])
 
-  epochs = linear_perceptron.train(10)
+  # epochs = linear_perceptron.train(10)
 
-  print(f"Finished learning at {epochs} epochs")
-  print("Output: ", linear_perceptron.get_outputs())
-  print(f"Expected: {expected_outputs[:point_amt]}")
-  print("Weights: ", linear_perceptron.weights)
+  # print(f"Finished learning at {epochs} epochs")
+  # print("Output: ", linear_perceptron.get_outputs())
+  # print("Weights: ", linear_perceptron.weights)
+
+  # Test non-linear perceptron
+  sigmoid_beta = 1
+  sigmoid_func = lambda value: np.tanh(sigmoid_beta * value) # tanh
+  sigmoid_func_img = (-1, 1)
+  sigmoid_func_derivative = lambda value: sigmoid_beta * (1 - sigmoid_func(value) ** 2)
+
+  non_linear_perceptron = NonLinearPerceptron(
+    settings.learning_rate,
+    inputs[:point_amt],
+    expected_outputs[:point_amt],
+    sigmoid_func=sigmoid_func,
+    sigmoid_func_img=sigmoid_func_img,
+    sigmoid_func_derivative=sigmoid_func_derivative
+  )
+
+  epochs = non_linear_perceptron.train(10)
+
+  print(f"\nFinished learning at {epochs} epochs")
+  print("Output: ", non_linear_perceptron.get_outputs())
+  print("Weights: ", non_linear_perceptron.weights)
+
 
 if __name__ == "__main__":
   main()

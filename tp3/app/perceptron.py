@@ -27,6 +27,16 @@ class Perceptron:
             break
 
         return epoch + 1
+
+
+    def get_outputs(self):
+        """Returns the perceptron's output for each input"""
+
+        # Compute the perceptron's excitation for each input, including the sum of the bias
+        excitations = np.dot(self.inputs, self.weights)
+
+        # Apply the activation function to each element of the array
+        return np.vectorize(self.activation_func)(excitations)
     
 
     def get_error(self):
@@ -36,9 +46,6 @@ class Perceptron:
         raise NotImplementedError
 
     def activation_func(self, value):
-        raise NotImplementedError
-
-    def get_outputs(self):
         raise NotImplementedError
 
     def update_weights(self):

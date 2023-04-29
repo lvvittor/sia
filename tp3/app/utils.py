@@ -28,3 +28,19 @@ def parse_csv(path: str):
 
     # Return as numpy array of float numbers
     return np.array(inputs, dtype=float), np.array(expected_outputs, dtype=float)
+  
+
+def feature_scaling(value: float, from_int: tuple[float, float], to_int: tuple[float, float]) -> float:
+    numerator = value - from_int[0]
+    denominator = from_int[1] - from_int[0]
+    return (numerator / denominator) * (to_int[1] - to_int[0]) + to_int[0]
+
+
+if __name__ == "__main__":
+    original_interval = (-1, 1)
+    scaled_interval = (2, 30)
+
+    value = 0.5
+    scaled_value = feature_scaling(value, original_interval, scaled_interval)
+
+    print(f"Scaled value {value} to {scaled_value}")
