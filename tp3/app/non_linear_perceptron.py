@@ -50,3 +50,14 @@ class NonLinearPerceptron(Perceptron):
 
 	def is_converged(self):
 		return self.get_error() < settings.non_linear_perceptron.convergence_threshold
+	
+
+	def __str__(self) -> str:
+		output = "Expected - Actual\n"
+
+		for expected, actual in zip(self.expected_outputs, self.get_scaled_outputs()):
+			output += f"{expected:<10} {actual}\n"
+
+		output += f"\nWeights: {self.weights}"
+		
+		return output

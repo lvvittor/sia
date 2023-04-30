@@ -1,6 +1,8 @@
 from typing import Optional
 import numpy as np
 
+from settings import settings
+
 
 class Perceptron:
     def __init__(
@@ -20,6 +22,7 @@ class Perceptron:
         # first weight is the bias => (w_0, w_1, w_2, ..., w_n)
         self.weights = np.zeros(self.inputs.shape[1])
 
+
     def train(self, epochs: Optional[int] = 1000):
         """
         Trains the perceptron for a given number of epochs
@@ -32,9 +35,7 @@ class Perceptron:
             bool: whether the perceptron converged or not
         """
         for epoch in range(epochs):
-            # print(
-            #     f"{epoch=} ; weights={self.weights} ; output={self.get_outputs()} ; error={self.get_error()}"
-            # )
+            if settings.verbose: print(f"{epoch=} ; weights={self.weights} ; output={self.get_outputs()} ; error={self.get_error()}")
 
             self.update_weights()
 
@@ -42,6 +43,7 @@ class Perceptron:
                 break
 
         return epoch + 1, self.is_converged()
+
 
     def get_outputs(self):
         """Returns the perceptron's output for each input"""
@@ -51,6 +53,18 @@ class Perceptron:
 
         # Apply the activation function to each element of the array
         return np.vectorize(self.activation_func)(excitations)
+
+
+    def __str__(self) -> str:
+        output = "Expected - Actual\n"
+
+        for expected, actual in zip(self.expected_outputs, self.get_outputs()):
+            output += f"{expected:<10} {actual}\n"
+
+        output += f"\nWeights: {self.weights}"
+
+        return output
+
 
     def get_error(self):
         raise NotImplementedError

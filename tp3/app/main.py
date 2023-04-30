@@ -16,16 +16,16 @@ def exercise_1():
     step_perceptron = StepPerceptron(settings.learning_rate, inputs, expected_outputs)
 
     epochs, converged = step_perceptron.train(settings.step_perceptron.epochs)
+      
+    print("\n----- AND -----\n")
 
     if not converged:
-        print("Did not converge")
+        print(f"Did not converge after {epochs} epochs\n")
     else:
-      step_perceptron.visualize()
-      print(f"Finished learning AND at {epochs} epochs")
-      print("Output: ", step_perceptron.get_outputs())
-      print("Weights: ", step_perceptron.weights)
+        step_perceptron.visualize()
+        print(f"Finished learning at {epochs} epochs\n")
 
-      print("\n")
+    print(step_perceptron)
 
     # Test logical XOR
     expected_outputs = np.apply_along_axis(logical_xor, axis=1, arr=inputs)
@@ -34,12 +34,14 @@ def exercise_1():
 
     epochs, converged = step_perceptron.train(settings.step_perceptron.epochs)
 
+    print("\n----- XOR -----\n")
+
     if not converged:
-        print("Did not converge")
+        print(f"Did not converge after {epochs} epochs\n")
     else:
-      print(f"Finished learning XOR at {epochs} epochs")
-      print("Output: ", step_perceptron.get_outputs())
-      print("Weights: ", step_perceptron.weights)
+        print(f"Finished learning at {epochs} epochs\n")
+
+    print(step_perceptron)
 
 
 def exercise_2():
@@ -48,20 +50,18 @@ def exercise_2():
 	print(f"\nInputs: {inputs}\n")
 
 	# Test linear perceptron
-	# linear_perceptron = LinearPerceptron(settings.learning_rate, inputs, expected_outputs)
+	linear_perceptron = LinearPerceptron(settings.learning_rate, inputs, expected_outputs)
 
-	# epochs, converged = linear_perceptron.train(settings.linear_perceptron.epochs)
+	epochs, converged = linear_perceptron.train(settings.linear_perceptron.epochs)
 
-	# if not converged:
-	# 	print("Did not converge\n")
-	# else:
-	# 	print(f"Finished learning at {epochs} epochs\n")
+	print("\n----- LINEAR PERCEPTRON -----\n")
 
-	# print(f"Expected - Actual")
-	# for expected, actual in zip(expected_outputs, linear_perceptron.get_outputs()):
-	# 	print(f"{expected:<10} {actual}")
+	if not converged:
+		print(f"Did not converge after {epochs} epochs\n")
+	else:
+		print(f"Finished learning at {epochs} epochs\n")
 
-	# print("Weights: ", linear_perceptron.weights)
+	print(linear_perceptron)
 
 	# Test non-linear perceptron
 	sigmoid_beta = 1
@@ -82,16 +82,15 @@ def exercise_2():
 
 	epochs, converged = non_linear_perceptron.train(settings.non_linear_perceptron.epochs)
 
+	print("\n----- NON-LINEAR PERCEPTRON -----\n")
+
 	if not converged:
-		print("Did not converge\n")
+		print(f"Did not converge after {epochs} epochs\n")
 	else:
-		print(f"\nFinished learning at {epochs} epochs\n")
+		print(f"Finished learning at {epochs} epochs\n")
 
-	print(f"Expected - Actual")
-	for expected, actual in zip(expected_outputs, non_linear_perceptron.get_scaled_outputs()):
-		print(f"{expected:<10} {actual}")
-
-	print("Weights: ", non_linear_perceptron.weights)	
+	# Print weights and outputs
+	print(non_linear_perceptron)
 
 
 if __name__ == "__main__":
