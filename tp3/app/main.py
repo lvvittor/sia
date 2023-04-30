@@ -21,7 +21,8 @@ def exercise_1():
     if not converged:
         print("Did not converge")
     else:
-      step_perceptron.visualize()
+      step_perceptron.save_animation()
+      step_perceptron.save_animation_frames()
       print(f"Finished learning AND at {epochs} epochs")
       print("Output: ", step_perceptron.get_outputs())
       print("Weights: ", step_perceptron.weights)
@@ -38,6 +39,8 @@ def exercise_1():
 
     if not converged:
         print("Did not converge")
+        # step_perceptron.save_animation()
+        # step_perceptron.save_animation_frames()
     else:
       print(f"Finished learning XOR at {epochs} epochs")
       print("Output: ", step_perceptron.get_outputs())

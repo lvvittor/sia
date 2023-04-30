@@ -19,6 +19,8 @@ class Perceptron:
         self.expected_outputs = expected_outputs
         # first weight is the bias => (w_0, w_1, w_2, ..., w_n)
         self.weights = np.zeros(self.inputs.shape[1])
+        self.historical_weights = []
+        self.historical_outputs = []
 
     def train(self, epochs: Optional[int] = 1000):
         """
@@ -36,7 +38,10 @@ class Perceptron:
                 f"{epoch=} ; weights={self.weights} ; output={self.get_outputs()} ; error={self.get_error()}"
             )
 
+            # save the weights
             self.update_weights()
+            self.historical_weights.append(self.weights)
+            self.historical_outputs.append(self.get_outputs())
 
             if self.is_converged():
                 return epoch + 1, True
@@ -64,5 +69,8 @@ class Perceptron:
     def update_weights(self):
         raise NotImplementedError
 
-    def visualize(self):
+    def save_animation(self):
+        raise NotImplementedError
+
+    def save_animation_frames(self):
         raise NotImplementedError
