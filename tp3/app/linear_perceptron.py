@@ -29,4 +29,6 @@ class LinearPerceptron(Perceptron):
 
 
     def is_converged(self):
-        return self.get_error() < settings.linear_perceptron.convergence_threshold
+        expected_outputs_amplitude = np.max(self.expected_outputs) - np.min(self.expected_outputs)
+        percentage_threshold = settings.linear_perceptron.convergence_threshold / 100
+        return self.get_error() < percentage_threshold * expected_outputs_amplitude

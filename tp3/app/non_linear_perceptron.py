@@ -49,7 +49,9 @@ class NonLinearPerceptron(Perceptron):
 
 
 	def is_converged(self):
-		return self.get_error() < settings.non_linear_perceptron.convergence_threshold
+		expected_outputs_amplitude = self.expected_range[1] - self.expected_range[0]
+		percentage_threshold = settings.non_linear_perceptron.convergence_threshold / 100
+		return self.get_error() < percentage_threshold * expected_outputs_amplitude
 	
 
 	def __str__(self) -> str:

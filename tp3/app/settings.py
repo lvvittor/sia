@@ -46,7 +46,6 @@ class Settings(BaseSettings):
 
     verbose: bool
     learning_rate: float
-    accuracy: float
     exercise: int
     step_perceptron: StepPerceptron
     linear_perceptron: LinearPerceptron
