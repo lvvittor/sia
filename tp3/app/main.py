@@ -1,6 +1,5 @@
 import numpy as np
 
-from visualization import visualize_3d, visualize_2d
 from step_perceptron import StepPerceptron
 from linear_perceptron import LinearPerceptron
 from non_linear_perceptron import NonLinearPerceptron
@@ -17,9 +16,11 @@ def exercise_1():
     step_perceptron = StepPerceptron(settings.learning_rate, inputs, expected_outputs)
 
     epochs, converged = step_perceptron.train(settings.step_perceptron.epochs)
+      
+    print("\n----- AND -----\n")
 
     if not converged:
-        print("Did not converge")
+        print(f"Did not converge after {epochs} epochs\n")
     else:
       step_perceptron.save_animation()
       step_perceptron.save_animation_frames()
@@ -27,7 +28,7 @@ def exercise_1():
       print("Output: ", step_perceptron.get_outputs())
       print("Weights: ", step_perceptron.weights)
 
-      print("\n")
+    print(step_perceptron)
 
     # Test logical XOR
     expected_outputs = np.apply_along_axis(logical_xor, axis=1, arr=inputs)
@@ -36,76 +37,65 @@ def exercise_1():
 
     epochs, converged = step_perceptron.train(settings.step_perceptron.epochs)
 
+    print("\n----- XOR -----\n")
 
     if not converged:
-        print("Did not converge")
         # step_perceptron.save_animation()
         # step_perceptron.save_animation_frames()
+        print(f"Did not converge after {epochs} epochs\n")
     else:
-      print(f"Finished learning XOR at {epochs} epochs")
-      print("Output: ", step_perceptron.get_outputs())
-      print("Weights: ", step_perceptron.weights)
+        print(f"Finished learning at {epochs} epochs\n")
+
+    print(step_perceptron)
 
 
 def exercise_2():
-	inputs, expected_outputs = parse_csv(
-		f"{settings.Config.data_path}/test_data.csv", 1
-	)
+	inputs, expected_outputs = parse_csv(f"{settings.Config.data_path}/regression_data.csv")
 
-	# visualize_2d(inputs, expected_outputs)
-
-	point_amt = expected_outputs.shape[0]
-
-	# w_1 x + w_2 y + w_0 = 0
-
-	print(f"\nInputs: {inputs[:point_amt]}\n")
-	print(f"Expected Output: {expected_outputs[:point_amt]}\n\n")
+	print(f"\nInputs: {inputs}\n")
 
 	# Test linear perceptron
-	linear_perceptron = LinearPerceptron(settings.learning_rate, inputs[:point_amt], expected_outputs[:point_amt])
-
-	visualize_2d(inputs[:point_amt], expected_outputs[:point_amt], [0, 0])
+	linear_perceptron = LinearPerceptron(settings.learning_rate, inputs, expected_outputs)
 
 	epochs, converged = linear_perceptron.train(settings.linear_perceptron.epochs)
 
-	visualize_2d(inputs[:point_amt], expected_outputs[:point_amt], linear_perceptron.weights)
+	print("\n----- LINEAR PERCEPTRON -----\n")
 
 	if not converged:
-		print("Did not converge")
+		print(f"Did not converge after {epochs} epochs\n")
 	else:
-		print(f"Finished learning at {epochs} epochs")
-		print("Output: ", linear_perceptron.get_outputs())
-		print("Weights: ", linear_perceptron.weights)
+		print(f"Finished learning at {epochs} epochs\n")
+
+	print(linear_perceptron)
 
 	# Test non-linear perceptron
-	# sigmoid_beta = 1
-	# sigmoid_func = lambda value: np.tanh(sigmoid_beta * value)  # tanh
-	# sigmoid_func_img = (-1, 1)
-	# sigmoid_func_derivative = lambda value: sigmoid_beta * (
-	# 	1 - sigmoid_func(value) ** 2
-	# )
+	sigmoid_beta = 1
+	sigmoid_func = lambda value: np.tanh(sigmoid_beta * value)  # tanh
+	sigmoid_func_img = (-1, 1)
+	sigmoid_func_derivative = lambda value: sigmoid_beta * (
+		1 - sigmoid_func(value) ** 2
+	)
 
-	# non_linear_perceptron = NonLinearPerceptron(
-	# 	settings.learning_rate,
-	# 	inputs[:point_amt],
-	# 	expected_outputs[:point_amt],
-	# 	sigmoid_func=sigmoid_func,
-	# 	sigmoid_func_img=sigmoid_func_img,
-	# 	sigmoid_func_derivative=sigmoid_func_derivative,
-	# )
+	non_linear_perceptron = NonLinearPerceptron(
+		settings.learning_rate,
+		inputs,
+		expected_outputs,
+		sigmoid_func=sigmoid_func,
+		sigmoid_func_img=sigmoid_func_img,
+		sigmoid_func_derivative=sigmoid_func_derivative,
+	)
 
-	# visualize_2d(
-	# 	inputs[:point_amt], expected_outputs[:point_amt], non_linear_perceptron.weights
-	# )
-	# epochs, converged = non_linear_perceptron.train(settings.non_linear_perceptron.epochs)
+	epochs, converged = non_linear_perceptron.train(settings.non_linear_perceptron.epochs)
 
-	# if not converged:
-	# 	print("Did not converge")
-	# else:
-	# 	print(f"\nFinished learning at {epochs} epochs")
-	# 	print("Output: ", non_linear_perceptron.get_outputs())
-	# 	print("Weights: ", non_linear_perceptron.weights)
-		
+	print("\n----- NON-LINEAR PERCEPTRON -----\n")
+
+	if not converged:
+		print(f"Did not converge after {epochs} epochs\n")
+	else:
+		print(f"Finished learning at {epochs} epochs\n")
+
+	# Print weights and outputs
+	print(non_linear_perceptron)
 
 
 if __name__ == "__main__":

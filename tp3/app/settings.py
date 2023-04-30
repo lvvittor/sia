@@ -44,6 +44,7 @@ class Settings(BaseSettings):
     https://jsontopydantic.com/
     """
 
+    verbose: bool
     learning_rate: float
     accuracy: float
     exercise: int
