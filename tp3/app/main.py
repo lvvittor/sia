@@ -106,10 +106,8 @@ if __name__ == "__main__":
 			exercise_2()
 		case 3:
 			# Example usage:
-			X, y = parse_csv(
-				f"{settings.Config.data_path}/test_data.csv", 1
-			)
-			# X, y = np.arange(10).reshape((5, 2)), list(range(5))
+			X, y = parse_csv(f"{settings.Config.data_path}/test_data.csv")
+
 			print(X)
 			print(y)
 
