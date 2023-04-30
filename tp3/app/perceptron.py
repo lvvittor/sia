@@ -63,3 +63,6 @@ class Perceptron:
 
     def update_weights(self):
         raise NotImplementedError
+
+    def visualize(self):
+        raise NotImplementedError

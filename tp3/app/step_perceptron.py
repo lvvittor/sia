@@ -1,6 +1,8 @@
 import numpy as np
 from perceptron import Perceptron
 from settings import settings
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 
 class StepPerceptron(Perceptron):
@@ -22,3 +24,36 @@ class StepPerceptron(Perceptron):
 
     def is_converged(self):
         return self.get_error() == settings.step_perceptron.convergence_threshold
+
+    def visualize(self):
+        # # remove bias term
+        drawable_inputs = self.inputs[:, 1:]
+
+        sns.set_style("whitegrid")
+
+        # plot the points
+        sns.scatterplot(
+            x=drawable_inputs[:, 0],
+            y=drawable_inputs[:, 1],
+            hue=self.get_outputs(),
+            size=100,
+            palette=["red", "blue"],
+        )
+
+        xmin, xmax = np.min(drawable_inputs[:, 0]), np.max(drawable_inputs[:, 0])
+
+        # w1*x + w2*y + w0 = 0
+        # y = -(w1*x + w0) / w2
+
+        x = np.linspace(xmin - 100, xmax + 100, 1000)
+        y = -(self.weights[1] * x + self.weights[0]) / self.weights[2]
+
+        lineplot = sns.lineplot(x=x, y=y, color="black")
+
+        plt.xlim([-2, 2])
+        plt.ylim([-2, 2])
+        plt.show()
+
+        # save the plot to a file
+        fig = lineplot.get_figure()
+        fig.savefig(f"{settings.Config.output_path}/step_perceptron.png")
