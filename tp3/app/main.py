@@ -103,7 +103,7 @@ def exercise_3():
 	inputs = np.array([[1,1], [0,1]])
 	expected_outputs = np.array([0, 1])
 
-	multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, [2], expected_outputs)
+	multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, [2], 1, expected_outputs)
 	multilayer_perceptron.feedforward()
 
 if __name__ == "__main__":
