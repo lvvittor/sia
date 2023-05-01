@@ -3,6 +3,7 @@ import numpy as np
 from step_perceptron import StepPerceptron
 from linear_perceptron import LinearPerceptron
 from non_linear_perceptron import NonLinearPerceptron
+from multilayer_perceptron import MultilayerPerceptron
 from settings import settings
 from utils import logical_and, logical_xor, parse_csv, train_test_split
 
@@ -98,6 +99,13 @@ def exercise_2():
 	print(non_linear_perceptron)
 
 
+def exercise_3():
+	inputs = np.array([[1,1], [0,1]])
+	expected_outputs = np.array([0, 1])
+
+	multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, [2], expected_outputs)
+	multilayer_perceptron.feedforward()
+
 if __name__ == "__main__":
 	match settings.exercise:
 		case 1:
@@ -105,20 +113,7 @@ if __name__ == "__main__":
 		case 2:
 			exercise_2()
 		case 3:
-			# Example usage:
-			X, y = parse_csv(f"{settings.Config.data_path}/test_data.csv")
-
-			print(X)
-			print(y)
-
-			# Split the data into training and testing subsets
-			X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
-
-			# # Print the sizes of the training and testing subsets
-			print(f"X_train: {X_train}")
-			print(f"y_train: {y_train}")
-			print(f"X_test: {X_test}")
-			print(f"y_test: {y_test}")
+			exercise_3()
 
 		case _:
 			raise ValueError("Invalid exercise number")

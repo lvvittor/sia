@@ -15,6 +15,7 @@ def train_cross_validation(inputs, expected_outputs):
     for i in range(fold_amount):
         left_index = i * math.floor(inputs.shape[0] / fold_amount)
         right_index = (i + 1) * math.floor(inputs.shape[0] / fold_amount)
+
         test_input = inputs[left_index:right_index]
         test_expected_output = expected_outputs[left_index:right_index]
         train_input = [*inputs[:left_index], *inputs[right_index:]]
@@ -32,7 +33,7 @@ def train_cross_validation(inputs, expected_outputs):
                 test_output += weights[counter] * element
                 counter += 1
             
-            if math.isclose(abs(test_expected_output[index] / test_output), 1, abs_tol=1e-1) : 
+            if math.isclose(abs(test_expected_output[index] / test_output), 1, abs_tol=1e-2) : 
                 corrects += 1
 
         if amount_correct == -1 or amount_correct < corrects:
