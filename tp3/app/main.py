@@ -100,11 +100,14 @@ def exercise_2():
 
 
 def exercise_3():
-	inputs = np.array([[1,1], [0,1]])
-	expected_outputs = np.array([0, 1])
+	inputs = np.array([[1,1]])
+	expected_outputs = np.array([[0]])
 
-	multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, [2], 1, expected_outputs)
-	multilayer_perceptron.feedforward()
+	multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, [2], expected_outputs)
+	for _ in range(20):
+		multilayer_perceptron.backpropagation()
+	
+	print(multilayer_perceptron.output_weights)
 
 if __name__ == "__main__":
 	match settings.exercise:
