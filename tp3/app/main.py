@@ -101,14 +101,14 @@ def exercise_2():
 # Tested with eta = 0.05
 def exercise_3():
 	# Test XOR
+	print("\n----- XOR -----\n")
+
 	inputs = np.array([[-1, 1], [1, -1], [-1, -1], [1, 1]])
 	expected_outputs = np.array([1, 1, -1, -1])
 
 	multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, 2, 1, expected_outputs)
 
-	print("\n----- XOR -----\n")
-	
-	multilayer_perceptron.train(100000)
+	multilayer_perceptron.train(10000)
 
 	# Test even or odd digits
 	inputs, expected_outputs = parse_digits(f"{settings.Config.data_path}/digits.txt")
@@ -117,6 +117,12 @@ def exercise_3():
 
 	is_digit_even = np.vectorize(lambda digit: 1 if digit % 2 == 0 else -1)(expected_outputs)
 	multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, 10, 1, is_digit_even)
+
+	multilayer_perceptron.train(10000)
+
+	print("\n----- GUESS THE DIGITS -----\n")
+
+	multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, 10, 10, expected_outputs)
 
 	multilayer_perceptron.train(10000)
 

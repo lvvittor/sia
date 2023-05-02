@@ -66,15 +66,20 @@ class MultilayerPerceptron():
         activation_function = self.activation_func(V)
         return activation_function * (1 - activation_function)
 
- 
-    def feed_forward(self):
+
+    def predict(self, X):
+        X = np.insert(X, 0, 1, axis=1)  
+        return self.feed_forward(X)
+
+
+    def feed_forward(self, X):
         """
         M          => amount of features + 1 (bias)
         weights[0] => shape(hidden_nodes, M)
         weights[1] => shape(output_nodes, hidden_nodes + 1)
         X          => shape(N, M)
         """
-        h1 = self.weights[0].dot(self.X.T) # (hidden_nodes, M) x (M, N) = (hidden_nodes, N)
+        h1 = self.weights[0].dot(X.T) # (hidden_nodes, M) x (M, N) = (hidden_nodes, N)
         # Hidden layer output
         V1 = self.activation_func(h1) # (hidden_nodes, N)
         # Add bias to hidden layer output
@@ -117,7 +122,7 @@ class MultilayerPerceptron():
             max_epochs (int): maximum number of epochs
         """
         for epoch in range(max_epochs):
-            h1, V1, h2, O = self.feed_forward()
+            h1, V1, h2, O = self.feed_forward(self.X)
 
             if self.get_error(O) == 0: # settings.multilayer_perceptron.convergence_threshold
                 break
