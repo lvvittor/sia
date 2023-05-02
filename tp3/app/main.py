@@ -122,9 +122,16 @@ def exercise_3():
 
 	print("\n----- GUESS THE DIGITS -----\n")
 
-	multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, 10, 10, expected_outputs)
+	# expected_output for 0 is [1 0 0 .... 0], for 1 is [0 1 0 .... 0], for 9 is [0 0 .... 0 1]
+	multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, 10, 10, np.identity(10))
 
-	multilayer_perceptron.train(10000)
+	multilayer_perceptron.train(100000)
+
+	inputs, _ = parse_digits(f"{settings.Config.data_path}/digits_with_noise.txt")
+
+	output = multilayer_perceptron.predict(np.array([inputs[0]]))
+	print(output)
+	print(f"\nPrediction is {np.argmax(output)}")
 
 	visualize_digit(inputs[0])
 
