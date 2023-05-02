@@ -13,5 +13,10 @@
   "non_linear_perceptron": {
     "convergence_threshold": 0.0011,
     "epochs": 4000
+  },
+  "optimization": {
+    "active": true,
+    "method": "momentum",
+    "momentum_rate": 0.9
   }
 }

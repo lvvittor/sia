@@ -30,6 +30,12 @@ class NonLinearPerceptron(BaseModel):
     epochs: int
 
 
+class Optimization(BaseModel):
+    active: bool
+    method: str
+    momentum_rate: float
+
+
 class Settings(BaseSettings):
     """
     Settings for the application.
