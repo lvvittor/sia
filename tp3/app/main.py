@@ -5,7 +5,7 @@ from linear_perceptron import LinearPerceptron
 from non_linear_perceptron import NonLinearPerceptron
 from multilayer_perceptron import MultilayerPerceptron
 from settings import settings
-from utils import logical_and, logical_xor, parse_csv, parse_digits
+from utils import logical_and, logical_xor, parse_csv, parse_digits, visualize_digit
 
 # Tested with eta = 0.1
 def exercise_1():
@@ -125,6 +125,8 @@ def exercise_3():
 	multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, 10, 10, expected_outputs)
 
 	multilayer_perceptron.train(10000)
+
+	visualize_digit(inputs[0])
 
 
 if __name__ == "__main__":

@@ -1,6 +1,9 @@
 import csv
 import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
 
+from settings import settings
 
 def get_boolean_value(value: int):
     return True if value == 1 else False
@@ -47,7 +50,7 @@ def parse_digits(path: str):
 
     digits = np.arange(10)
 
-    return np.array(digit_images, dtype=int), digits
+    return np.array(digit_images, dtype=float), digits
 
 
 def train_test_split(*arrays, test_size=0.25, random_state=None):
@@ -87,6 +90,14 @@ def feature_scaling(
     numerator = value - from_int[0]
     denominator = from_int[1] - from_int[0]
     return (numerator / denominator) * (to_int[1] - to_int[0]) + to_int[0]
+
+
+def visualize_digit(digit: np.array):
+	sns.heatmap(digit.reshape(7, 5), cmap='Greys', vmin=0, vmax=1)
+
+	# Mostrar el heatmap
+	plt.show()
+	plt.savefig(f"{settings.Config.output_path}/digit.png")
 
 
 if __name__ == "__main__":

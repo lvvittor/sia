@@ -68,7 +68,8 @@ class MultilayerPerceptron():
 
     def predict(self, X):
         X = np.insert(X, 0, 1, axis=1)  
-        return self.feed_forward(X)
+        _, _, _, output = self.feed_forward(X)
+        return output
 
 
     def feed_forward(self, X):
