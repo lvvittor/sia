@@ -108,7 +108,7 @@ def exercise_3():
 
 	print("\n----- XOR -----\n")
 	
-	multilayer_perceptron.train(10)
+	multilayer_perceptron.train(100000)
 
 
 if __name__ == "__main__":
