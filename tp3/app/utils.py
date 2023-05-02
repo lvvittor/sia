@@ -29,6 +29,25 @@ def parse_csv(path: str):
 
     # Return as numpy array of float numbers
     return np.array(inputs, dtype=float), np.array(expected_outputs, dtype=float)
+  
+
+def parse_digits(path: str):
+    with open(path, 'r') as f:
+        data = f.read().splitlines()  # read the file and split into lines
+
+    digit_images = []
+    
+    for i, line in enumerate(data):
+        if i % 7 == 0:  # if we're at the start of a new item
+            digit_img = []  # create a new digit_img array
+        numbers = line.strip().split()  # remove trailing spaces and split into individual numbers
+        digit_img.extend(numbers)  # add the numbers to the current digit_img
+        if i % 7 == 6:  # if we're at the end of an digit_img
+            digit_images.append(digit_img)  # add the digit_img to the list of digit_images
+
+    digits = np.arange(10)
+
+    return np.array(digit_images, dtype=int), digits
 
 
 def train_test_split(*arrays, test_size=0.25, random_state=None):
