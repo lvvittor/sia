@@ -71,6 +71,8 @@ def feature_scaling(
 
 
 if __name__ == "__main__":
+
+    # FEATURE SCALING TEST
     original_interval = (-1, 1)
     scaled_interval = (2, 30)
 
@@ -78,3 +80,19 @@ if __name__ == "__main__":
     scaled_value = feature_scaling(value, original_interval, scaled_interval)
 
     print(f"Scaled value {value} to {scaled_value}")
+    
+
+    # TRAIN TEST SPLIT TEST
+    X, y = parse_csv(f"../data/test_data.csv")
+
+    print(X)
+    print(y)
+
+    # Split the data into training and testing subsets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+
+    # # Print the sizes of the training and testing subsets
+    print(f"X_train: {X_train}")
+    print(f"y_train: {y_train}")
+    print(f"X_test: {X_test}")
+    print(f"y_test: {y_test}")

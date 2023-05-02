@@ -100,11 +100,16 @@ def exercise_2():
 
 
 def exercise_3():
-	inputs = np.array([[1,1], [0,1]])
-	expected_outputs = np.array([0, 1])
+	# Test XOR
+	inputs = np.array([[-1, 1], [1, -1], [-1, -1], [1, 1]])
+	expected_outputs = np.array([1, 1, -1, -1])
 
-	multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, [2], 1, expected_outputs)
-	multilayer_perceptron.feedforward()
+	multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, 2, 1, expected_outputs)
+
+	print("\n----- XOR -----\n")
+	
+	multilayer_perceptron.train(10)
+
 
 if __name__ == "__main__":
 	match settings.exercise:
