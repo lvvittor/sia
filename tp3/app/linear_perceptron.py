@@ -22,7 +22,7 @@ class LinearPerceptron(Perceptron):
 
 
     def get_error(self):
-        """Mean Square Error - MSE"""
+        """Mean Squared Error - MSE"""
         p = self.inputs.shape[0]
         output_errors = self.expected_outputs - self.get_outputs()
         return np.power(output_errors, 2).sum() / p
