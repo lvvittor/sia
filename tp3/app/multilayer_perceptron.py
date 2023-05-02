@@ -37,9 +37,10 @@ class MultilayerPerceptron():
         
         # m0 - shape(self.hidden_nodes, self.M) , m1 - shape(output_nodes, hidden_nodes)
         self.weights = [
-            # TODO: check if this is the correct way to initialize weights
+            # Can also try with uniform distribution between -1 or 0 and 1 to initialize the weights
             np.random.randn(self.hidden_nodes, self.M),               # XOR: shape(2, 2) , DIGITS: shape(10, 1 * 7 * 5)
-            np.random.randn(self.output_nodes, self.hidden_nodes + 1) # +1 for bias --- XOR: shape(1, 2) , DIGITS: shape(10, 10)
+            # +1 for bias => simulate that the bias is an extra hidden neuron with constant output 1
+            np.random.randn(self.output_nodes, self.hidden_nodes + 1) # XOR: shape(1, 2) , DIGITS: shape(10, 10)
         ]
 
         print("HIDDEN NODES: ", self.hidden_nodes)
@@ -125,13 +126,14 @@ class MultilayerPerceptron():
             h1, V1, h2, O = self.feed_forward(self.X)
 
             if self.get_error(O) == 0: # settings.multilayer_perceptron.convergence_threshold
-                print(O)
-                return O
+                break
 
             if epoch % 1000 == 0:
                 print(f"{epoch=} ; output={O} ; error={self.get_error(O)}")
 
             self.backward_propagation(h1, V1, h2, O)
+
+        return O, epoch, self.get_error(O)
     
     
     def get_error(self, O):
