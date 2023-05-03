@@ -118,14 +118,14 @@ def exercise_3():
 	is_digit_even = np.vectorize(lambda digit: 1 if digit % 2 == 0 else -1)(expected_outputs)
 	multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, 10, 1, is_digit_even)
 
-	multilayer_perceptron.train(10000)
+	multilayer_perceptron.train(settings.multilayer_perceptron.epochs)
 
 	print("\n----- GUESS THE DIGITS -----\n")
 
 	# expected_output for 0 is [1 0 0 .... 0], for 1 is [0 1 0 .... 0], for 9 is [0 0 .... 0 1]
 	multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, 10, 10, np.identity(10))
 
-	multilayer_perceptron.train(100000)
+	multilayer_perceptron.train(settings.multilayer_perceptron.epochs)
 
 	inputs, _ = parse_digits(f"{settings.Config.data_path}/{settings.multilayer_perceptron.predicting_digit}_with_noise.txt")
 
