@@ -56,6 +56,7 @@ class Settings(BaseSettings):
     step_perceptron: StepPerceptron
     linear_perceptron: LinearPerceptron
     non_linear_perceptron: NonLinearPerceptron
+    optimization: Optimization
 
     class Config:
         env_file_encoding = "utf-8"
