@@ -30,6 +30,12 @@ class NonLinearPerceptron(BaseModel):
     epochs: int
 
 
+class MultilayerPerceptron(BaseModel):
+    convergence_threshold: float
+    epochs: int
+    predicting_digit: int
+
+
 class Optimization(BaseModel):
     active: bool
     method: str
@@ -56,6 +62,7 @@ class Settings(BaseSettings):
     step_perceptron: StepPerceptron
     linear_perceptron: LinearPerceptron
     non_linear_perceptron: NonLinearPerceptron
+    multilayer_perceptron: MultilayerPerceptron
     optimization: Optimization
 
     class Config:
