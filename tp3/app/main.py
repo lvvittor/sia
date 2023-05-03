@@ -5,7 +5,7 @@ from linear_perceptron import LinearPerceptron
 from non_linear_perceptron import NonLinearPerceptron
 from multilayer_perceptron import MultilayerPerceptron
 from settings import settings
-from utils import logical_and, logical_xor, parse_csv, parse_digits, visualize_digit
+from utils import logical_and, logical_xor, parse_csv, parse_digits, visualize_digit, visualize_error
 
 # Tested with eta = 0.1
 def exercise_1():
@@ -68,6 +68,8 @@ def exercise_2():
 		print(f"Finished learning at {epochs} epochs\n")
 
 	print(linear_perceptron)
+	visualize_error(linear_perceptron.show_errors())
+
 
 	# Test non-linear perceptron
 	sigmoid_beta = 1
@@ -97,6 +99,7 @@ def exercise_2():
 
 	# Print weights and outputs
 	print(non_linear_perceptron)
+	visualize_error(linear_perceptron.show_errors())
 
 # Tested with eta = 0.05
 def exercise_3():

@@ -1,7 +1,7 @@
 {
   "learning_rate": 0.001,
   "verbose": false,
-  "exercise": 3,
+  "exercise": 2,
   "step_perceptron": {
     "convergence_threshold": 0,
     "epochs": 30
@@ -20,7 +20,7 @@
     "predicting_digit": 2
   },
   "optimization": {
-    "active": true,
+    "active": false,
     "method": "momentum",
     "momentum_rate": 0.9
   }

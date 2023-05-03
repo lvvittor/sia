@@ -2,6 +2,7 @@ import csv
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 
 from settings import settings
 
@@ -98,6 +99,34 @@ def visualize_digit(digit: np.array):
 	# Mostrar el heatmap
 	plt.show()
 	plt.savefig(f"{settings.Config.output_path}/digit.png")
+
+
+def visualize_error(data):
+
+    # Create a figure and axis
+    fig, ax = plt.subplots()
+
+    # Set axis limits
+    ax.set_xlim(0, len(data))
+    ax.set_ylim(0, max(point[1] for point in data))
+
+    # Create empty lists to store x and y values
+    x_values = []
+    y_values = []
+
+    # Iterate over data and plot each point with a red dot
+    for point in data:
+        x_values.append(point[0])
+        y_values.append(point[1])
+        ax.plot(point[0], point[1], 'ro')
+
+        # Plot a line connecting the points
+        if len(x_values) > 1:
+            ax.plot(x_values, y_values, 'b--')
+
+    # Save the plot as a PNG image
+    plt.savefig(f"{settings.Config.output_path}/error_vs_epoch.png")
+
 
 
 if __name__ == "__main__":

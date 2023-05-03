@@ -25,6 +25,7 @@ class Perceptron:
         # Data for plotting
         self.historical_weights = []
         self.historical_outputs = []
+        self.historical_error = []
 
         # Momentum
         self.previous_deltas = np.zeros(self.weights.shape)
@@ -48,6 +49,7 @@ class Perceptron:
             self.update_weights()
             self.historical_weights.append(self.weights)
             self.historical_outputs.append(self.get_outputs())
+            self.historical_error.append((epoch, self.get_error()))
 
             if self.is_converged():
                 break
@@ -86,6 +88,8 @@ class Perceptron:
 
         return output
 
+    def show_errors(self):
+        return self.historical_error
 
     def compute_deltas(self) -> np.array:
         raise NotImplementedError
