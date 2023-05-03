@@ -21,8 +21,13 @@ class Perceptron:
         self.expected_outputs = expected_outputs
         # first weight is the bias => (w_0, w_1, w_2, ..., w_n)
         self.weights = np.zeros(self.inputs.shape[1])
+        
+        # Data for plotting
         self.historical_weights = []
         self.historical_outputs = []
+
+        # Momentum
+        self.previous_deltas = np.zeros(self.weights.shape)
 
 
     def train(self, epochs: Optional[int] = 1000):
@@ -49,6 +54,17 @@ class Perceptron:
 
         return epoch + 1, self.is_converged()
 
+    
+    def update_weights(self):
+        deltas = self.compute_deltas()
+
+        if settings.optimization.active and settings.optimization.method == "momentum":
+            aux = deltas.copy()
+            deltas += settings.optimization.momentum_rate * self.previous_deltas
+            self.previous_deltas = aux
+
+        self.weights = self.weights + np.sum(deltas, axis=0)
+
 
     def get_outputs(self):
         """Returns the perceptron's output for each input"""
@@ -71,6 +87,9 @@ class Perceptron:
         return output
 
 
+    def compute_deltas(self) -> np.array:
+        raise NotImplementedError
+
     def get_error(self):
         raise NotImplementedError
 
@@ -78,9 +97,6 @@ class Perceptron:
         raise NotImplementedError
 
     def activation_func(self, value):
-        raise NotImplementedError
-
-    def update_weights(self):
         raise NotImplementedError
 
     def save_animation(self):

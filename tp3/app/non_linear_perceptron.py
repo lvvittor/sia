@@ -27,8 +27,15 @@ class NonLinearPerceptron(Perceptron):
 		return np.array(scaled_outputs)
 
 
-	def update_weights(self):
-		# Get the difference between the expected outputs and the actual outputs
+	def get_error(self):
+		"""Mean Squared Error - MSE"""
+		p = self.inputs.shape[0]
+		output_errors = self.scaled_expected_outputs - self.get_outputs()
+		return np.power(output_errors, 2).sum() / p
+
+
+	def compute_deltas(self) -> np.array:
+    # Get the difference between the expected outputs and the actual outputs
 		output_errors = self.scaled_expected_outputs - self.get_outputs()
 
 		# Compute the delta weights for each input
@@ -37,15 +44,7 @@ class NonLinearPerceptron(Perceptron):
 
 		deltas = self.learning_rate * (output_errors * derivatives).reshape(-1, 1) * self.inputs
 
-		# Sum the delta weights for each input, and add them to the weights
-		self.weights = self.weights + np.sum(deltas, axis=0)
-
-
-	def get_error(self):
-		"""Mean Squared Error - MSE"""
-		p = self.inputs.shape[0]
-		output_errors = self.scaled_expected_outputs - self.get_outputs()
-		return np.power(output_errors, 2).sum() / p
+		return deltas
 
 
 	def is_converged(self):
