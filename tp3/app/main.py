@@ -5,7 +5,7 @@ from linear_perceptron import LinearPerceptron
 from non_linear_perceptron import NonLinearPerceptron
 from multilayer_perceptron import MultilayerPerceptron
 from settings import settings
-from utils import logical_and, logical_xor, parse_csv, parse_digits, visualize_digit, visualize_error
+from utils import logical_and, logical_xor, parse_csv, parse_digits, visualize_digit, visualize_error, write_errors, visualize_errors_eta
 
 # Tested with eta = 0.1
 def exercise_1():
@@ -98,6 +98,7 @@ def exercise_2():
 
 	# Print weights and outputs
 	print(non_linear_perceptron)
+	write_errors(non_linear_perceptron.show_errors())
 	visualize_error(non_linear_perceptron.show_errors(), settings.exercise)
 
 # Tested with eta = 0.05

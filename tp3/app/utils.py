@@ -2,6 +2,7 @@ import csv
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+import os
 from matplotlib.animation import FuncAnimation
 
 from settings import settings
@@ -131,6 +132,52 @@ def visualize_error(data, exercise):
 
     # Save the plot as a PNG image
     plt.savefig(f"{settings.Config.output_path}/error_vs_epoch_ex{exercise}_{which}_opt.png")
+
+def write_errors(historical_error):
+    # save historical_error in txt file
+    print("Saving historical error...")
+
+    with open(f"{settings.Config.output_path}/historical_error_{settings.learning_rate}.txt", 'w') as f:
+        f.write(f"{settings.learning_rate}\n")
+        for item in historical_error:
+            f.write(f"{item[0]} {item[1]}\n")
+
+def visualize_errors_eta():
+    # create a figure and axis
+    fig, ax = plt.subplots()
+
+    # in {settings.Config.output_path} there are 3 files named historical_error_{eta}.txt, where eta is the learning rate
+    # we want to plot the error vs epochs for each of these files in the same plot
+    for file in os.listdir(settings.Config.output_path):
+        if file.startswith("historical_error"):
+            with open(f"{settings.Config.output_path}/{file}", 'r') as f:
+                # the first line is the learning rate
+                eta = float(f.readline())
+                # the rest of the lines are the error vs epochs
+                data = f.readlines()
+                # we want to plot the error vs epochs for each of these files in the same plot
+                x_values = []
+                y_values = []
+                for line in data:
+                    x_values.append(int(line.split()[0]))
+                    y_values.append(float(line.split()[1]))
+                ax.plot(x_values, y_values, label=f"eta = {eta}")
+                
+
+                
+    # set common labels
+    ax.set_xlabel('Epochs')
+    ax.set_ylabel('Error')
+    ax.title.set_text(f"Error vs Epochs for different learning rates")
+
+    # show legend
+    ax.legend()
+
+
+    # save
+    plt.savefig(f"{settings.Config.output_path}/error_vs_epoch_eta.png")
+
+    return 0
 
 
 
