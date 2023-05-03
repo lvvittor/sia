@@ -20,7 +20,7 @@
     "predicting_digit": 2
   },
   "optimization": {
-    "active": false,
+    "active": true,
     "method": "momentum",
     "momentum_rate": 0.9
   }

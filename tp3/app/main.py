@@ -68,7 +68,6 @@ def exercise_2():
 		print(f"Finished learning at {epochs} epochs\n")
 
 	print(linear_perceptron)
-	visualize_error(linear_perceptron.show_errors())
 
 
 	# Test non-linear perceptron
@@ -99,7 +98,7 @@ def exercise_2():
 
 	# Print weights and outputs
 	print(non_linear_perceptron)
-	visualize_error(linear_perceptron.show_errors())
+	visualize_error(non_linear_perceptron.show_errors(), 2)
 
 # Tested with eta = 0.05
 def exercise_3():
@@ -147,7 +146,6 @@ if __name__ == "__main__":
 			exercise_2()
 		case 3:
 			exercise_3()
-
 		case _:
 			raise ValueError("Invalid exercise number")
 
