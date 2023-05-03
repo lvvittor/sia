@@ -29,6 +29,10 @@ class MultilayerPerceptron():
         expected_range = (np.min(expected_outputs), np.max(expected_outputs))
         self.Y = feature_scaling(expected_outputs, expected_range, (0, 1)) # XOR: shape(1, 4) , DIGITS: shape(1, 10)
 
+        print("EXPECTED OUTPUTS SHAPE: ", self.Y.shape)
+        print(self.Y)
+        print()
+
         # Amount of perceptrons in the hidden and output layers
         self.hidden_nodes = hidden_nodes                      # XOR: 2, DIGITS: 10
         self.output_nodes = output_nodes                      # XOR: 1, DIGITS: 10
@@ -158,3 +162,14 @@ class MultilayerPerceptron():
         p = self.X.shape[0]
         output_errors = self.Y - O
         return np.power(output_errors, 2).sum() / p
+    
+
+    def __str__(self) -> str:
+        output = "---MULTI-LAYER PERCEPTRON---\n"
+
+        _, _, _, O = self.feed_forward(self.X)
+
+        output += f"Training Error: {self.get_error(O)}\n"
+        output += f"Converged: {self.is_converged(O)}\n"
+
+        return output
