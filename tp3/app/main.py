@@ -7,6 +7,7 @@ from multilayer_perceptron import MultilayerPerceptron
 from settings import settings
 from utils import logical_and, logical_xor, parse_csv, parse_digits, visualize_digit
 from cross_validation import train_non_linear_cross_validation, train_multilayer_cross_validation
+from visualization import visualize_digit_output
 
 # Tested with eta = 0.1
 def exercise_1():
@@ -105,25 +106,24 @@ def exercise_2():
 # Tested with eta = 0.05
 def exercise_3():
 	# # Test XOR
-	# print("\n----- XOR -----\n")
+	print("\n----- XOR -----\n")
 
-	# inputs = np.array([[-1, 1], [1, -1], [-1, -1], [1, 1]])
-	# expected_outputs = np.array([1, 1, -1, -1])
+	inputs = np.array([[-1, 1], [1, -1], [-1, -1], [1, 1]])
+	expected_outputs = np.array([1, 1, -1, -1])
 
-	# multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, 2, 1, expected_outputs)
+	multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, 2, 1, expected_outputs)
 
-	# multilayer_perceptron.train(settings.multilayer_perceptron.epochs)
+	multilayer_perceptron.train(settings.multilayer_perceptron.epochs)
 
 	# # Test even or odd digits
 	inputs, expected_outputs = parse_digits(f"{settings.Config.data_path}/digits.txt")
-	train_multilayer_cross_validation(inputs, np.identity(10))
-	return
+
 	# print("\n----- EVEN OR ODD DIGITS -----\n")
 
-	# is_digit_even = np.vectorize(lambda digit: 1 if digit % 2 == 0 else -1)(expected_outputs)
-	# multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, 10, 1, is_digit_even)
+	is_digit_even = np.vectorize(lambda digit: 1 if digit % 2 == 0 else -1)(expected_outputs)
+	multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, 10, 1, is_digit_even)
 
-	# multilayer_perceptron.train(settings.multilayer_perceptron.epochs)
+	multilayer_perceptron.train(settings.multilayer_perceptron.epochs)
 
 	print("\n----- GUESS THE DIGITS -----\n")
 

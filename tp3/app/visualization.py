@@ -100,3 +100,23 @@ def visualize_errors():
     plt.show()
     plt.grid(alpha=0.5)
     plt.savefig(f"{settings.Config.output_path}/train_test_errors.png")
+
+
+def visualize_digit_output():
+    output = np.array([3.75921292e-02, 5.07557209e-04, 2.25636235e-03, 7.47481886e-01, 1.50909998e-03, 7.04594803e-03, 8.80117940e-02, 5.61648024e-03, 1.46905315e-03, 1.02530703e-01])
+
+    # Configurar el gráfico
+    fig, ax = plt.subplots()
+
+    # Graficar la primera línea
+    ax.scatter(np.arange(len(output)), output, color='blue')
+    ax.set_xticks(np.arange(10))
+
+    # Agregar etiquetas y leyenda al gráfico
+    ax.set_xlabel('i')
+    ax.set_ylabel('$O_{i}$')
+
+    # Mostrar el gráfico
+    plt.show()
+    plt.grid(alpha=0.5)
+    plt.savefig(f"{settings.Config.output_path}/digit_output.png")

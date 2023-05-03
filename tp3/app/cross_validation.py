@@ -89,10 +89,10 @@ def train_multilayer_cross_validation(inputs, expected_outputs):
         Divide input array in N pieces, where 1 piece is for testing, N-1 pieces is for training
         Test with each piece and check which piece trained better.
     """
-    permutation = np.random.permutation(inputs.shape[0])
-    inputs = inputs[permutation]
-    expected_outputs = expected_outputs[permutation]
-    fold_amount = 5
+    # permutation = np.random.permutation(inputs.shape[0])
+    # inputs = inputs[permutation]
+    # expected_outputs = expected_outputs[permutation]
+    fold_amount = 10
     best_fold = -1
     amount_correct = -1
     best_error = -1
@@ -109,19 +109,22 @@ def train_multilayer_cross_validation(inputs, expected_outputs):
         train_input = [*inputs[:left_index], *inputs[right_index:]]
         train_expected_output = [*expected_outputs[:left_index], *expected_outputs[right_index:]]
 
-        print("Train input")
-        print(train_input)
+        # print("Train input")
+        # print(train_input)
 
-        print("Train expected output")
-        print(train_expected_output)
+        # print("Train expected output")
+        # print(train_expected_output)
 
         multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, train_input, 10, 10, train_expected_output)
 
-        epochs, _, = multilayer_perceptron.train(settings.multilayer_perceptron.epochs)
-        test_output = multilayer_perceptron.predict(test_input)
-        errors = abs((test_expected_output - test_output)/test_expected_output)
-        corrects = np.count_nonzero(errors < 0.05)
-        multilayer_error = multilayer_perceptron.get_error()
+        output, epochs, _, = multilayer_perceptron.train(settings.multilayer_perceptron.epochs)
+        test_output = multilayer_perceptron.predict(test_input).T
+        # print("test expected output")
+        # print(test_expected_output)
+        # print("test_output.T")
+        # print(test_output )
+        corrects = np.count_nonzero(np.amax(test_expected_output * test_output, axis=1) > 0.9)
+        multilayer_error = multilayer_perceptron.get_error(output)
         print(f"multilayer error is {multilayer_error}")
 
         p = test_output.shape[0]
