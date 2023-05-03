@@ -6,6 +6,7 @@ from non_linear_perceptron import NonLinearPerceptron
 from multilayer_perceptron import MultilayerPerceptron
 from settings import settings
 from utils import logical_and, logical_xor, parse_csv, parse_digits, visualize_digit
+from cross_validation import train_cross_validation
 
 # Tested with eta = 0.1
 def exercise_1():
@@ -77,10 +78,12 @@ def exercise_2():
 		1 - sigmoid_func(value) ** 2
 	)
 
+	best_input, best_input_output, best_test, best_test_output = train_cross_validation(inputs, expected_outputs)
+
 	non_linear_perceptron = NonLinearPerceptron(
 		settings.learning_rate,
-		inputs,
-		expected_outputs,
+		best_input,
+		best_input_output,
 		sigmoid_func=sigmoid_func,
 		sigmoid_func_img=sigmoid_func_img,
 		sigmoid_func_derivative=sigmoid_func_derivative,
@@ -97,6 +100,7 @@ def exercise_2():
 
 	# Print weights and outputs
 	print(non_linear_perceptron)
+
 
 # Tested with eta = 0.05
 def exercise_3():

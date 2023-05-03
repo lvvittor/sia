@@ -1,7 +1,7 @@
 {
-  "learning_rate": 0.05,
-  "verbose": true,
-  "exercise": 3,
+  "learning_rate": 0.001,
+  "verbose": false,
+  "exercise": 2,
   "step_perceptron": {
     "convergence_threshold": 0,
     "epochs": 30
@@ -11,8 +11,8 @@
     "epochs": 1000
   },
   "non_linear_perceptron": {
-    "convergence_threshold": 0.0011,
-    "epochs": 4000
+    "convergence_threshold": 0.0013,
+    "epochs": 5000
   },
   "multilayer_perceptron": {
     "convergence_threshold": 0.4,

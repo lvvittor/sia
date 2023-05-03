@@ -13,12 +13,12 @@ class StepPerceptron(Perceptron):
 
 
     def get_error(self):
-        return np.sum(abs(self.expected_outputs - self.get_outputs()))
+        return np.sum(abs(self.expected_outputs - self.get_outputs(self.inputs)))
 
 
     def compute_deltas(self) -> np.array:
         # Get the difference between the expected outputs and the actual outputs
-        output_errors = self.expected_outputs - self.get_outputs()
+        output_errors = self.expected_outputs - self.get_outputs(self.inputs)
         # Compute the delta weights for each input
         deltas = self.learning_rate * output_errors.reshape(-1, 1) * self.inputs
         

@@ -42,12 +42,12 @@ class Perceptron:
             bool: whether the perceptron converged or not
         """
         for epoch in range(epochs):
-            if settings.verbose: print(f"{epoch=} ; weights={self.weights} ; output={self.get_outputs()} ; error={self.get_error()}")
+            if settings.verbose: print(f"{epoch=} ; weights={self.weights} ; output={self.get_outputs(self.inputs)} ; error={self.get_error()}")
 
             # save the weights
             self.update_weights()
             self.historical_weights.append(self.weights)
-            self.historical_outputs.append(self.get_outputs())
+            self.historical_outputs.append(self.get_outputs(self.inputs))
 
             if self.is_converged():
                 break
@@ -66,11 +66,11 @@ class Perceptron:
         self.weights = self.weights + np.sum(deltas, axis=0)
 
 
-    def get_outputs(self):
+    def get_outputs(self, inputs):
         """Returns the perceptron's output for each input"""
 
         # Compute the perceptron's excitation for each input, including the sum of the bias
-        excitations = np.dot(self.inputs, self.weights)
+        excitations = np.dot(inputs, self.weights)
 
         # Apply the activation function to each element of the array
         return np.vectorize(self.activation_func)(excitations)
@@ -79,7 +79,7 @@ class Perceptron:
     def __str__(self) -> str:
         output = "Expected - Actual\n"
 
-        for expected, actual in zip(self.expected_outputs, self.get_outputs()):
+        for expected, actual in zip(self.expected_outputs, self.get_outputs(self.inputs)):
             output += f"{expected:<10} {actual}\n"
 
         output += f"\nWeights: {self.weights}"

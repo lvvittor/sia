@@ -6,8 +6,8 @@ from settings import settings
 
 class NonLinearPerceptron(Perceptron):
 
-	def __init__(self, inputs, expected_outputs, learning_rate, sigmoid_func, sigmoid_func_img, sigmoid_func_derivative):
-		super().__init__(inputs, expected_outputs, learning_rate)
+	def __init__(self, learning_rate, inputs, expected_outputs, sigmoid_func, sigmoid_func_img, sigmoid_func_derivative):
+		super().__init__(learning_rate, inputs, expected_outputs)
 
 		self.expected_range = (np.min(self.expected_outputs), np.max(self.expected_outputs))
 		self.sigmoid_func = sigmoid_func
@@ -20,8 +20,8 @@ class NonLinearPerceptron(Perceptron):
 		return self.sigmoid_func(value)
 
 
-	def get_scaled_outputs(self):
-		outputs = self.get_outputs()
+	def get_scaled_outputs(self, inputs):
+		outputs = self.get_outputs(inputs)
 		scaled_outputs = [feature_scaling(o, self.sigmoid_func_img, self.expected_range) for o in outputs]
 
 		return np.array(scaled_outputs)
@@ -30,13 +30,13 @@ class NonLinearPerceptron(Perceptron):
 	def get_error(self):
 		"""Mean Squared Error - MSE"""
 		p = self.inputs.shape[0]
-		output_errors = self.scaled_expected_outputs - self.get_outputs()
+		output_errors = self.scaled_expected_outputs - self.get_outputs(self.inputs)
 		return np.power(output_errors, 2).sum() / p
 
 
 	def compute_deltas(self) -> np.array:
     # Get the difference between the expected outputs and the actual outputs
-		output_errors = self.scaled_expected_outputs - self.get_outputs()
+		output_errors = self.scaled_expected_outputs - self.get_outputs(self.inputs)
 
 		# Compute the delta weights for each input
 		excitations = np.dot(self.inputs, self.weights)
@@ -45,6 +45,11 @@ class NonLinearPerceptron(Perceptron):
 		deltas = self.learning_rate * (output_errors * derivatives).reshape(-1, 1) * self.inputs
 
 		return deltas
+
+
+	def predict(self, X):
+		X = np.insert(X, 0, 1, axis=1)
+		return self.get_scaled_outputs(X) 
 
 
 	def is_converged(self):
@@ -56,7 +61,7 @@ class NonLinearPerceptron(Perceptron):
 	def __str__(self) -> str:
 		output = "Expected - Actual\n"
 
-		for expected, actual in zip(self.expected_outputs, self.get_scaled_outputs()):
+		for expected, actual in zip(self.expected_outputs, self.get_scaled_outputs(self.inputs)):
 			output += f"{expected:<10} {actual}\n"
 
 		output += f"\nWeights: {self.weights}"
