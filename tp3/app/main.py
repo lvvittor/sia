@@ -108,7 +108,7 @@ def exercise_3():
 
 	multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, 2, 1, expected_outputs)
 
-	multilayer_perceptron.train(10000)
+	multilayer_perceptron.train(settings.multilayer_perceptron.epochs)
 
 	# Test even or odd digits
 	inputs, expected_outputs = parse_digits(f"{settings.Config.data_path}/digits.txt")
@@ -127,7 +127,7 @@ def exercise_3():
 
 	multilayer_perceptron.train(100000)
 
-	inputs, _ = parse_digits(f"{settings.Config.data_path}/digits_with_noise.txt")
+	inputs, _ = parse_digits(f"{settings.Config.data_path}/{settings.multilayer_perceptron.predicting_digit}_with_noise.txt")
 
 	output = multilayer_perceptron.predict(np.array([inputs[0]]))
 	print(output)
