@@ -1,14 +1,14 @@
 {
-  "learning_rate": 0.1,
+  "learning_rate": 0.001,
   "verbose": false,
-  "exercise": 3,
+  "exercise": 2,
   "step_perceptron": {
     "convergence_threshold": 0,
     "epochs": 30
   },
   "linear_perceptron": {
     "convergence_threshold": 10,
-    "epochs": 1000
+    "epochs": 4000
   },
   "non_linear_perceptron": {
     "convergence_threshold": 0.0013,

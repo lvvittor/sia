@@ -24,6 +24,11 @@ class LinearPerceptron(Perceptron):
         p = self.inputs.shape[0]
         output_errors = self.expected_outputs - self.get_outputs(self.inputs)
         return np.power(output_errors, 2).sum() / p
+    
+
+    def predict(self, X):
+        X = np.insert(X, 0, 1, axis=1)
+        return self.get_outputs(X) 
 
 
     def is_converged(self):

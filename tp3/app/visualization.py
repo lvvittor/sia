@@ -77,9 +77,13 @@ def visualize_cross_validation():
 
 def visualize_errors():
     # Definir los arreglos de valores para las dos líneas
-    test_output = np.array([25.05310213, 7.23375041, 21.56969344, 17.90886506, 64.55373287, 1.13264102, 62.17524978])
-    test_expected_output = np.array([24.974,  7.871, 21.755, 18.543, 64.107,  0.32, 61.301])
-
+    # Non linear errors
+    # test_output = np.array([25.05310213, 7.23375041, 21.56969344, 17.90886506, 64.55373287, 1.13264102, 62.17524978])
+    # test_expected_output = np.array([24.974,  7.871, 21.755, 18.543, 64.107,  0.32, 61.301])
+    # test_output = np.array([41.83490368, 61.5956833,  -5.71967425, 49.49993098, 58.80001283, 46.91659683, 34.8413668 ])
+    test_output = np.array([47.1741055, 60.87985601, 35.47251946, 68.70965489, 49.21808371, 34.99918724, -1.11956693])
+    # test_expected_output = np.array([40.131, 72.512, 1.48,  51.0, 68.568, 49.0, 26.503])
+    test_expected_output = np.array([23.183, 61.301, 21.417, 72.512, 49.,    18.543,  4.653])
     # Configurar el gráfico
     fig, ax = plt.subplots()
 

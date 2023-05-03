@@ -6,8 +6,8 @@ from non_linear_perceptron import NonLinearPerceptron
 from multilayer_perceptron import MultilayerPerceptron
 from settings import settings
 from utils import logical_and, logical_xor, parse_csv, parse_digits, visualize_digit
-from cross_validation import train_non_linear_cross_validation, train_multilayer_cross_validation
-from visualization import visualize_digit_output
+from cross_validation import train_non_linear_cross_validation, train_multilayer_cross_validation, train_linear_cross_validation
+from visualization import visualize_digit_output, visualize_errors
 
 # Tested with eta = 0.1
 def exercise_1():
@@ -54,6 +54,8 @@ def exercise_1():
 # Tested with eta = 0.001
 def exercise_2():
 	inputs, expected_outputs = parse_csv(f"{settings.Config.data_path}/regression_data.csv")
+	train_linear_cross_validation(inputs, expected_outputs)
+	return
 
 	print(f"\nInputs: {inputs}\n")
 
@@ -142,6 +144,8 @@ def exercise_3():
 
 
 if __name__ == "__main__":
+	visualize_errors()
+	exit()
 	match settings.exercise:
 		case 1:
 			exercise_1()
