@@ -160,6 +160,10 @@ class MultilayerPerceptron():
     def get_error(self, O):
         """Mean Squared Error - MSE"""
         p = self.X.shape[0]
+        print("Y")
+        print(self.Y)
+        print("O")
+        print(O)
         output_errors = self.Y - O
         return np.power(output_errors, 2).sum() / p
     
