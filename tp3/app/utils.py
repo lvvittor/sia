@@ -101,7 +101,7 @@ def visualize_digit(digit: np.array):
 	plt.savefig(f"{settings.Config.output_path}/digit.png")
 
 
-def visualize_error(data, excercise):
+def visualize_error(data, exercise):
     # Create a figure and axis
     fig, ax = plt.subplots()
 
@@ -127,10 +127,10 @@ def visualize_error(data, excercise):
     ax.set_xlabel('Epochs')
     ax.set_ylabel('Error')
     which = "with" if settings.optimization.active else "without"
-    ax.title.set_text(f"Error vs Epochs {which} optimization")
+    ax.title.set_text(f"Error vs Epochs {which} Momentum Optimization")
 
     # Save the plot as a PNG image
-    plt.savefig(f"{settings.Config.output_path}/error_vs_epoch_ex{excercise}_{which}_opt.png")
+    plt.savefig(f"{settings.Config.output_path}/error_vs_epoch_ex{exercise}_{which}_opt.png")
 
 
 

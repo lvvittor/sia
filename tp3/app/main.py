@@ -98,7 +98,7 @@ def exercise_2():
 
 	# Print weights and outputs
 	print(non_linear_perceptron)
-	visualize_error(non_linear_perceptron.show_errors(), 2)
+	visualize_error(non_linear_perceptron.show_errors(), settings.exercise)
 
 # Tested with eta = 0.05
 def exercise_3():
@@ -136,6 +136,7 @@ def exercise_3():
 	print(f"\nPrediction is {np.argmax(output)}")
 
 	visualize_digit(inputs[0])
+	visualize_error(multilayer_perceptron.historical_error, settings.exercise)
 
 
 if __name__ == "__main__":

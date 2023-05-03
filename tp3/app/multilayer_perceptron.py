@@ -59,6 +59,8 @@ class MultilayerPerceptron():
         # Momentum
         self.previous_deltas = [np.zeros(self.weights[0].shape), np.zeros(self.weights[1].shape)]
 
+        self.historical_error = []
+
 
     def activation_func(self, V):
         """Sigmoid activation function (logistic function)"""
@@ -135,6 +137,8 @@ class MultilayerPerceptron():
         """
         for epoch in range(max_epochs):
             h1, V1, h2, O = self.feed_forward(self.X)
+
+            self.historical_error.append((epoch, self.get_error(O)))
 
             if self.is_converged(O):
                 break
