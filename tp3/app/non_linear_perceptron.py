@@ -6,8 +6,8 @@ from settings import settings
 
 class NonLinearPerceptron(Perceptron):
 
-	def __init__(self, inputs, expected_outputs, learning_rate, sigmoid_func, sigmoid_func_img, sigmoid_func_derivative):
-		super().__init__(inputs, expected_outputs, learning_rate)
+	def __init__(self, learning_rate, inputs, expected_outputs, sigmoid_func, sigmoid_func_img, sigmoid_func_derivative):
+		super().__init__(learning_rate, inputs, expected_outputs)
 
 		self.expected_range = (np.min(self.expected_outputs), np.max(self.expected_outputs))
 		self.sigmoid_func = sigmoid_func
@@ -48,7 +48,7 @@ class NonLinearPerceptron(Perceptron):
 
 
 	def is_converged(self):
-		expected_outputs_amplitude = self.expected_range[1] - self.expected_range[0]
+		expected_outputs_amplitude = np.max(self.scaled_expected_outputs) - np.min(self.scaled_expected_outputs)
 		percentage_threshold = settings.non_linear_perceptron.convergence_threshold / 100
 		return self.get_error() < percentage_threshold * expected_outputs_amplitude
 	

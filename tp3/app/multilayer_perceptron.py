@@ -111,6 +111,7 @@ class MultilayerPerceptron():
         h2, O  => shape(output_nodes, N)
         """
         # Update output layer weights
+        # TODO: FIXME: `self.Y` has shape (N, output_nodes) instead of (1, N). We might need to transpose it.
         output_errors = self.Y - O                                # (1, N) - (output_nodes, N)            = (output_nodes, N), substract each output from the output layer from the expected output
         dO = output_errors * self.activation_func_derivative(h2)  # (output_nodes, N) * (output_nodes, N) = (output_nodes, N), multiply element by element
         dW = self.learning_rate * dO.dot(V1.T)                    # (output_nodes, N) x (N, hidden_nodes + 1) = (output_nodes, hidden_nodes + 1)
@@ -152,6 +153,7 @@ class MultilayerPerceptron():
     
 
     def is_converged(self, O):
+        # TODO: FIXME: this amplitude should maybe be dependant on `self.Y` values
         expected_outputs_amplitude = 1 - 0 # amplitude of the expected output values (scaled to logistic function range)
         percentage_threshold = settings.multilayer_perceptron.convergence_threshold / 100
         return self.get_error(O) < percentage_threshold * expected_outputs_amplitude
@@ -160,6 +162,7 @@ class MultilayerPerceptron():
     def get_error(self, O):
         """Mean Squared Error - MSE"""
         p = self.X.shape[0]
+        # TODO: FIXME: `self.Y` has shape (N, output_nodes) instead of (1, N). We might need to transpose it.
         output_errors = self.Y - O
         return np.power(output_errors, 2).sum() / p
     

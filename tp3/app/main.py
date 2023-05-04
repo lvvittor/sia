@@ -98,7 +98,7 @@ def exercise_2():
 	# Print weights and outputs
 	print(non_linear_perceptron)
 
-# Tested with eta = 0.05
+# Tested with eta = 0.1
 def exercise_3():
 	# Test XOR
 	print("\n----- XOR -----\n")
@@ -108,7 +108,9 @@ def exercise_3():
 
 	multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, 2, 1, expected_outputs)
 
-	multilayer_perceptron.train(settings.multilayer_perceptron.epochs)
+	_, epochs, _ = multilayer_perceptron.train(settings.multilayer_perceptron.epochs)
+	print("\nStopped training at epoch: ", epochs)
+	print(multilayer_perceptron)
 
 	# Test even or odd digits
 	inputs, expected_outputs = parse_digits(f"{settings.Config.data_path}/digits.txt")
