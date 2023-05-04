@@ -1,0 +1,27 @@
+{
+  "learning_rate": 0.001,
+  "verbose": false,
+  "exercise": 2,
+  "step_perceptron": {
+    "convergence_threshold": 0,
+    "epochs": 30
+  },
+  "linear_perceptron": {
+    "convergence_threshold": 10,
+    "epochs": 1000
+  },
+  "non_linear_perceptron": {
+    "convergence_threshold": 0.049,
+    "epochs": 10000
+  },
+  "multilayer_perceptron": {
+    "convergence_threshold": 0.04,
+    "epochs": 10000,
+    "predicting_digit": 2
+  },
+  "optimization": {
+    "active": true,
+    "method": "momentum",
+    "momentum_rate": 0.9
+  }
+}
