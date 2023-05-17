@@ -11,26 +11,28 @@ def boxplot(variables_data, standardized=None):
 	plt.show()
 
 
-# FIXME: This function is not working properly
 def biplot(countries, variables_data, pca):
-	df = pd.DataFrame(data=variables_data, columns=[pca.components_[0], pca.components_[1]])
-	df['Etiqueta'] = countries
+	# PC1 and PC2 components of each country in the dataset
+	pc_coords = pca.fit_transform(variables_data) # shape (28, 2)
 
-	X_pca = pca.fit_transform(variables_data.T)
+	plt.figure(figsize=(12, 6))
 
-	# Crear el biplot utilizando seaborn
-	plt.figure(figsize=(8, 6))
-	plt.scatter(X_pca[:, 0], X_pca[:, 1], c='b', alpha=0.5)
+	# Plot dataset items with their PC1 and PC2 coordinates
+	plt.scatter(pc_coords[:, 0], pc_coords[:, 1], c='b', alpha=0.5)
 
+	# Add country name labels to each point in the plot
 	for i, label in enumerate(countries):
-		plt.annotate(label, (X_pca[i, 0], X_pca[i, 1]))
+		plt.annotate(label, (pc_coords[i, 0], pc_coords[i, 1]), fontsize=7, alpha=0.75)
 
-	# Mostrar ejes de referencia
-	for length, vector in zip(pca.explained_variance_, pca.components_):
-		v = vector * 3 * np.sqrt(length)
-		plt.arrow(0, 0, v[0], v[1], head_width=0.2, head_length=0.2, fc='r', ec='r')
+	# Show features as vectors, with their PC1 and PC2 coordinates
+	for i, feature in enumerate(variables_data.columns.values):
+		plt.arrow(0, 0, pca.components_[0, i], pca.components_[1, i], head_width=0.03, head_length=0.03, color="red", alpha=0.6)
+		# * 1.3 to make the text appear a bit further from the vector
+		plt.text(pca.components_[0, i] * 1.3, pca.components_[1, i] * 1.3, feature, color="red", fontsize=9)
 
-	# Mostrar el biplot
+	plt.xlabel("PC1")
+	plt.ylabel("PC2")
+
 	plt.grid()
 	plt.show()
 	

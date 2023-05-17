@@ -22,7 +22,6 @@ def pca_with_sklearn(countries, variables_data, n_components):
 
 	boxplot(standardized_data, standardized=True)
 
-	# FIXME: This function is not working properly
 	biplot(countries, standardized_data, pca)
         
 
