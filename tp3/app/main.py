@@ -100,7 +100,6 @@ def exercise_2():
 
 # Tested with eta = 0.1
 def exercise_3():
-	# Test XOR
 	print("\n----- XOR -----\n")
 
 	inputs = np.array([[-1, 1], [1, -1], [-1, -1], [1, 1]])
@@ -112,22 +111,27 @@ def exercise_3():
 	print("\nStopped training at epoch: ", epochs)
 	print(multilayer_perceptron)
 
-	# Test even or odd digits
-	inputs, expected_outputs = parse_digits(f"{settings.Config.data_path}/digits.txt")
 
 	print("\n----- EVEN OR ODD DIGITS -----\n")
+	inputs, expected_outputs = parse_digits(f"{settings.Config.data_path}/digits.txt")
 
 	is_digit_even = np.vectorize(lambda digit: 1 if digit % 2 == 0 else -1)(expected_outputs)
 	multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, 10, 1, is_digit_even)
 
-	multilayer_perceptron.train(settings.multilayer_perceptron.epochs)
+	_, epochs, _ = multilayer_perceptron.train(settings.multilayer_perceptron.epochs)
+	print("\nStopped training at epoch: ", epochs)
+	print(multilayer_perceptron)
 
 	print("\n----- GUESS THE DIGITS -----\n")
 
+	# Same input as the previous experiment
 	# expected_output for 0 is [1 0 0 .... 0], for 1 is [0 1 0 .... 0], for 9 is [0 0 .... 0 1]
 	multilayer_perceptron = MultilayerPerceptron(settings.learning_rate, inputs, 10, 10, np.identity(10))
 
-	multilayer_perceptron.train(settings.multilayer_perceptron.epochs)
+	_, epochs, _ = multilayer_perceptron.train(settings.multilayer_perceptron.epochs)
+
+	print("\nStopped training at epoch: ", epochs)
+	print(multilayer_perceptron)
 
 	inputs, _ = parse_digits(f"{settings.Config.data_path}/{settings.multilayer_perceptron.predicting_digit}_with_noise.txt")
 
