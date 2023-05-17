@@ -7,7 +7,7 @@ from settings import settings
 class NonLinearPerceptron(Perceptron):
 
 	def __init__(self, inputs, expected_outputs, learning_rate, sigmoid_func, sigmoid_func_img, sigmoid_func_derivative):
-		super().__init__(inputs, expected_outputs, learning_rate)
+		super().__init__(learning_rate, inputs, expected_outputs)
 
 		self.expected_range = (np.min(self.expected_outputs), np.max(self.expected_outputs))
 		self.sigmoid_func = sigmoid_func

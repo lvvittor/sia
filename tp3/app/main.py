@@ -5,7 +5,7 @@ from linear_perceptron import LinearPerceptron
 from non_linear_perceptron import NonLinearPerceptron
 from multilayer_perceptron import MultilayerPerceptron
 from settings import settings
-from utils import logical_and, logical_xor, parse_csv, parse_digits, visualize_digit, visualize_error, write_errors, visualize_errors_eta
+from utils import logical_and, logical_xor, parse_csv, parse_digits, visualize_digit, visualize_error, write_errors, visualize_errors_momentum
 
 # Tested with eta = 0.1
 def exercise_1():
@@ -60,6 +60,8 @@ def exercise_2():
 
 	epochs, converged = linear_perceptron.train(settings.linear_perceptron.epochs)
 
+	visualize_error(linear_perceptron.show_errors(), settings.exercise)
+
 	print("\n----- LINEAR PERCEPTRON -----\n")
 
 	if not converged:
@@ -79,15 +81,16 @@ def exercise_2():
 	)
 
 	non_linear_perceptron = NonLinearPerceptron(
-		settings.learning_rate,
 		inputs,
 		expected_outputs,
+		settings.learning_rate,
 		sigmoid_func=sigmoid_func,
 		sigmoid_func_img=sigmoid_func_img,
 		sigmoid_func_derivative=sigmoid_func_derivative,
 	)
 
 	epochs, converged = non_linear_perceptron.train(settings.non_linear_perceptron.epochs)
+	#write_errors(non_linear_perceptron.historical_error)
 
 	print("\n----- NON-LINEAR PERCEPTRON -----\n")
 
@@ -99,7 +102,7 @@ def exercise_2():
 	# Print weights and outputs
 	print(non_linear_perceptron)
 	write_errors(non_linear_perceptron.show_errors())
-	visualize_error(non_linear_perceptron.show_errors(), settings.exercise)
+	visualize_errors_momentum()
 
 # Tested with eta = 0.05
 def exercise_3():

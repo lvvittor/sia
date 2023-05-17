@@ -95,16 +95,27 @@ def feature_scaling(
 
 
 def visualize_digit(digit: np.array):
-	sns.heatmap(digit.reshape(7, 5), cmap='Greys', vmin=0, vmax=1)
 
-	# Mostrar el heatmap
-	plt.show()
-	plt.savefig(f"{settings.Config.output_path}/digit.png")
+    input_data = np.loadtxt(f'{settings.Config.data_path}/digits.txt')
+
+    # Loop over each digit and generate the corresponding heatmap
+    for i in range(10):
+        digit = input_data[i*7:(i+1)*7]
+        sns.heatmap(digit.reshape(7, 5), cmap='Greys', vmin=0, vmax=1)
+        plt.savefig(f"{settings.Config.output_path}/digit_{i}.png")
+        plt.clf()
+
+	# sns.heatmap(digit.reshape(7, 5), cmap='Greys', vmin=0, vmax=1)
+
+	# # Mostrar el heatmap
+	# plt.show()
+	# plt.savefig(f"{settings.Config.output_path}/digit.png")
 
 
 def visualize_error(data, exercise):
     # Create a figure and axis
     fig, ax = plt.subplots()
+    print("NO CONVERGEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
 
     # Set axis limits
     ax.set_xlim(0, len(data))
@@ -113,16 +124,19 @@ def visualize_error(data, exercise):
     # Create empty lists to store x and y values
     x_values = []
     y_values = []
-
+    counter = 0
     # Iterate over data and plot each point with a red dot
     for point in data:
         x_values.append(point[0])
         y_values.append(point[1])
-        ax.plot(point[0], point[1], 'ro')
+
+        if counter % 100 == 0:
+            ax.plot(point[0], point[1], 'ro')
 
         # Plot a line connecting the points
         if len(x_values) > 1:
             ax.plot(x_values, y_values, 'b--')
+        counter += 1
 
     # Set common labels
     ax.set_xlabel('Epochs')
@@ -137,12 +151,13 @@ def write_errors(historical_error):
     # save historical_error in txt file
     print("Saving historical error...")
 
-    with open(f"{settings.Config.output_path}/historical_error_{settings.learning_rate}.txt", 'w') as f:
-        f.write(f"{settings.learning_rate}\n")
+    with_out = "with" if settings.optimization.active else "without"
+    with open(f"{settings.Config.output_path}/historical_error_{with_out}_opt.txt", 'w') as f:
+        f.write(f"{with_out}\n")
         for item in historical_error:
             f.write(f"{item[0]} {item[1]}\n")
 
-def visualize_errors_eta():
+def visualize_errors_momentum():
     # create a figure and axis
     fig, ax = plt.subplots()
 
@@ -152,7 +167,7 @@ def visualize_errors_eta():
         if file.startswith("historical_error"):
             with open(f"{settings.Config.output_path}/{file}", 'r') as f:
                 # the first line is the learning rate
-                eta = float(f.readline())
+                with_out = str(f.readline())
                 # the rest of the lines are the error vs epochs
                 data = f.readlines()
                 # we want to plot the error vs epochs for each of these files in the same plot
@@ -161,21 +176,21 @@ def visualize_errors_eta():
                 for line in data:
                     x_values.append(int(line.split()[0]))
                     y_values.append(float(line.split()[1]))
-                ax.plot(x_values, y_values, label=f"eta = {eta}")
+                ax.plot(x_values, y_values, label=f"{with_out} Momentum")
                 
 
                 
     # set common labels
     ax.set_xlabel('Epochs')
     ax.set_ylabel('Error')
-    ax.title.set_text(f"Error vs Epochs for different learning rates")
+    ax.title.set_text(f"Error vs Epochs with and without Momentum")
 
     # show legend
     ax.legend()
 
 
     # save
-    plt.savefig(f"{settings.Config.output_path}/error_vs_epoch_eta.png")
+    plt.savefig(f"{settings.Config.output_path}/error_vs_epoch_momentum.png")
 
     return 0
 
