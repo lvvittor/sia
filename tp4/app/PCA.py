@@ -1,7 +1,5 @@
-import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
-from settings import settings
 
 def get_dataset_principal_components(variables_data, n_components):
     """

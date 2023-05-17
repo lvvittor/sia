@@ -1,6 +1,4 @@
-import pandas as pd
 import seaborn as sns
-import numpy as np
 import matplotlib.pyplot as plt
 
 def boxplot(variables_data, standardized=None):

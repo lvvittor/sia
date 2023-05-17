@@ -17,8 +17,8 @@ def pca_with_sklearn(countries, variables_data, n_components):
 	# Add column names and index
 	standardized_data = pd.DataFrame(data=standardized_data, columns=variables_data.columns.values)
     
-	print("PC1: ", pca.components_[0])
-	print("PC2: ", pca.components_[1])
+	feature_charges = pd.DataFrame(pca.components_.T, columns=['PC1', 'PC2'], index=variables_data.columns.values)
+	print(feature_charges)
 
 	boxplot(standardized_data, standardized=True)
 
