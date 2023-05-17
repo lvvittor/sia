@@ -14,6 +14,7 @@ seaborn = "^0.12.2"
 jinja2 = "^3.1.2"
 dataframe-image = "^0.1.5"
 func-timeout = "^4.3.5"
+scikit-learn = "^1.2.2"
 
 
 [build-system]
