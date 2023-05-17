@@ -1,11 +1,14 @@
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+from settings import settings
+
 def boxplot(variables_data, standardized=None):
 	plt.figure(figsize=(10, 6))
 	sns.boxplot(data=variables_data, palette='pastel')
 	standardized = "Non " if not standardized else ""
 	plt.title(f"{standardized}Standardized features")
+	plt.savefig(settings.Config.output_path+"/boxplot.png")
 	plt.show()
 
 
@@ -32,5 +35,20 @@ def biplot(countries, variables_data, pca):
 	plt.ylabel("PC2")
 
 	plt.grid()
+	plt.savefig(settings.Config.output_path+"/biplot.png")
 	plt.show()
 	
+
+def component_barplot(countries, variables_data, component):
+	values = variables_data.apply(lambda row: sum(row * component), axis=1)
+	plt.figure(figsize=(12, 6))
+
+	sns.set(style="whitegrid")
+	ax = sns.barplot(x=countries, y=values)
+	ax.set(xlabel='', ylabel='PCA1', title='')
+
+	plt.xticks(rotation=90)
+	plt.tight_layout()
+
+	plt.savefig(settings.Config.output_path+"/pc1_barplot.png")
+	plt.show()

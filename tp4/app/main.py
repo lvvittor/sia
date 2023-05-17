@@ -2,7 +2,7 @@ import pandas as pd
 
 from settings import settings
 from PCA import get_dataset_principal_components
-from visualization import boxplot, biplot
+from visualization import boxplot, biplot, component_barplot
 
 def main():
 	countries, variables_data = parse_dataset(f"{settings.Config.data_path}/europe.csv")
@@ -23,6 +23,8 @@ def pca_with_sklearn(countries, variables_data, n_components):
 	boxplot(standardized_data, standardized=True)
 
 	biplot(countries, standardized_data, pca)
+
+	component_barplot(countries, standardized_data, pca.components_[0])
         
 
 def parse_dataset(dataset: str):
