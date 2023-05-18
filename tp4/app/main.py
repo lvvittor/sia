@@ -22,6 +22,7 @@ def pca_with_sklearn(countries, variables_data, n_components):
 
 	boxplot(standardized_data, standardized=True)
 
+	# biplot(countries, standardized_data, pca, scaled=True)
 	biplot(countries, standardized_data, pca)
 
 	component_barplot(countries, standardized_data, pca.components_[0])
