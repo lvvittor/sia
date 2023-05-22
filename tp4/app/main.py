@@ -3,11 +3,14 @@ import pandas as pd
 from settings import settings
 from PCA import get_dataset_principal_components
 from visualization import boxplot, biplot, component_barplot
+from kohonen import Kohonen
 
 def main():
 	countries, variables_data = parse_dataset(f"{settings.Config.data_path}/europe.csv")
-	
-	pca_with_sklearn(countries, variables_data, 2)
+	# print(variables_data.to_numpy())
+	# pca_with_sklearn(countries, variables_data, 2)
+	kohonen = Kohonen(10, variables_data)
+	kohonen.train()
 
 
 def pca_with_sklearn(countries, variables_data, n_components):
