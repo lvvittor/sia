@@ -14,7 +14,7 @@ class Kohonen():
         self.inputs = standardized_data # Inputs standarized as a dataframe 
         self.weights = np.random.rand(self.k, self.k, self.n) # Array of k*k with each element n dimensions, all randoms (could use random examples from inputs).
         self.R = 1 # R is constant 1 but it should probably be a decreasing number.
-        self.eta = 0.01
+        self.eta = 1.0
 
     def train(self, epochs=100):
         input_np = self.inputs.to_numpy()
