@@ -7,9 +7,9 @@ from kohonen import Kohonen
 
 def main():
 	countries, variables_data = parse_dataset(f"{settings.Config.data_path}/europe.csv")
-	# print(variables_data.to_numpy())
+
 	# pca_with_sklearn(countries, variables_data, 2)
-	kohonen = Kohonen(10, variables_data)
+	kohonen = Kohonen(4, variables_data.to_numpy())
 	kohonen.train()
 
 

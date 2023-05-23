@@ -6,9 +6,9 @@ from settings import settings
 def boxplot(variables_data, standardized=None):
 	plt.figure(figsize=(10, 6))
 	sns.boxplot(data=variables_data, palette='pastel')
-	standardized = "Non " if not standardized else ""
-	plt.title(f"{standardized}Standardized features")
-	plt.savefig(settings.Config.output_path+"/boxplot.png")
+	standardized = "Non" if not standardized else ""
+	plt.title(f"{standardized} Standardized features")
+	plt.savefig(f"{settings.Config.output_path}/{standardized}StandardizedBoxplot.png")
 	plt.show()
 
 
@@ -52,7 +52,7 @@ def component_barplot(countries, variables_data, component):
 
 	sns.set(style="whitegrid")
 	ax = sns.barplot(x=countries, y=values)
-	ax.set(xlabel='', ylabel='PCA1', title='')
+	ax.set(xlabel='', ylabel='PC1', title='')
 
 	plt.xticks(rotation=90)
 	plt.tight_layout()

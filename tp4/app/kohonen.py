@@ -1,61 +1,66 @@
 import numpy as np
-import pandas as pd
 
 from sklearn.preprocessing import StandardScaler
 
 class Kohonen():
     def __init__(self, k, inputs):
-        self.k = k
-        self.p = inputs.shape[0]
-        self.n = inputs.shape[1]
+        self.k = k                  # k^2 = amount of neurones (k x k map)
+        self.p = inputs.shape[0]    # amount of inputs
+        self.n = inputs.shape[1]    # dimensions of each input
+
         scaler = StandardScaler()
-        standardized_data = scaler.fit_transform(inputs)
-        standardized_data = pd.DataFrame(data=standardized_data, columns=inputs.columns.values) 
-        self.inputs = standardized_data # Inputs standarized as a dataframe 
-        self.weights = np.random.rand(self.k, self.k, self.n) # Array of k*k with each element n dimensions, all randoms (could use random examples from inputs).
-        self.R = 1 # R is constant 1 but it should probably be a decreasing number.
-        self.eta = 1.0
+        self.inputs = scaler.fit_transform(inputs) # standardize inputs (mean=0, std=1)
 
-    def train(self, epochs=100):
-        input_np = self.inputs.to_numpy()
+        # k^2 weights, each with n dimensions (same as inputs).
+        # Initialized with uniform distribution U(0,1). Could also initialize with samples from the inputs.
+        self.weights = np.random.rand(self.k**2, self.n)
 
-        for epoch in range(epochs):
-            # Random Xp from inputs
-            xp = input_np[np.random.randint(self.p)]
+        self.R = 1.0          # initial radius of the neighbourhood
+        self.eta = 1.0        # initial learning rate
 
-            # Obtain closest w to xp
-            dist = np.linalg.norm(self.weights-xp, axis=2) # dist is a matrix k*k where each element is the distance between the neurone and xp
-            min_dist_index = np.unravel_index(np.argmin(dist), dist.shape) # matrix index of the minimum distance neurone
-            min_dist_row, min_dist_col = min_dist_index
 
-            # Update weights with Kohonen rule
-            # Obtain all indexes that are inside R radius from the minimum neurone
-            N_k = self.get_neighbours(min_dist_row, min_dist_col)
+    def train(self, max_epochs=100):
+        for epoch in range(1, max_epochs):
+            # Get a random input
+            x = self.inputs[np.random.randint(self.p)]
 
-            # For each neurone inside the radius update the weights
-            for coords in N_k:
-                row = coords[0]
-                col = coords[1]
-                # Using eta/(epoch+1) as a way to decrease the learning rate.
-                self.weights[row][col] += (self.eta/(epoch+1))*(xp - self.weights[row][col])
+            # Get the index of the minimum distance neurone (winner neurone)
+            distances = np.linalg.norm(self.weights - x, axis=1) # euclidean distance between `x` and each neurone's weights
+            winner_neuron_index = np.argmin(distances)
+
+            # Get the indexes of all the neighbours of the winner neurone (inside the radius `R`)
+            winner_neighbours = self.get_neighbours(winner_neuron_index, self.R) # includes the winner neurone itself
+
+            # Update the weights of the winner neurone and its neighbours
+            for neuron in winner_neighbours:
+                # The learning rate decreases with the epoch
+                self.weights[neuron] += (self.eta/epoch) * (x - self.weights[neuron])
 
         return self.weights
 
-    def get_neighbours(self, row, col):
-        # There is probably a better way of doing this instead of using 2 fors
+
+    def get_neighbours(self, neuron_index, radius):
+        """
+        Returns the indexes of all the neighbours of the neuron with index `neuron_index`.
+        The neuron with index `neuron_index` is also included.
+        """
+
         neighbours = []
-        # Instead of iterating through all the matrix, iterate only in the square containing the radius R that will contain all elements inside the radius R
-        for i in range(np.floor(-self.R).astype(int), np.ceil(self.R+1).astype(int)):
-            for j in range(np.floor(-self.R).astype(int), np.ceil(self.R+1).astype(int)):
 
-                # Ignore elements outside of the matrix and ignore i=0, j=0 because it is the current neurone.
-                if (i == 0 and j == 0) or row + i < 0 or row + i >= self.weights.shape[0] or col + j < 0 or col + j >= self.weights.shape[1]:
-                    continue
+        # Think of the neurons' weights as a k x k matrix
+        row_i, col_i = divmod(neuron_index, self.k)
 
-                # Calculate distance using the indexes using that adjacents elements in the matrix have distance 1
-                distance = np.linalg.norm(np.array([row + i, col + j]) - np.array([row, col]))
+        # Optimize the search by only looking at the neighbours inside a square of side length 2R+1
+        min_row = max(0, row_i - int(radius))
+        max_row = min(self.k - 1, row_i + int(radius))
+        min_col = max(0, col_i - int(radius))
+        max_col = min(self.k - 1, col_i + int(radius))
 
-                # If it is inside the radius, it is a neighbour.
-                if distance <= self.R:
-                    neighbours.append((row + i, col + j))
+        for row in range(min_row, max_row + 1):
+            for col in range(min_col, max_col + 1):
+                distance = np.linalg.norm([row - row_i, col - col_i])  # euclidean distance between (row, col) and (row_i, col_i)
+                if distance <= radius:
+                    index = row * self.k + col
+                    neighbours.append(index)
+
         return neighbours
