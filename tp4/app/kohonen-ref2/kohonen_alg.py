@@ -30,46 +30,48 @@ class Kohonen:
         self.X = X
         self.country_name_train = country_name_train
         self.categories = categories
+
+
+    def train_kohonen(self):
+        X_standard = self.standard(self.X)
+        # self.barplot_x(X_standard)
+        neuron_activations = np.zeros((self.k**2, len(X_standard)))
+        neuron_country = np.zeros(len(X_standard))
+        for i in range(self.epochs):
+            for j in range(len(X_standard)):
+                # Seleccionar un registro de entrada X^p
+                x = X_standard[j]
+                # Encontrar la neurona ganadora
+                winner_index = self.winner(x)
+                distances = self.activation(winner_index, i)
+                # Actualizar los pesos segun kohonen
+                self.regla_de_kohonen(distances, x)
+                neuron_activations[winner_index][j] = 1
+                neuron_country[j] = winner_index
+            # Ajuste de radio:
+            ajuste = self.radio[0] * (1 - i/self.epochs)
+            self.radio[1] = 1 if ajuste < 1 else ajuste
+            # Ajuste de ETA:
+            self.learning_rate[1] = self.learning_rate[0] * (1 - i/self.epochs)
+            # Segunda opcion de ajuste de ETA mas abruta (para ppt probar la dif entre las dos)
+            # decay_rate es un hiperparametro que recibiriamos.
+            # self.learning_rate[1] = self.learning_rate[0] * np.exp(-decay_rate*i)
+
+        self.neurons = self.neurons_reshape.reshape(self.k,self.k)
+        return neuron_country
     
-    def predict(self, input_data):
-        activations = np.zeros((self.k, self.k))
-        for x in input_data:
-            winner_index = self.winner(x)
-            activations[winner_index] += 1
-        return activations   
-    
+
     def standard(self, X):
         X_standard = []
         for i in range(len(X)):
             X_standard.append(self.standard_i(X[i]))    
         return X_standard
     
+    
     def standard_i(self,x):
         mean =[np.mean(x) for _ in range(len(x))]
         std = [np.std(x) for _ in range(len(x))]
         return (x - np.array(mean))/np.array(std) 
-
-    def get_neighbours_weight_distance(self, winner_pos, similitud):
-        distances=[]
-        for i in range(self.k):
-            for j in range(self.k):
-                distance = self.get_neighbours_distance(np.array(winner_pos), [i,j])
-                # Veo si son vecinos
-                if(distance <= self.radio[1]):
-                    n_idx = np.ravel_multi_index((i, j), self.neurons.shape)
-                    w_idx = np.ravel_multi_index((winner_pos[0], winner_pos[1]), self.neurons.shape)
-                    # distances.append(distance)
-                    if(similitud == 'euclidea'):
-                        distances.append(np.linalg.norm(self.weights[w_idx] - self.weights[n_idx]))
-                    else:
-                        distances.append(np.exp(-((np.linalg.norm(self.weights[w_idx] - self.weights[n_idx]))**2)))
-        return np.mean(distances)
-
-    
-    def get_neighbours_distance(self, winner_pos, neurons):
-        #winner_pos = [x,y]
-        #neurons = [a,b]
-        return np.linalg.norm(winner_pos - neurons)
 
     
     def regla_de_kohonen(self, distances, x):
@@ -79,11 +81,6 @@ class Kohonen:
                 for p in range(self.n):
                     self.weights[j][p] += self.learning_rate[1] * (x[p]-self.weights[j][p])  
 
-    def regla_de_kohonen_per_category(self, distances, x):
-        for j in range(self.k**2):
-            # Si soy vecino actulizo mis pesos
-            if(j in distances):
-                self.weights[j] += self.learning_rate[1] * (x-self.weights[j])  
 
     def euclidea(self, x):
         w=[]
@@ -92,6 +89,7 @@ class Kohonen:
         wk = min(w)
         return w.index(wk)
     
+
     def exponencial(self, x):
         w=[]
         for j in range(self.k**2): #recorriendo filas
@@ -99,12 +97,14 @@ class Kohonen:
         wk = min(w)
         return w.index(wk)
     
+
     def winner(self, x):
         if(self.similitud == "euclidea"):
             return self.euclidea(x)
         else:
             return self.exponencial(x)
     
+
     def activation(self,j, epoch):
         if(epoch == self.epochs - 1):
             self.neurons_reshape[j]+=1
@@ -119,8 +119,16 @@ class Kohonen:
                 # Veo si son vecinos
                 if(distance <= self.radio[1]):
                     distances.append(np.ravel_multi_index((i, j), self.neurons.shape))
+
         return distances
     
+
+    def get_neighbours_distance(self, winner_pos, neurons):
+        #winner_pos = [x,y]
+        #neurons = [a,b]
+        return np.linalg.norm(winner_pos - neurons)
+    
+
     def plot_heatmap(self, similitud, neurons_countries):
         fig, ax = plt.subplots(1, 1)
         cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "orange", "red"])
@@ -139,6 +147,7 @@ class Kohonen:
         ax.yaxis.set_major_locator(plt.NullLocator())  # remove y axis ticks
         ax.xaxis.set_major_locator(plt.NullLocator())  # remove x axis ticks
         plt.show()
+
 
     def plot_category(self, categoryIdx, neurons_countries):
         train_category = [fila[categoryIdx] for fila in self.X]
@@ -161,6 +170,7 @@ class Kohonen:
         ax.xaxis.set_major_locator(plt.NullLocator())  # remove x axis ticks
         plt.show()
 
+
     def plot_u_matrix(self, similitud):
         fig, ax = plt.subplots(1, 1)
         distances = np.zeros(shape=(self.k, self.k))
@@ -176,6 +186,24 @@ class Kohonen:
         ax.yaxis.set_major_locator(plt.NullLocator())  # remove y axis ticks
         ax.xaxis.set_major_locator(plt.NullLocator())  # remove x axis ticks
         plt.show()
+
+
+    def get_neighbours_weight_distance(self, winner_pos, similitud):
+        distances=[]
+        for i in range(self.k):
+            for j in range(self.k):
+                distance = self.get_neighbours_distance(np.array(winner_pos), [i,j])
+                # Veo si son vecinos
+                if(distance <= self.radio[1]):
+                    n_idx = np.ravel_multi_index((i, j), self.neurons.shape)
+                    w_idx = np.ravel_multi_index((winner_pos[0], winner_pos[1]), self.neurons.shape)
+                    # distances.append(distance)
+                    if(similitud == 'euclidea'):
+                        distances.append(np.linalg.norm(self.weights[w_idx] - self.weights[n_idx]))
+                    else:
+                        distances.append(np.exp(-((np.linalg.norm(self.weights[w_idx] - self.weights[n_idx]))**2)))
+        return np.mean(distances)
+    
 
     def barplot_x(self,X_standard):
         X = self.X
@@ -216,58 +244,3 @@ class Kohonen:
         plt.show()
 
         return None
-
-    def train_kohonen(self):
-        X_standard = self.standard(self.X)
-        # self.barplot_x(X_standard)
-        neuron_activations = np.zeros((self.k**2, len(X_standard)))
-        neuron_country = np.zeros(len(X_standard))
-        for i in range(self.epochs):
-            print(i)
-            for j in range(len(X_standard)):
-                # Seleccionar un registro de entrada X^p
-                x = X_standard[j]
-                # Encontrar la neurona ganadora
-                winner_index = self.winner(x)
-                distances = self.activation(winner_index, i)
-                # Actualizar los pesos segun kohonen
-                self.regla_de_kohonen(distances, x)
-                neuron_activations[winner_index][j] = 1
-                neuron_country[j] = winner_index
-            # Ajuste de radio:
-            ajuste = self.radio[0] * (1 - i/self.epochs)
-            self.radio[1] = 1 if ajuste < 1 else ajuste
-            # Ajuste de ETA:
-            self.learning_rate[1] = self.learning_rate[0] * (1 - i/self.epochs)
-            # Segunda opcion de ajuste de ETA mas abruta (para ppt probar la dif entre las dos)
-            # decay_rate es un hiperparametro que recibiriamos.
-            # self.learning_rate[1] = self.learning_rate[0] * np.exp(-decay_rate*i)
-
-        self.neurons = self.neurons_reshape.reshape(self.k,self.k)
-        return neuron_country
-
-    def train_kohonen_per_category(self):
-        X_standard = self.standard_i(self.X)
-        neuron_activations = np.zeros((self.k**2, len(X_standard)))
-        neuron_country = np.zeros(len(X_standard))
-        for i in range(self.epochs):
-            for j in range(len(X_standard)):
-                # Seleccionar un registro de entrada X^p
-                x = X_standard[j]
-                # Encontrar la neurona ganadora
-                winner_index = self.winner(x)
-                distances = self.activation(winner_index, i)
-                # Actualizar los pesos segun kohonen
-                self.regla_de_kohonen_per_category(distances, x)
-                neuron_activations[winner_index][j] = 1
-
-                print(f"Registro {j+1} asignado a la neurona {winner_index}")
-                neuron_country[j] = winner_index
-            # Ajuste de radio:
-            ajuste = self.radio[0] * (1 - i/self.epochs)
-            self.radio[1] = 1 if ajuste < 1 else ajuste
-            # Ajuste de ETA:
-            self.learning_rate[1] = self.learning_rate[0] * (1 - i/self.epochs)
-
-        self.neurons = self.neurons_reshape.reshape(self.k,self.k)
-        return neuron_country
