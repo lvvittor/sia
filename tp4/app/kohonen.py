@@ -11,12 +11,16 @@ class Kohonen():
         scaler = StandardScaler()
         self.inputs = scaler.fit_transform(inputs) # standardize inputs (mean=0, std=1)
 
-        # k^2 weights, each with n dimensions (same as inputs).
-        # Initialized with uniform distribution U(0,1). Could also initialize with samples from the inputs.
-        self.weights = np.random.rand(self.k**2, self.n)
+        # Initialize weights of each neurone with uniform distribution U(0,1).
+        # self.weights = np.random.rand(self.k**2, self.n)
+
+        # Initialize weights of each neurone with random samples from the inputs.
+        self.weights = np.zeros((self.k**2, self.n))
+        for i in range(self.k**2):
+            self.weights[i] += self.inputs[np.random.randint(self.p)]
 
         self.R = 1.0          # initial radius of the neighbourhood
-        self.eta = 1.0        # initial learning rate
+        self.eta = 0.5        # initial learning rate
 
 
     def train(self, max_epochs=100):
@@ -64,3 +68,35 @@ class Kohonen():
                     neighbours.append(index)
 
         return neighbours
+    
+
+    def map_inputs(self, inputs):
+        """
+        Map each input to its closest neurone, and return the indexes of the neurones for each input.
+        """
+        # Reshape the inputs and weights to have dimensions (p, 1, n)
+        inputs = inputs[:, np.newaxis, :]
+        weights = self.weights[np.newaxis, :, :]
+
+        # Compute the euclidean distance between each input and each neurone's weights
+        distances = np.linalg.norm(inputs - weights, axis=2)
+
+        # Return the indices of the weights that are closest to each input.
+        return np.argmin(distances, axis=1)
+    
+
+    def get_heatmap(self, inputs):
+        """
+        Get the heatmap of the Kohonen map (i.e. how many inputs are mapped to each neurone).
+        """
+        winner_neurons = self.map_inputs(inputs)
+
+        # Count the occurrences of each neuron index
+        counts = np.bincount(winner_neurons)
+
+        # Create the new array with counts
+        occurrences = np.zeros(self.weights.shape[0])
+        occurrences[:len(counts)] = counts # fill the array with the counts, and leave the rest as 0
+
+        # Reshape the array to have dimensions (k, k)
+        return occurrences.reshape(self.k, self.k)

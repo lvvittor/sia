@@ -4,13 +4,29 @@ from settings import settings
 from PCA import get_dataset_principal_components
 from visualization import boxplot, biplot, component_barplot
 from kohonen import Kohonen
+from som import SOM
 
 def main():
+	# Parse dataset
 	countries, variables_data = parse_dataset(f"{settings.Config.data_path}/europe.csv")
 
+	# PCA with sklearn
 	# pca_with_sklearn(countries, variables_data, 2)
-	kohonen = Kohonen(4, variables_data.to_numpy())
-	kohonen.train()
+
+
+	# Kohonen
+	variables = variables_data.to_numpy()
+
+	kohonen = Kohonen(4, variables)
+	kohonen.train(10000)
+
+	winner_neurons = kohonen.map_inputs(variables) # get the winner neuron for each input
+	heatmap = kohonen.get_heatmap(variables)	   # get amount of inputs mapped to each neuron
+
+	# print("\n\n---WINNER NEURONS---")
+	# print(winner_neurons)
+	print("---HEATMAP---")
+	print(heatmap)
 
 
 def pca_with_sklearn(countries, variables_data, n_components):
