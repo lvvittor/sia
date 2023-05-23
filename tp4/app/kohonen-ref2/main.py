@@ -29,6 +29,7 @@ def main():
     # Matriz U
     model.plot_u_matrix(similitud)
 
+
 def import_data(file):
     csv_file = open(file, 'r')
     csv_reader = csv.reader(csv_file, delimiter=",")

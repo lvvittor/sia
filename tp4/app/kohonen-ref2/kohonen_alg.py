@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 import matplotlib
 
 class Kohonen:
@@ -12,8 +11,10 @@ class Kohonen:
         self.k = k
         self.neurons = np.zeros((k,k))
         self.neurons_reshape = self.neurons.reshape(k**2)
+
         self.weights = []
-        # Input Related Weight
+
+        # Initialize weights with samples from X (inputs)
         for _ in range(k**2):
             index = np.random.randint(0, p-1)
             if(n==1):
@@ -21,8 +22,7 @@ class Kohonen:
             else:
                 x = self.standard_i(X[index])
             self.weights.append(x) 
-        # Uniform Distributed Weight
-        # self.weights = np.random.rand(k**2,n)
+
         self.radio = [radio,radio]
         self.learning_rate = [learning_rate,learning_rate]
         self.similitud = similitud
@@ -34,9 +34,9 @@ class Kohonen:
 
     def train_kohonen(self):
         X_standard = self.standard(self.X)
-        # self.barplot_x(X_standard)
         neuron_activations = np.zeros((self.k**2, len(X_standard)))
         neuron_country = np.zeros(len(X_standard))
+
         for i in range(self.epochs):
             for j in range(len(X_standard)):
                 # Seleccionar un registro de entrada X^p
@@ -48,14 +48,13 @@ class Kohonen:
                 self.regla_de_kohonen(distances, x)
                 neuron_activations[winner_index][j] = 1
                 neuron_country[j] = winner_index
+
             # Ajuste de radio:
             ajuste = self.radio[0] * (1 - i/self.epochs)
             self.radio[1] = 1 if ajuste < 1 else ajuste
+
             # Ajuste de ETA:
             self.learning_rate[1] = self.learning_rate[0] * (1 - i/self.epochs)
-            # Segunda opcion de ajuste de ETA mas abruta (para ppt probar la dif entre las dos)
-            # decay_rate es un hiperparametro que recibiriamos.
-            # self.learning_rate[1] = self.learning_rate[0] * np.exp(-decay_rate*i)
 
         self.neurons = self.neurons_reshape.reshape(self.k,self.k)
         return neuron_country
@@ -79,7 +78,14 @@ class Kohonen:
             # Si soy vecino actulizo mis pesos
             if(j in distances):
                 for p in range(self.n):
-                    self.weights[j][p] += self.learning_rate[1] * (x[p]-self.weights[j][p])  
+                    self.weights[j][p] += self.learning_rate[1] * (x[p]-self.weights[j][p])
+
+
+    def winner(self, x):
+        if(self.similitud == "euclidea"):
+            return self.euclidea(x)
+        else:
+            return self.exponencial(x)
 
 
     def euclidea(self, x):
@@ -96,13 +102,6 @@ class Kohonen:
             w.append(np.exp(-((np.linalg.norm(x - self.weights[j]))**2)))
         wk = min(w)
         return w.index(wk)
-    
-
-    def winner(self, x):
-        if(self.similitud == "euclidea"):
-            return self.euclidea(x)
-        else:
-            return self.exponencial(x)
     
 
     def activation(self,j, epoch):
@@ -203,44 +202,3 @@ class Kohonen:
                     else:
                         distances.append(np.exp(-((np.linalg.norm(self.weights[w_idx] - self.weights[n_idx]))**2)))
         return np.mean(distances)
-    
-
-    def barplot_x(self,X_standard):
-        X = self.X
-        X_n = X_standard
-        area_x=[fila[0] for fila in X]
-        gdp_x=[fila[1] for fila in X]
-        inf_x=[fila[2] for fila in X]
-        life_x=[fila[3] for fila in X]
-        mil_x=[fila[4] for fila in X]
-        pop_x=[fila[5] for fila in X]
-        unem_x=[fila[6] for fila in X]
-
-        area_xn=[fila[0] for fila in X_n]
-        gdp_xn=[fila[1] for fila in X_n]
-        inf_xn=[fila[2] for fila in X_n]
-        life_xn=[fila[3] for fila in X_n]
-        mil_xn=[fila[4] for fila in X_n]
-        pop_xn=[fila[5] for fila in X_n]
-        unem_xn=[fila[6] for fila in X_n]
-
-        dfx= {'Area': area_x, 'GDP': gdp_x,'Inflation':inf_x,'Life Expect':life_x, 'Military': mil_x, 'Population Growth': pop_x, 'Unemployment': unem_x}
-        dfx_data=pd.DataFrame(data=dfx, index = None)
-        dfxn= {'Area': area_xn, 'GDP': gdp_xn,'Inflation':inf_xn,'Life Expect':life_xn, 'Military': mil_xn, 'Population Growth': pop_xn, 'Unemployment': unem_xn}
-        dfxn_data=pd.DataFrame(data=dfxn, index = None)
-
-        plt.figure(figsize=(25,13))
-        plt.xlabel('Features',fontsize=15) 
-        plt.ylabel('Value',fontsize=15)
-        plt.title(('Non-Standarized Inputs'))
-        dfx_data.boxplot(column=['Area', 'GDP', 'Inflation','Life Expect','Military','Population Growth','Unemployment'])
-        plt.show()
-
-        plt.figure(figsize=(25,13))
-        plt.xlabel('Features',fontsize=15) 
-        plt.ylabel('Value',fontsize=15)
-        plt.title(('Standarized Inputs'))
-        dfxn_data.boxplot(column=['Area', 'GDP', 'Inflation','Life Expect','Military','Population Growth','Unemployment'])
-        plt.show()
-
-        return None
