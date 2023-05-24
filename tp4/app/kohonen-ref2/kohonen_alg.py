@@ -33,30 +33,40 @@ class Kohonen:
 
 
     def train_kohonen(self):
+        print("NON STANDARD DATA shape:", np.array(self.X).shape)
+        print(self.X)
+
         X_standard = self.standard(self.X)
-        neuron_activations = np.zeros((self.k**2, len(X_standard)))
+
+        print("STANDARD DATA shape:", np.array(X_standard).shape)
+        print(X_standard)
+
+        # Winner index de cada registro de entrada
         neuron_country = np.zeros(len(X_standard))
 
         for i in range(self.epochs):
-            for j in range(len(X_standard)):
+            for j in range(len(X_standard)): # TODO: try
                 # Seleccionar un registro de entrada X^p
                 x = X_standard[j]
                 # Encontrar la neurona ganadora
                 winner_index = self.winner(x)
+
+                # Get neighborhood of winner neuron
                 distances = self.activation(winner_index, i)
                 # Actualizar los pesos segun kohonen
                 self.regla_de_kohonen(distances, x)
-                neuron_activations[winner_index][j] = 1
+
                 neuron_country[j] = winner_index
 
             # Ajuste de radio:
             ajuste = self.radio[0] * (1 - i/self.epochs)
-            self.radio[1] = 1 if ajuste < 1 else ajuste
+            self.radio[1] = 1 if ajuste < 1 else ajuste # TODO: try
 
             # Ajuste de ETA:
-            self.learning_rate[1] = self.learning_rate[0] * (1 - i/self.epochs)
+            self.learning_rate[1] = self.learning_rate[0] * (1 - i/self.epochs) # TODO: try
 
         self.neurons = self.neurons_reshape.reshape(self.k,self.k)
+
         return neuron_country
     
 
@@ -104,12 +114,12 @@ class Kohonen:
         return w.index(wk)
     
 
-    def activation(self,j, epoch):
+    def activation(self, winner_index, epoch):
         if(epoch == self.epochs - 1):
-            self.neurons_reshape[j]+=1
+            self.neurons_reshape[winner_index] += 1
             self.neurons = self.neurons_reshape.reshape(self.k,self.k)
 
-        winner_pos = np.unravel_index(j, self.neurons.shape)
+        winner_pos = np.unravel_index(winner_index, self.neurons.shape)
         distances = []
         # Obtengo la distancia entre neuronas
         for i in range(self.k):

@@ -14,20 +14,20 @@ def main():
     p = len(training_set)
     n = len(training_set[0])
 
-    radio = 8
-    similitud = "euclidea"
     k = 4
+    radio = k
+    similitud = "euclidea"
     
     model = kohonen_alg.Kohonen(p, n, k, radio, learning_rate, similitud, epochs,training_set,country_name_train, categories)
     neurons_countries = model.train_kohonen()
     model.plot_heatmap(similitud, neurons_countries)
 
     # Categories Heatmap
-    for categoryIdx in range(len(categories)):
-        model.plot_category(categoryIdx, neurons_countries)
+    # for categoryIdx in range(len(categories)):
+    #     model.plot_category(categoryIdx, neurons_countries)
 
-    # Matriz U
-    model.plot_u_matrix(similitud)
+    # # Matriz U
+    # model.plot_u_matrix(similitud)
 
 
 def import_data(file):

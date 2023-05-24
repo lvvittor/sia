@@ -1,15 +1,20 @@
 import numpy as np
 
-from sklearn.preprocessing import StandardScaler
-
 class Kohonen():
     def __init__(self, k, inputs):
         self.k = k                  # k^2 = amount of neurones (k x k map)
         self.p = inputs.shape[0]    # amount of inputs
         self.n = inputs.shape[1]    # dimensions of each input
 
-        scaler = StandardScaler()
-        self.inputs = scaler.fit_transform(inputs) # standardize inputs (mean=0, std=1)
+        
+        # Standardize inputs (mean=0, std=1)
+        # self.inputs = (inputs - np.mean(inputs, axis=0)) / np.std(inputs, axis=0)
+
+        # Calculate the mean and standard deviation of each row
+        mean = np.mean(inputs, axis=1)
+        std = np.std(inputs, axis=1)
+        # Subtract the mean from each row and divide by the standard deviation
+        self.inputs = (inputs.T - mean).T / std[:, np.newaxis]
 
         # Initialize weights of each neurone with uniform distribution U(0,1).
         # self.weights = np.random.rand(self.k**2, self.n)
@@ -19,26 +24,35 @@ class Kohonen():
         for i in range(self.k**2):
             self.weights[i] += self.inputs[np.random.randint(self.p)]
 
-        self.R = 1.0          # initial radius of the neighbourhood
-        self.eta = 0.5        # initial learning rate
+        self.R = self.k / 2   # initial radius of the neighbourhood
+        self.eta = 1.0        # initial learning rate
 
 
     def train(self, max_epochs=100):
         for epoch in range(1, max_epochs):
-            # Get a random input
-            x = self.inputs[np.random.randint(self.p)]
+            # Get a random input each epoch
+            # x = self.inputs[np.random.randint(self.p)]
+            
+            # Iterating through each input in each epoch seems to work better than the previous option, given the current parameters (mainly eta and radius decays)
+            for x in self.inputs:
+                # Get the index of the minimum distance neurone (winner neurone)
+                distances = np.linalg.norm(self.weights - x, axis=1) # euclidean distance between `x` and each neurone's weights
+                winner_neuron_index = np.argmin(distances)
 
-            # Get the index of the minimum distance neurone (winner neurone)
-            distances = np.linalg.norm(self.weights - x, axis=1) # euclidean distance between `x` and each neurone's weights
-            winner_neuron_index = np.argmin(distances)
+                # Adjust radius with the epoch, with a minimum of 1
+                radius = self.R * (1 - epoch/max_epochs)
+                radius = 1 if radius < 1 else radius
 
-            # Get the indexes of all the neighbours of the winner neurone (inside the radius `R`)
-            winner_neighbours = self.get_neighbours(winner_neuron_index, self.R) # includes the winner neurone itself
+                # Get the indexes of all the neighbours of the winner neurone (inside the radius `R`)
+                winner_neighbours = self.get_neighbours(winner_neuron_index, radius) # includes the winner neurone itself
 
-            # Update the weights of the winner neurone and its neighbours
-            for neuron in winner_neighbours:
-                # The learning rate decreases with the epoch
-                self.weights[neuron] += (self.eta/epoch) * (x - self.weights[neuron])
+                # Adjust learning rate with the epoch, starting at 1 and decreasing to 0
+                eta = self.eta * (1 - epoch/max_epochs)
+
+                # Update the weights of the winner neurone and its neighbours
+                for neuron in winner_neighbours:
+                    # The learning rate decreases with the epoch
+                    self.weights[neuron] += eta * (x - self.weights[neuron])
 
         return self.weights
 
