@@ -12,6 +12,7 @@ from discrete_hopfield import DiscreteHopfield
 from parser import Parser
 from oja import Oja
 from pprint import pprint
+import numpy as np
 
 def main():
 	match settings.exercise:
@@ -51,8 +52,16 @@ def hopfield():
 		parsed_letter_with_noise = parser.apply_noise(parsed_letter)
 		pprint(parser.calculate_similarity(parsed_letter, parsed_letter_with_noise))
 
+		hopfield = DiscreteHopfield(XI=np.array(parser.letter_matrix), ZETA=np.array(parsed_letter_with_noise))
 
-	hopfield = DiscreteHopfield()
+		S, energy, iterations = hopfield.train()
+
+		print(f"S: {S}")
+		print(f"Energy: {energy}")
+		print(f"Iterations: {iterations}")
+
+		break
+
 
 
 def pca_with_sklearn(countries, variables_data, n_components):
