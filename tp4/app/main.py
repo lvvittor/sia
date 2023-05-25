@@ -8,12 +8,10 @@ from kohonen import Kohonen
 def main():
 	# Parse dataset
 	countries, variables_data = parse_dataset(f"{settings.Config.data_path}/europe.csv")
+	variables = variables_data.to_numpy()
 
 	# PCA with sklearn
 	# pca_with_sklearn(countries, variables_data, 2)
-
-	#  Convert dataset to numpy array
-	variables = variables_data.to_numpy()
 
 	# Kohonen
 	run_kohonen(countries, variables)

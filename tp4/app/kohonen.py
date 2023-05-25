@@ -27,31 +27,29 @@ class Kohonen():
         self.eta = 1.0        # initial learning rate
 
 
-    def train(self, max_epochs=100):
+    def train(self, max_epochs):
         for epoch in range(1, max_epochs):
+            # Adjust learning rate and radius linearly with the epoch
+            eta = self.eta * (1 - epoch/max_epochs)     # 1 to 0
+            radius = self.R * (1 - epoch/max_epochs)
+            radius = 1 if radius < 1 else radius        # k/2 to 1
+
             # Get a random input each epoch
             # x = self.inputs[np.random.randint(self.p)]
             
-            # Iterating through each input in each epoch seems to work better than the previous option, given the current parameters (mainly eta and radius decays)
+            # Iterating through each input in each epoch seems to work better than the previous option, given the current parameters
             for x in self.inputs:
                 # Get the index of the minimum distance neurone (winner neurone)
                 distances = np.linalg.norm(self.weights - x, axis=1) # euclidean distance between `x` and each neurone's weights
                 winner_neuron_index = np.argmin(distances)
 
-                # Adjust radius with the epoch, with a minimum of 1
-                radius = self.R * (1 - epoch/max_epochs)
-                radius = 1 if radius < 1 else radius
-
                 # Get the indexes of all the neighbours of the winner neurone (inside the radius `R`)
                 winner_neighbours = self.get_neighbours(winner_neuron_index, radius) # includes the winner neurone itself
 
-                # Adjust learning rate with the epoch, starting at 1 and decreasing to 0
-                eta = self.eta * (1 - epoch/max_epochs)
+                # self.log_epoch(epoch, x, eta, radius, distances, winner_neuron_index, winner_neighbours)
 
                 # Update the weights of the winner neurone and its neighbours
-                for neuron in winner_neighbours:
-                    # The learning rate decreases with the epoch
-                    self.weights[neuron] += eta * (x - self.weights[neuron])
+                self.weights[winner_neighbours] += eta * (x - self.weights[winner_neighbours])
 
         return self.weights
 
@@ -81,6 +79,30 @@ class Kohonen():
                     neighbours.append(index)
 
         return neighbours
+    
+
+    def log_epoch(self, epoch, x, eta, radius, distances, winner_neuron_index, winner_neighbours):
+        print(f"\n\n---------------EPOCH {epoch}---------------")
+        print("ETA: ", eta)
+        print("RADIUS: ", radius)
+
+        print("\nINPUT ; shape=", self.inputs.shape)
+        print(x)
+
+        print("\n\nWEIGHTS ; shape: ", self.weights.shape)
+        print(self.weights)
+
+        print("\n\nDistance between input and each neurone: ", distances)
+
+        print("\n\nWinner neuron index: ", winner_neuron_index)
+        print("Winner neuron: ", self.weights[winner_neuron_index])
+
+        print("\n\nWinner neighbours: ", winner_neighbours)
+        print("Winner neighbours weights: ", self.weights[winner_neighbours])
+
+        print("\n\nDelta weights: ", eta * (x - self.weights[winner_neighbours]))
+
+        print("\n\nUpdated weights: ", self.weights[winner_neighbours] + eta * (x - self.weights[winner_neighbours]))
     
 
     def map_inputs(self, inputs):
@@ -131,6 +153,6 @@ class Kohonen():
             umatrix[row, col] = np.mean(distances)
         
         # Normalize the U-matrix
-        umatrix = (umatrix - np.min(umatrix)) / (np.max(umatrix) - np.min(umatrix))
+        # umatrix = (umatrix - np.min(umatrix)) / (np.max(umatrix) - np.min(umatrix))
 
         return umatrix
