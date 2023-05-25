@@ -8,6 +8,9 @@ class DiscreteHopfield:
             XI: Patterns to be stored in the network
             ZETA: Input pattern to be recognized from the network
         """
+        if not self._is_stable(XI):
+            # TODO: Raise exception here!
+            print("The network is not stable")
         self.P = XI.shape[0]                # Number of patterns
         self.W = np.dot(XI, XI.T) / self.P  # Weights matrix
         np.fill_diagonal(self.W, 0)         # Weights matrix diagonal is 0 (no self connections)
@@ -42,10 +45,11 @@ class DiscreteHopfield:
 
         return self.S[-1], self.energy, self.t
 
-    @property
-    def is_stable(self):
-        """Returns true if the W vectors are orthogonal"""
-        dot_products = np.dot(self.W, self.W.T)
+    
+    def _is_stable(self, vectors: np.ndarray):
+        """Returns true if the vectors are orthogonal"""
+        dot_products = np.dot(vectors, vectors.T)
+        return np.allclose(dot_products, 0)
 
     @property
     def activation_function(self):
