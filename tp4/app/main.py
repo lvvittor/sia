@@ -2,17 +2,22 @@ import pandas as pd
 
 from settings import settings
 from PCA import get_dataset_principal_components
+from visualization import boxplot, biplot, component_barplot, country_heatmap, u_matrix
 from sklearn.preprocessing import StandardScaler
-from visualization import boxplot, biplot, component_barplot
+
 from kohonen import Kohonen
 from oja import Oja
 
 def main():
+	# Parse dataset
 	countries, variables_data = parse_dataset(f"{settings.Config.data_path}/europe.csv")
+	variables = variables_data.to_numpy()
 
+	# PCA with sklearn
 	# pca_with_sklearn(countries, variables_data, 2)
-	# kohonen = Kohonen(4, variables_data.to_numpy())
-	# kohonen.train()
+
+	# Kohonen
+	run_kohonen(countries, variables)
 
 
 def oja(countries, variables_data):
@@ -43,7 +48,21 @@ def pca_with_sklearn(countries, variables_data, n_components):
 	biplot(countries, standardized_data, pca)
 
 	component_barplot(countries, standardized_data, pca.components_[0], "pc1_barplot")
-        
+
+
+def run_kohonen(countries, dataset):
+	k = 4
+	epochs = 1_000
+
+	kohonen = Kohonen(k, dataset)
+	kohonen.train(epochs)
+
+	winner_neurons = kohonen.map_inputs(dataset) # get the winner neuron for each input
+	umatrix = kohonen.get_umatrix()			  	     # get u matrix
+
+	country_heatmap(countries, winner_neurons, k)
+	u_matrix(umatrix)
+
 
 def parse_dataset(dataset: str):
 	data = pd.read_csv(dataset)
