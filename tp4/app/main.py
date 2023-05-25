@@ -1,18 +1,26 @@
+from __future__ import annotations 
+
 import pandas as pd
+import random as r
 
 from settings import settings
 from PCA import get_dataset_principal_components
 from sklearn.preprocessing import StandardScaler
 from visualization import boxplot, biplot, component_barplot
 from kohonen import Kohonen
+from hopfield import Hopfield
 from oja import Oja
 
 def main():
-	countries, variables_data = parse_dataset(f"{settings.Config.data_path}/europe.csv")
+	match settings.exercise:
+		case 1:
+			#countries, variables_data = parse_dataset(f"{settings.Config.data_path}/europe.csv")
 
-	# pca_with_sklearn(countries, variables_data, 2)
-	# kohonen = Kohonen(4, variables_data.to_numpy())
-	# kohonen.train()
+			# pca_with_sklearn(countries, variables_data, 2)
+			# kohonen = Kohonen(4, variables_data.to_numpy())
+			# kohonen.train()
+		case 2:
+			hopfield()
 
 
 def oja(countries, variables_data):
@@ -25,6 +33,15 @@ def oja(countries, variables_data):
 	standardized_data = pd.DataFrame(data=standardized_data, columns=variables_data.columns.values)
 	component_barplot(countries, standardized_data, oja.weights, "oja_barplot")
 	print(oja.weights)
+
+
+def hopfield():
+	# transform data to array matrix
+	letter_parser = Parser(f"{settings.Config.data_path}/alphabet.txt")
+
+	hopfield = Hopfield()
+
+	#hopfield = Hopfield()
 
 
 def pca_with_sklearn(countries, variables_data, n_components):

@@ -2,7 +2,7 @@ import numpy as np
 
 from sklearn.preprocessing import StandardScaler
 
-class Kohonen():
+class Kohonen:
     def __init__(self, k, inputs):
         self.k = k                  # k^2 = amount of neurones (k x k map)
         self.p = inputs.shape[0]    # amount of inputs
@@ -20,7 +20,7 @@ class Kohonen():
 
 
     def train(self, max_epochs=100):
-        for epoch in range(1, max_epochs):
+        for epoch in range(1, settings.max_epochs):
             # Get a random input
             x = self.inputs[np.random.randint(self.p)]
 

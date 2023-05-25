@@ -1,3 +1,9 @@
 {
-  "verbose": false 
+  "exercise": 2,
+  "verbose": false, 
+  "hopfield": {
+    "selected_letters": ["a", "b", "j"],
+    "max_epochs": 100
+  },
+  "max_epochs": 100
 }
