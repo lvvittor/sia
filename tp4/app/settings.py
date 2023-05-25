@@ -16,9 +16,9 @@ def json_config_settings_source(settings: BaseSettings) -> dict[str, Any]:
 
 
 class Hopfield(BaseModel):
-    weights: List[float]
-    xi: List[float]
+    selected_letters: List[str]
     max_epochs: int
+    noise_level: float
 
 class Settings(BaseSettings):
     """
@@ -36,7 +36,6 @@ class Settings(BaseSettings):
 
     verbose: bool
     exercise: int
-    selected_letters: List[str]
     max_epochs: int
     hopfield: Hopfield
 
