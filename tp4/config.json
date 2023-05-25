@@ -3,7 +3,7 @@
   "verbose": false, 
   "hopfield": {
     "selected_letters": ["a", "b", "j"],
-    "max_epochs": 100,
+    "max_iterations": 100,
     "noise_level": 0.4
   },
   "max_epochs": 100

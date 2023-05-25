@@ -43,16 +43,26 @@ def hopfield():
 	# Parse letters into a 5x5 matrix of 1s and -1s 
 	parser = Parser(f"{settings.Config.data_path}/letters")
 	
-	print("Parsed letters:")
-	pprint(parser.letter_matrix)
+	if settings.verbose:
+		print("Parsed letters:")
+		pprint(parser.letter_matrix)
 
-	print(f"Similarity comparison with XI and ZETA: (jaccard_coefficient, element_wise_comparison)")
+		print(f"Similarity comparison with XI and ZETA: (jaccard_coefficient, element_wise_comparison)")
 
 	for parsed_letter in parser.letter_matrix:
 		parsed_letter_with_noise = parser.apply_noise(parsed_letter)
-		pprint(parser.calculate_similarity(parsed_letter, parsed_letter_with_noise))
 
-		hopfield = DiscreteHopfield(XI=np.array(parser.letter_matrix), ZETA=np.array(parsed_letter_with_noise))
+		# Flatten the matrix to have 1D patterns
+		flated_patterns = np.array([pattern.flatten() for pattern in np.array(parser.letter_matrix)])
+		flated_noise_pattern = np.array(parsed_letter_with_noise).flatten()
+
+		print(f"flated_patterns shape: {flated_patterns.shape}")
+		print(f"flated_noise_pattern shape: {flated_noise_pattern.shape}")
+
+		if settings.verbose:
+			pprint(parser.calculate_similarity(parsed_letter, parsed_letter_with_noise))
+
+		hopfield = DiscreteHopfield(XI=flated_patterns, ZETA=flated_noise_pattern)
 
 		S, energy, iterations = hopfield.train()
 
