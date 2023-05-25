@@ -29,6 +29,8 @@ class Settings(BaseSettings):
     https://jsontopydantic.com/
     """
 
+    verbose: bool
+
     class Config:
         env_file_encoding = "utf-8"
         config_path = "tp4/config.json"

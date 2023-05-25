@@ -47,7 +47,7 @@ def biplot(countries, variables_data, pca, scaled = False):
 	plt.show()
 	
 
-def component_barplot(countries, variables_data, component):
+def component_barplot(countries, variables_data, component, filename):
 	values = variables_data.apply(lambda row: sum(row * component), axis=1)
 	plt.figure(figsize=(12, 6))
 
@@ -58,7 +58,7 @@ def component_barplot(countries, variables_data, component):
 	plt.xticks(rotation=90)
 	plt.tight_layout()
 
-	plt.savefig(settings.Config.output_path+"/pc1_barplot.png")
+	plt.savefig(settings.Config.output_path+"/" + filename + ".png")
 	plt.show()
 
 
@@ -114,4 +114,6 @@ def u_matrix(umatrix):
 	plt.tight_layout()
 	
 	plt.savefig(f"{settings.Config.output_path}/u_matrix.png")
+
 	plt.show()
+  
