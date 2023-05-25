@@ -48,8 +48,13 @@ class DiscreteHopfield:
     
     def _is_stable(self, vectors: np.ndarray):
         """Returns true if the vectors are orthogonal"""
-        dot_products = np.dot(vectors, vectors.T)
-        return np.allclose(dot_products, 0)
+        num_vectors = len(vectors)
+        for i in range(num_vectors):
+            for j in range(i + 1, num_vectors):
+                dot_product = np.dot(vectors[i], vectors[j])
+                if dot_product != 0:
+                    return False
+        return True
 
     @property
     def activation_function(self):
