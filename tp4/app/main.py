@@ -2,7 +2,7 @@ import pandas as pd
 
 from settings import settings
 from PCA import get_dataset_principal_components
-from visualization import boxplot, biplot, component_barplot, country_heatmap
+from visualization import boxplot, biplot, component_barplot, country_heatmap, u_matrix
 from kohonen import Kohonen
 
 def main():
@@ -12,23 +12,11 @@ def main():
 	# PCA with sklearn
 	# pca_with_sklearn(countries, variables_data, 2)
 
+	#  Convert dataset to numpy array
+	variables = variables_data.to_numpy()
 
 	# Kohonen
-	variables = variables_data.to_numpy()
-	k = 4
-
-	kohonen = Kohonen(k, variables)
-	kohonen.train(1_000)
-
-	winner_neurons = kohonen.map_inputs(variables) # get the winner neuron for each input
-	heatmap = kohonen.get_heatmap(variables)	   # get amount of inputs mapped to each neuron
-
-	# print("\n\n---WINNER NEURONS---")
-	# print(winner_neurons)
-	print("---HEATMAP---")
-	print(heatmap)
-
-	country_heatmap(countries, winner_neurons, k)
+	run_kohonen(countries, variables)
 
 
 def pca_with_sklearn(countries, variables_data, n_components):
@@ -47,7 +35,21 @@ def pca_with_sklearn(countries, variables_data, n_components):
 	biplot(countries, standardized_data, pca)
 
 	component_barplot(countries, standardized_data, pca.components_[0])
-        
+
+
+def run_kohonen(countries, dataset):
+	k = 4
+	epochs = 1_000
+
+	kohonen = Kohonen(k, dataset)
+	kohonen.train(epochs)
+
+	winner_neurons = kohonen.map_inputs(dataset) # get the winner neuron for each input
+	umatrix = kohonen.get_umatrix()			  	   # get u matrix
+
+	country_heatmap(countries, winner_neurons, k)
+	u_matrix(umatrix)
+
 
 def parse_dataset(dataset: str):
 	data = pd.read_csv(dataset)

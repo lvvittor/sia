@@ -6,8 +6,7 @@ class Kohonen():
         self.p = inputs.shape[0]    # amount of inputs
         self.n = inputs.shape[1]    # dimensions of each input
 
-        
-        # Standardize inputs (mean=0, std=1)
+        # Standardize each variable so each has mean=0, std=1
         # self.inputs = (inputs - np.mean(inputs, axis=0)) / np.std(inputs, axis=0)
 
         # Calculate the mean and standard deviation of each row
@@ -57,10 +56,10 @@ class Kohonen():
         return self.weights
 
 
-    def get_neighbours(self, neuron_index, radius):
+    def get_neighbours(self, neuron_index, radius, include_self=True):
         """
         Returns the indexes of all the neighbours of the neuron with index `neuron_index`.
-        The neuron with index `neuron_index` is also included.
+        The neuron with index `neuron_index` is also included by default.
         """
 
         neighbours = []
@@ -77,7 +76,7 @@ class Kohonen():
         for row in range(min_row, max_row + 1):
             for col in range(min_col, max_col + 1):
                 distance = np.linalg.norm([row - row_i, col - col_i])  # euclidean distance between (row, col) and (row_i, col_i)
-                if distance <= radius:
+                if distance <= radius and (include_self or distance != 0):
                     index = row * self.k + col
                     neighbours.append(index)
 
@@ -114,3 +113,24 @@ class Kohonen():
 
         # Reshape the array to have dimensions (k, k)
         return occurrences.reshape(self.k, self.k)
+
+
+    def get_umatrix(self):
+        """
+        Get the (k, k) U-matrix of the Kohonen map.
+        """
+        umatrix = np.zeros((self.k, self.k))
+
+        # Iterate through each neuron
+        for i in range(self.k**2):
+            # Get the neighbours of the neuron
+            neighbours = self.get_neighbours(i, 1, include_self=False)
+            # Calculate the average distance between the neuron and its neighbours
+            distances = np.linalg.norm(self.weights[neighbours] - self.weights[i], axis=1)
+            row, col = divmod(i, self.k)
+            umatrix[row, col] = np.mean(distances)
+        
+        # Normalize the U-matrix
+        umatrix = (umatrix - np.min(umatrix)) / (np.max(umatrix) - np.min(umatrix))
+
+        return umatrix

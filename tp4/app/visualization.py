@@ -97,5 +97,21 @@ def country_heatmap(countries, winner_neurons, k):
 	plt.colorbar()
 
 	# Show the plot
+	plt.tight_layout()
 	plt.savefig(f"{settings.Config.output_path}/country_heatmap.png")
+	plt.show()
+
+
+def u_matrix(umatrix):
+	plt.figure(figsize=(8, 8))
+	cmap = plt.cm.get_cmap('Greys')
+
+	plt.imshow(umatrix, cmap=cmap.reversed())
+
+	plt.colorbar()
+	plt.xticks([])
+	plt.yticks([])
+	plt.tight_layout()
+	
+	plt.savefig(f"{settings.Config.output_path}/u_matrix.png")
 	plt.show()
