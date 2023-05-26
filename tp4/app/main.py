@@ -42,10 +42,12 @@ def oja(countries, variables_data):
 def hopfield():
 	# Parse letters into a 5x5 matrix of 1s and -1s 
 	parser = Parser(f"{settings.Config.data_path}/letters")
-	
+
 	if settings.verbose:
 		print("Parsed letters:")
 		pprint(parser.letter_matrix)
+		sets = parser.find_orthogonal_columns(f"{settings.Config.data_path}/alphabet.txt")
+		print(f"orthogonal letters: {sets}")
 
 		print(f"Similarity comparison with XI and ZETA: (jaccard_coefficient, element_wise_comparison)")
 
@@ -53,13 +55,14 @@ def hopfield():
 		parsed_letter_with_noise = parser.apply_noise(parsed_letter)
 
 		# Flatten the matrix to have 1D patterns
-		flated_patterns = np.array([pattern.flatten() for pattern in np.array(parser.letter_matrix)])
-		flated_noise_pattern = np.array(parsed_letter_with_noise).flatten()
-
-		print(f"flated_patterns shape: {flated_patterns.shape}")
-		print(f"flated_noise_pattern shape: {flated_noise_pattern.shape}")
+		flated_patterns = np.column_stack([pattern.flatten() for pattern in np.array(parser.letter_matrix)])
+		flated_noise_pattern = np.array(parsed_letter_with_noise).flatten().T
 
 		if settings.verbose:
+			print(f"flated_patterns: {flated_patterns}")
+			print(f"flated_patterns shape: {flated_patterns.shape}")
+			print(f"flated_noise_pattern: {flated_noise_pattern}")
+			print(f"flated_noise_pattern shape: {flated_noise_pattern.shape}")
 			pprint(parser.calculate_similarity(parsed_letter, parsed_letter_with_noise))
 
 		hopfield = DiscreteHopfield(XI=flated_patterns, ZETA=flated_noise_pattern)

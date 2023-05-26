@@ -9,7 +9,7 @@ class DiscreteHopfield:
             ZETA: Input pattern to be recognized from the network
         """
         if not self._is_stable(XI):
-            # TODO: Raise exception here!
+            # TODO: raise exception here!
             print("The network is not stable")
         self.P = XI.shape[0]                # Number of patterns
         self.W = np.dot(XI, XI.T) / self.P  # Weights matrix
@@ -39,7 +39,7 @@ class DiscreteHopfield:
             iterations: The number of iterations it took to converge
         """
         while not self.converged:
-            print(f"t: {self.t}, S shape: {self.S[-1].shape}, h: {self.activation_function}")
+            print(f"t: {self.t}, S shape: {self.S[-1].shape}, h: {self.activation_function}, H: {self.energy}")
             self.S.append(self.activation_function)
             self.t += 1
 

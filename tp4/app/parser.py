@@ -39,5 +39,32 @@ class Parser:
 
         return jaccard_coefficient, element_wise_comparison.tolist()
 
-    
+    def combinations(self, lst, n):
+        if n == 0:
+            yield []
+        else:
+            for i in range(len(lst)):
+                rest = lst[i+1:]
+                for c in self.combinations(rest, n-1):
+                    yield [lst[i]] + c
+
+    def find_orthogonal_columns(self, path):
+        """ Calculates all posible combinations of orthogonal letters in the alphabet"""
+        with open(path, 'r') as file:
+            content = file.read()
+        letters = [letter.split('\n') for letter in content.split('\n\n')]
+        matrixes = [[[1 if char == '*' else -1 for char in row] for row in letter] for letter in letters]
+        matrix = np.column_stack([pattern.flatten() for pattern in np.array(matrixes)])
+
+        num_columns = matrix.shape[1]
+        column_indices = np.arange(num_columns)
+        orthogonal_sets = []
+
+        for subset_indices in self.combinations(column_indices, 4):
+            subset_matrix = matrix[:, subset_indices]
+            dot_product_matrix = np.dot(subset_matrix.T, subset_matrix)
+            if np.allclose(dot_product_matrix, np.eye(4)):
+                orthogonal_sets.append(subset_indices)
+
+        return orthogonal_sets
 
