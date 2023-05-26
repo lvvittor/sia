@@ -19,6 +19,7 @@ class Hopfield(BaseModel):
     selected_letters: List[str]
     max_iterations: int
     noise_level: float
+    orthogonal_tolerance: float
 
 class Settings(BaseSettings):
     """

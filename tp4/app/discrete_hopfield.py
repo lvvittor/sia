@@ -14,7 +14,7 @@ class DiscreteHopfield:
         self.P = XI.shape[0]                # Number of patterns
         self.W = np.dot(XI, XI.T) / self.P  # Weights matrix
         np.fill_diagonal(self.W, 0)         # Weights matrix diagonal is 0 (no self connections)
-        self.S = [ZETA]                     # List of the states of the network (initial state is ZETA, the last state is the current state). 
+        self.S = [ZETA]                     # List of the states of the network (initial state is ZETA, the last state is the current state).
         self.N = self.S[-1].shape[0]        # Number of neurons
         self.t = 0                          # Time step
         print(f" W shape: {self.W.shape}")
@@ -48,13 +48,19 @@ class DiscreteHopfield:
     
     def _is_stable(self, vectors: np.ndarray):
         """Returns true if the vectors are orthogonal"""
-        num_vectors = len(vectors)
-        for i in range(num_vectors):
-            for j in range(i + 1, num_vectors):
-                dot_product = np.dot(vectors[i], vectors[j])
-                if dot_product != 0:
-                    return False
-        return True
+        # num_vectors = len(vectors)
+        # for i in range(num_vectors):
+        #     for j in range(i + 1, num_vectors):
+        #         dot_product = np.dot(vectors[i], vectors[j])
+        #         if dot_product != 0:
+        #             return False
+        # return True
+        # use np.allclose with settings.hopfield.orthogonal_tolerance instead
+        matrix = np.dot(vectors.T, vectors)
+        np.fill_diagonal(matrix, 0)
+        print(f"VECTOR: {vectors}")
+        print(f"MATRIX: {matrix}")
+        return np.allclose(matrix, np.zeros(matrix.shape), settings.hopfield.orthogonal_tolerance)
 
     @property
     def activation_function(self):

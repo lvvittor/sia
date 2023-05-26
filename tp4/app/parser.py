@@ -63,7 +63,7 @@ class Parser:
         for subset_indices in self.combinations(column_indices, 4):
             subset_matrix = matrix[:, subset_indices]
             dot_product_matrix = np.dot(subset_matrix.T, subset_matrix)
-            if np.allclose(dot_product_matrix, np.eye(4)):
+            if np.allclose(dot_product_matrix, np.eye(4), settings.hopfield.orthogonal_tolerance):
                 orthogonal_sets.append(subset_indices)
 
         return orthogonal_sets
