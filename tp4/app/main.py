@@ -6,7 +6,7 @@ import random as r
 from settings import settings
 from PCA import get_dataset_principal_components
 from sklearn.preprocessing import StandardScaler
-from visualization import boxplot, biplot, component_barplot
+from visualization import boxplot, biplot, component_barplot, hopfield_gif
 from kohonen import Kohonen
 from discrete_hopfield import DiscreteHopfield
 from parser import Parser
@@ -67,9 +67,11 @@ def hopfield():
 
 		hopfield = DiscreteHopfield(XI=flated_patterns, ZETA=flated_noise_pattern)
 
-		S, energy, iterations = hopfield.train()
+		S_f, S, energy, iterations = hopfield.train()
 
-		print(f"S: {S}")
+		hopfield_gif(parser.letter_matrix, S, 40, 40, 500)
+
+		print(f"S: {S_f}")
 		print(f"Energy: {energy}")
 		print(f"Iterations: {iterations}")
 

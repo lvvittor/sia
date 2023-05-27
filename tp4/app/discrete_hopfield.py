@@ -43,7 +43,7 @@ class DiscreteHopfield:
             self.S.append(self.activation_function)
             self.t += 1
 
-        return self.S[-1], self.energy, self.t
+        return self.S[-1], self.S, self.energy, self.t
 
     
     def _is_stable(self, vectors: np.ndarray):
