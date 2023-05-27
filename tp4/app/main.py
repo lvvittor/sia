@@ -69,7 +69,7 @@ def hopfield():
 
 		S_f, S, energy, iterations = hopfield.train()
 
-		hopfield_gif(parser.letter_matrix, S, 40, 40, 500)
+		hopfield_gif(parsed_letter_with_noise, S, 40, 40, 500)
 
 		print(f"S: {S_f}")
 		print(f"Energy: {energy}")
