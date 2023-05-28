@@ -89,3 +89,59 @@ def hopfield_gif(initial_state, states_vector, width, height, duration):
 
 	# Guardar las imágenes en un archivo GIF
 	first_image.save(f'{settings.Config.output_path}/hopfield.gif', save_all=True, append_images=gif_images[1:], optimize=False, duration=duration, loop=0)
+
+def country_heatmap(countries, winner_neurons, k):
+	# Create an empty k x k matrix to store the counts
+	matrix = np.zeros((k, k), dtype=int)
+
+	# Count the number of countries per cell
+	for idx in winner_neurons:
+		row, col = divmod(idx, k)
+		matrix[row, col] += 1
+
+	# Plot the heatmap
+	plt.figure(figsize=(8, 8))
+	plt.imshow(matrix, cmap='OrRd')
+
+	# Add country labels to each cell
+	for i in range(k):
+		for j in range(k):
+			plt.text(
+				j,
+				i,
+				'\n'.join(countries[z] for z, index in enumerate(winner_neurons) if (index // k, index % k) == (i, j)),
+				ha='center',
+				va='center',
+				color='black'
+			)
+
+	# Set tick positions and labels
+	plt.xticks(np.arange(k))
+	plt.yticks(np.arange(k))
+	plt.gca().set_xticklabels(np.arange(k) + 1)
+	plt.gca().set_yticklabels(np.arange(k) + 1)
+
+	# Add color bar
+	plt.colorbar()
+
+	# Show the plot
+	plt.tight_layout()
+	plt.savefig(f"{settings.Config.output_path}/country_heatmap.png")
+	plt.show()
+
+
+def u_matrix(umatrix):
+	plt.figure(figsize=(8, 8))
+	cmap = plt.cm.get_cmap('Greys')
+
+	plt.imshow(umatrix, cmap=cmap.reversed())
+
+	plt.colorbar()
+	plt.xticks([])
+	plt.yticks([])
+	plt.tight_layout()
+	
+	plt.savefig(f"{settings.Config.output_path}/u_matrix.png")
+
+	plt.show()
+  
