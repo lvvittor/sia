@@ -2,18 +2,14 @@ import numpy as np
 
 class Kohonen():
     def __init__(self, k, inputs):
+        """
+        `inputs` MUST be already standardized, so it has mean=0, std=1
+        """
         self.k = k                  # k^2 = amount of neurones (k x k map)
         self.p = inputs.shape[0]    # amount of inputs
         self.n = inputs.shape[1]    # dimensions of each input
 
-        # Standardize each variable so each has mean=0, std=1
-        # self.inputs = (inputs - np.mean(inputs, axis=0)) / np.std(inputs, axis=0)
-
-        # Calculate the mean and standard deviation of each row
-        mean = np.mean(inputs, axis=1)
-        std = np.std(inputs, axis=1)
-        # Subtract the mean from each row and divide by the standard deviation
-        self.inputs = (inputs.T - mean).T / std[:, np.newaxis]
+        self.inputs = inputs
 
         # Initialize weights of each neurone with uniform distribution U(0,1).
         # self.weights = np.random.rand(self.k**2, self.n)
@@ -35,21 +31,19 @@ class Kohonen():
             radius = 1 if radius < 1 else radius        # k/2 to 1
 
             # Get a random input each epoch
-            # x = self.inputs[np.random.randint(self.p)]
+            x = self.inputs[np.random.randint(self.p)]
             
-            # Iterating through each input in each epoch seems to work better than the previous option, given the current parameters
-            for x in self.inputs:
-                # Get the index of the minimum distance neurone (winner neurone)
-                distances = np.linalg.norm(self.weights - x, axis=1) # euclidean distance between `x` and each neurone's weights
-                winner_neuron_index = np.argmin(distances)
+            # Get the index of the minimum distance neurone (winner neurone)
+            distances = np.linalg.norm(self.weights - x, axis=1) # euclidean distance between `x` and each neurone's weights
+            winner_neuron_index = np.argmin(distances)
 
-                # Get the indexes of all the neighbours of the winner neurone (inside the radius `R`)
-                winner_neighbours = self.get_neighbours(winner_neuron_index, radius) # includes the winner neurone itself
+            # Get the indexes of all the neighbours of the winner neurone (inside the radius `R`)
+            winner_neighbours = self.get_neighbours(winner_neuron_index, radius) # includes the winner neurone itself
 
-                # self.log_epoch(epoch, x, eta, radius, distances, winner_neuron_index, winner_neighbours)
+            # self.log_epoch(epoch, x, eta, radius, distances, winner_neuron_index, winner_neighbours)
 
-                # Update the weights of the winner neurone and its neighbours
-                self.weights[winner_neighbours] += eta * (x - self.weights[winner_neighbours])
+            # Update the weights of the winner neurone and its neighbours
+            self.weights[winner_neighbours] += eta * (x - self.weights[winner_neighbours])
 
         return self.weights
 
