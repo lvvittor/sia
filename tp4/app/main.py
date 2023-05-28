@@ -52,24 +52,26 @@ def hopfield():
 		print(f"Similarity comparison with XI and ZETA: (jaccard_coefficient, element_wise_comparison)")
 
 	for parsed_letter in parser.letter_matrix:
-		parsed_letter_with_noise = parser.apply_noise(parsed_letter)
+		#parsed_letter_with_noise = parser.apply_noise(parsed_letter)
+		parsed_letter_rotated = parser.rotate(parsed_letter)
+		print(f"parsed letter rotated: {parsed_letter_rotated}")
 
 		# Flatten the matrix to have 1D patterns
 		flated_patterns = np.column_stack([pattern.flatten() for pattern in np.array(parser.letter_matrix)])
-		flated_noise_pattern = np.array(parsed_letter_with_noise).flatten().T
+		flated_noise_pattern = np.array(parsed_letter_rotated).flatten().T
 
 		if settings.verbose:
 			print(f"flated_patterns: {flated_patterns}")
 			print(f"flated_patterns shape: {flated_patterns.shape}")
 			print(f"flated_noise_pattern: {flated_noise_pattern}")
 			print(f"flated_noise_pattern shape: {flated_noise_pattern.shape}")
-			pprint(parser.calculate_similarity(parsed_letter, parsed_letter_with_noise))
+			pprint(parser.calculate_similarity(parsed_letter, parsed_letter_rotated))
 
 		hopfield = DiscreteHopfield(XI=flated_patterns, ZETA=flated_noise_pattern)
 
 		S_f, S, energy, iterations = hopfield.train()
 
-		hopfield_gif(parsed_letter_with_noise, S, 40, 40, 500)
+		hopfield_gif(parsed_letter_rotated, S, 40, 40, 500)
 
 		print(f"S: {S_f}")
 		print(f"Energy: {energy}")

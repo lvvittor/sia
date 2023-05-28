@@ -23,6 +23,10 @@ class Parser:
         """Adds noise to a given letter."""
         return [[-value if random.random() < settings.hopfield.noise_level else value for value in row] for row in parsed_letter]
 
+    def rotate(self, parsed_letter: list):
+        """Adds noise to a given letter."""
+        return np.array([[value for value in row] for row in parsed_letter]).T
+
     def calculate_similarity(self, parsed_letter: list, parsed_letter_with_noise: list):
         """Calculates the similarity between two letters. 
             Returns the jaccard coefficient and a matrix with 1s where the letters are equal and 0s where they are different.
