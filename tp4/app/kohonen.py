@@ -140,8 +140,8 @@ class Kohonen():
         # Iterate through each neuron
         for i in range(self.k**2):
             # Get the neighbours of the neuron
-            neighbours = self.get_neighbours(i, 1, include_self=False)
-            # Calculate the average distance between the neuron and its neighbours
+            neighbours = self.get_neighbours(neuron_index=i, radius=1, include_self=False)
+            # Calculate the average [euclidean] distance between the neuron and its neighbours
             distances = np.linalg.norm(self.weights[neighbours] - self.weights[i], axis=1)
             row, col = divmod(i, self.k)
             umatrix[row, col] = np.mean(distances)

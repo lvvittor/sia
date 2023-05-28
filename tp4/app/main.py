@@ -74,6 +74,7 @@ def run_kohonen(countries, dataset):
 	winner_neurons = kohonen.map_inputs(dataset) # get the winner neuron for each input
 	umatrix = kohonen.get_umatrix()			  	 # get u matrix
 
+	# Plot results
 	country_heatmap(countries, winner_neurons, k)
 	u_matrix(umatrix)
 
