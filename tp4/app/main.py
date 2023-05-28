@@ -1,8 +1,9 @@
 import pandas as pd
+import numpy as np
 
 from settings import settings
 from PCA import get_dataset_principal_components
-from visualization import boxplot, biplot, component_barplot, country_heatmap, u_matrix
+from visualization import boxplot, biplot, component_barplot, country_heatmap, u_matrix, variable_value_scatter
 from sklearn.preprocessing import StandardScaler
 
 from kohonen import Kohonen
@@ -18,6 +19,7 @@ def main():
 
 	# Kohonen
 	run_kohonen(countries, variables)
+	# oja(countries, variables_data)
 
 
 def oja(countries, variables_data):
@@ -28,8 +30,16 @@ def oja(countries, variables_data):
 	scaler = StandardScaler()
 	standardized_data = scaler.fit_transform(variables_data)
 	standardized_data = pd.DataFrame(data=standardized_data, columns=variables_data.columns.values)
+	variables = ["Area", "GDP", "Inflation", "Life. expect", "Military", "Pop.growth", "Unemployment"]
+	variable_value_scatter(variables, oja.weights)
 	component_barplot(countries, standardized_data, oja.weights, "oja_barplot")
 	print(oja.weights)
+
+	_, pca = get_dataset_principal_components(variables_data, 2)
+	print(pca.components_[0])
+
+	print(np.dot(np.dot(oja.weights, np.cov(variables_data.to_numpy(), rowvar=False)),oja.weights.T))
+	print(np.dot(np.dot(pca.components_[0], np.cov(variables_data.to_numpy(), rowvar=False)),pca.components_[0].T))
 
 
 def pca_with_sklearn(countries, variables_data, n_components):
