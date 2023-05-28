@@ -1,11 +1,8 @@
 from __future__ import annotations 
 
 import pandas as pd
-<<<<<<< HEAD
 import random as r
-=======
 import numpy as np
->>>>>>> 6c94adde4a3c34b841453510ab4e35a436457178
 
 from settings import settings
 from PCA import get_dataset_principal_components
@@ -25,12 +22,13 @@ def main():
 			# Parse dataset
 			countries, variables_data = parse_dataset(f"{settings.Config.data_path}/europe.csv")
 			variables = variables_data.to_numpy()
+			standardized_vars = (variables - np.mean(variables, axis=0)) / np.std(variables, axis=0)
 
 			# PCA with sklearn
 			# pca_with_sklearn(countries, variables_data, 2)
 
 			# Kohonen
-			run_kohonen(countries, variables)
+			run_kohonen(countries, standardized_vars)
 			# oja(countries, variables_data)
 			pass
 		case 2:
@@ -116,14 +114,15 @@ def pca_with_sklearn(countries, variables_data, n_components):
 
 
 def run_kohonen(countries, dataset):
+	""" Run kohonen algorithm with the given dataset, which MUST be standardized (mean=0, std=1) """
 	k = 4
-	epochs = 1_000
+	epochs = 10_000
 
 	kohonen = Kohonen(k, dataset)
 	kohonen.train(epochs)
 
 	winner_neurons = kohonen.map_inputs(dataset) # get the winner neuron for each input
-	umatrix = kohonen.get_umatrix()			  	     # get u matrix
+	umatrix = kohonen.get_umatrix()			  	 # get u matrix
 
 	country_heatmap(countries, winner_neurons, k)
 	u_matrix(umatrix)
