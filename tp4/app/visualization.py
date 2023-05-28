@@ -47,6 +47,19 @@ def biplot(countries, variables_data, pca, scaled = False):
 	plt.grid()
 	plt.savefig(settings.Config.output_path+"/biplot.png")
 	plt.show()
+
+
+def variable_value_scatter(variables, values):
+	plt.scatter(variables, values)
+
+	plt.xlabel("Variable")
+	plt.xticks(rotation=-30)
+	plt.ylabel("Value")
+
+	plt.grid()
+	plt.tight_layout()
+	plt.savefig(settings.Config.output_path+"/oja_components.png")
+	plt.show()
 	
 
 def component_barplot(countries, variables_data, component, filename):
