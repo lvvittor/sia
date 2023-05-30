@@ -56,3 +56,7 @@ You'll find a `config.json` file in this folder, which looks something like this
 - `active`: A boolean value that determines whether the optimization technique should be used during training or not.
 - `method`: A string value that represents the optimization technique to be used during training (e.g., "momentum", "adagrad", "rmsprop", etc.).
 - `momentum_rate`: A floating point value that represents the momentum rate used in the momentum optimization technique.
+
+## Running the project
+
+Please follow the instructions on the `README.md` located in the parent folder to run the project using either `Docker` or `Poetry`.
