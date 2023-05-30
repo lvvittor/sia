@@ -1,5 +1,7 @@
 import seaborn as sns
 import matplotlib.pyplot as plt
+from PIL import Image
+import imageio
 import numpy as np
 
 from settings import settings
@@ -74,6 +76,32 @@ def component_barplot(countries, variables_data, component, filename):
 	plt.savefig(settings.Config.output_path+"/" + filename + ".png")
 	plt.show()
 
+def hopfield_gif(initial_state, states_vector, width, height, duration):
+	# Convertir la matriz inicial en una imagen
+	first_image = Image.new('RGB', (len(initial_state[0]) * width, len(initial_state[0]) * height))
+	for i in range(len(initial_state)):
+		for j in range(len(initial_state[0])):
+			color = 'black' if initial_state[i][j] == 1 else 'white'
+			first_image.paste(color, (j * width, i * height, (j + 1) * width, (i + 1) * height))
+
+	# Crear una lista de imágenes para el GIF
+	gif_images = [first_image]
+
+	#counter = 2
+	# Reconstruir las matrices del vector y agregarlas al GIF
+	for state in states_vector:
+		matriz = np.reshape(state, (len(initial_state[0]), len(initial_state[0])))
+		new_image = Image.new('RGB', (len(matriz[0]) * width, len(matriz) * height))
+		for i in range(len(matriz)):
+			for j in range(len(matriz[0])):
+				color = 'black' if matriz[i][j] == 1 else 'white'
+				new_image.paste(color, (j * width, i * height, (j + 1) * width, (i + 1) * height))
+		gif_images.append(new_image)
+		#new_image.save(f'{settings.Config.output_path}/hopfield{counter}.png')
+		#counter+=1
+
+	# Guardar las imágenes en un archivo GIF
+	first_image.save(f'{settings.Config.output_path}/hopfield.gif', save_all=True, append_images=gif_images[1:], optimize=False, duration=duration, loop=0)
 
 def country_heatmap(countries, winner_neurons, k):
 	# Create an empty k x k matrix to store the counts

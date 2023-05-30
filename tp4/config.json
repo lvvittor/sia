@@ -1,3 +1,11 @@
 {
-  "verbose": false 
+  "exercise": 2,
+  "verbose": true,
+  "hopfield": {
+    "selected_letters": ["a", "j", "k", "s"],
+    "max_iterations": 100,
+    "noise_level": 0.6,
+    "orthogonal_tolerance": 0
+  },
+  "max_epochs": 100
 }

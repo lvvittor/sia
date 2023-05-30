@@ -1,6 +1,6 @@
 import numpy as np
 
-class Kohonen():
+class Kohonen:
     def __init__(self, k, inputs):
         """
         `inputs` MUST be already standardized, so it has mean=0, std=1
