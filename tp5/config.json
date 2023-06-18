@@ -1,5 +1,6 @@
 {
   "learning_rate": 0.1,
-  "verbose": false,
+  "verbose": true,
+  "epochs": 10000,
   "exercise": 1
 }

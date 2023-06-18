@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Any
-from pydantic import BaseSettings, BaseModel
+from pydantic import BaseSettings
 from pathlib import Path
 import json
 
@@ -31,6 +31,7 @@ class Settings(BaseSettings):
 
     verbose: bool
     learning_rate: float
+    epochs: int
     exercise: int
 
     class Config:
