@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Any
-from pydantic import BaseSettings
+from pydantic import BaseSettings, BaseModel
 from pathlib import Path
 import json
 
@@ -14,6 +14,10 @@ def json_config_settings_source(settings: BaseSettings) -> dict[str, Any]:
     config_path = settings.__config__.config_path
     return json.loads(Path(config_path).read_text(encoding))
 
+class AdamOptimization(BaseModel):
+    beta1: float
+    beta2: float
+    epsilon: float
 
 class Settings(BaseSettings):
     """
@@ -33,6 +37,8 @@ class Settings(BaseSettings):
     learning_rate: float
     epochs: int
     exercise: int
+    optimization: str
+    adam_optimization: AdamOptimization
 
     class Config:
         env_file_encoding = "utf-8"

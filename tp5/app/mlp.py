@@ -21,6 +21,12 @@ class MLP():
 
         self.output_activation_func = output_activation_func
 
+        # Adam variables
+        self.m_dw = np.zeros((hidden_nodes, input_dim + 1)) # Same size as dw in backward_propagation
+        self.v_dw = np.zeros((hidden_nodes, input_dim + 1))
+        self.m_dW = np.zeros((output_nodes, hidden_nodes + 1)) # Same size as dW in backward_propagation
+        self.v_dW = np.zeros((output_nodes, hidden_nodes + 1))
+
 
     def feed_forward(self, inputs):
         # Add neuron with constant output 1 to inputs, to account for bias
@@ -54,11 +60,25 @@ class MLP():
         dw = self.learning_rate * dV1.dot(X)
 
         hidden_layer_delta_sum = dV1.T.dot(self.weights[0][:, 1:]) # remove bias from hidden layer weights
-
         # Momentum optimization
-        self.previous_deltas = [dw.copy(), dW.copy()]
-        dW -= 0.9 * self.previous_deltas[1]
-        dw -= 0.9 * self.previous_deltas[0]
+        if settings.optimization == "momentum":
+            self.previous_deltas = [dw.copy(), dW.copy()]
+            dW -= 0.9 * self.previous_deltas[1]
+            dw -= 0.9 * self.previous_deltas[0]
+        # Adam optimization
+        elif settings.optimization == "adam":
+            self.m_dw = settings.adam_optimization.beta1 * self.m_dw + (1 - settings.adam_optimization.beta1) * dw
+            self.m_dW = settings.adam_optimization.beta1 * self.m_dW + (1 - settings.adam_optimization.beta1) * dW
+            self.v_dw = settings.adam_optimization.beta2 * self.v_dw + (1 - settings.adam_optimization.beta2) * (dw ** 2)
+            self.v_dW = settings.adam_optimization.beta2 * self.v_dW + (1 - settings.adam_optimization.beta2) * (dW ** 2)
+
+            m_dw_corrected = self.m_dw / (1 - settings.adam_optimization.beta1)
+            m_dW_corrected = self.m_dW / (1 - settings.adam_optimization.beta1)
+            v_dw_corrected = self.v_dw / (1 - settings.adam_optimization.beta2)
+            v_dW_corrected = self.v_dW / (1 - settings.adam_optimization.beta2)
+
+            dw = self.learning_rate * m_dw_corrected / (np.sqrt(v_dw_corrected) + settings.adam_optimization.epsilon)
+            dW = self.learning_rate * m_dW_corrected / (np.sqrt(v_dW_corrected) + settings.adam_optimization.epsilon)
 
         self.weights[1] -= dW
         self.weights[0] -= dw
