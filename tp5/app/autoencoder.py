@@ -31,6 +31,12 @@ class Autoencoder():
                 print(f"output[0]={np.where(O < 0.5, 0, 1)[0]}\n\n") # threshold output to 0 or 1
 
 
+    def predict(self, inputs: np.array):
+        _, _, _, latent_vector = self.encoder.feed_forward(inputs)
+        _, _, _, O = self.decoder.feed_forward(latent_vector)
+        return np.where(O < 0.5, 0, 1) # threshold output to 0 or 1
+
+
     def _binary_cross_entropy(self, O, epsilon=1e-15):
         P = np.clip(O, epsilon, 1 - epsilon) # avoid division by 0
         return np.mean(-self.inputs * np.log(P) - (1 - self.inputs) * np.log(1 - P))
