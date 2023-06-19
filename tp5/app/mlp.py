@@ -49,18 +49,19 @@ class MLP():
         dW = self.learning_rate * dO.dot(V1.T)
         
         # Update hidden layer weights
-        output_layer_delta_sum = dO.T.dot(self.weights[1][:, 1:])
+        output_layer_delta_sum = dO.T.dot(self.weights[1][:, 1:]) # remove bias from output layer weights
         dV1 = output_layer_delta_sum.T * self._relu_derivative(h1)
         dw = self.learning_rate * dV1.dot(X)
 
-        hidden_layer_delta_sum = dV1.T.dot(self.weights[0][:, 1:])
+        hidden_layer_delta_sum = dV1.T.dot(self.weights[0][:, 1:]) # remove bias from hidden layer weights
 
+        # Momentum optimization
         self.previous_deltas = [dw.copy(), dW.copy()]
-        dW += 0.9 * self.previous_deltas[1]
-        dw += 0.9 * self.previous_deltas[0]
+        dW -= 0.9 * self.previous_deltas[1]
+        dw -= 0.9 * self.previous_deltas[0]
 
-        self.weights[1] += dW
-        self.weights[0] += dw
+        self.weights[1] -= dW
+        self.weights[0] -= dw
 
         return hidden_layer_delta_sum
 

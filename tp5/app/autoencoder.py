@@ -11,7 +11,7 @@ class Autoencoder():
         self.encoder = MLP(inputs.shape[1], hidden_nodes, latent_dim, "linear")
 
         self.decoder = MLP(latent_dim, hidden_nodes, inputs.shape[1], "sigmoid")
-    
+
 
     def train(self, epochs: int):
         for epoch in range(epochs):
@@ -20,17 +20,30 @@ class Autoencoder():
             h3, V3, h4, O = self.decoder.feed_forward(latent_vector)
 
             # Backward pass
-            error = self.inputs - O # TODO: should this use the loss function?
+            error = self._binary_cross_entropy_derivative(O) # error = dE/dO, where E is the loss function (e.g. binary cross entropy or MSE)
+
             delta_sum = self.decoder.backward_propagation(latent_vector, h3, V3, h4, error)
             self.encoder.backward_propagation(self.inputs, h1, V1, h2, delta_sum)
             
             if epoch % 1000 == 0 and settings.verbose:
-                print(f"{epoch=} ; error={self.get_error(O)}")
+                print(f"{epoch=} ; error={self._binary_cross_entropy(O)}\n")
+                print(f"input[0]={self.inputs[0].astype(int)}")
+                print(f"output[0]={np.where(O < 0.5, 0, 1)[0]}\n\n") # threshold output to 0 or 1
 
 
-    # TODO: change to binary cross-entropy loss function
-    def get_error(self, O):
-        """Mean Squared Error - MSE"""
-        N = self.inputs.shape[0]
-        errors = self.inputs - O # inputs are the expected outputs
-        return np.power(errors, 2).sum() / N
+    def _binary_cross_entropy(self, O, epsilon=1e-15):
+        P = np.clip(O, epsilon, 1 - epsilon) # avoid division by 0
+        return np.mean(-self.inputs * np.log(P) - (1 - self.inputs) * np.log(1 - P))
+
+
+    def _binary_cross_entropy_derivative(self, O, epsilon=1e-7):
+        P = np.clip(O, epsilon, 1 - epsilon) # avoid division by 0
+        return (P - self.inputs) / (P * (1 - P))
+
+
+    def _mse(self, O):
+        return np.mean(np.square(self.inputs - O))
+
+
+    def _mse_derivative(self, O):
+        return 2 * (O - self.inputs)
