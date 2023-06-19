@@ -21,7 +21,7 @@ def exercise_1():
 	
     # This MUST output 0 incorrect inputs
     print(f"Incorrect inputs: {incorrect_inputs} (out of {inputs.shape[0]})")
-        
+    print(f"Patience: {autoencoder.patience}")
 
 
 if __name__ == "__main__":
