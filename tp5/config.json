@@ -4,6 +4,7 @@
   "epochs": 50000,
   "exercise": 1,
   "optimization": "adam",
+  "noise": 0.9,
   "adam_optimization": {
     "beta1": 0.9,
     "beta2": 0.999,

@@ -7,6 +7,15 @@ from autoencoder import Autoencoder
 def exercise_1():
     inputs = parse_characters(f"{settings.Config.data_path}/font.txt")
 
+    # Apply some noise to the inputs (only if it's configured to add noise), 
+    # so the autoencoder can learn to denoise (i.e Denoising Autoencoder)
+    if settings.noise > 0:
+        # Generate mask of random bits with the same shape as the inputs
+        mask = np.random.rand(*inputs.shape) < settings.noise
+
+        # Apply XOR operation to flip the bits
+        inputs = np.logical_xor(inputs, mask).astype(int) 
+
     autoencoder = Autoencoder(inputs, 16, 2)
 
     autoencoder.train(settings.epochs)

@@ -39,6 +39,7 @@ class Settings(BaseSettings):
     exercise: int
     optimization: str
     adam_optimization: AdamOptimization
+    noise: float # Noise in [0, 1] to add to the inputs 
 
     class Config:
         env_file_encoding = "utf-8"
