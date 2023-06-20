@@ -10,11 +10,9 @@ def exercise_1():
     # Apply some noise to the inputs (only if it's configured to add noise), 
     # so the autoencoder can learn to denoise (i.e Denoising Autoencoder)
     if settings.noise > 0:
-        # Generate mask of random bits with the same shape as the inputs
-        mask = np.random.rand(*inputs.shape) < settings.noise
-
-        # Apply XOR operation to flip the bits
-        inputs = np.logical_xor(inputs, mask).astype(int) 
+        # Generate Gaussian noise with the desired noise level
+        noise = np.random.normal(loc=0, scale=settings.noise, size=inputs.shape)
+        inputs = inputs + noise
 
     autoencoder = Autoencoder(inputs, 16, 2)
 
