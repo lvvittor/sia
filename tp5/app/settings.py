@@ -19,6 +19,10 @@ class AdamOptimization(BaseModel):
     beta2: float
     epsilon: float
 
+class DenoisingAutoencoder(BaseModel):
+    noise: float # Noise in [0, 1] to add to the inputs 
+    train_iterations: int # Number of iterations to train the autoencoder for computing the percentage difference
+
 class Settings(BaseSettings):
     """
     Settings for the application.
@@ -39,7 +43,7 @@ class Settings(BaseSettings):
     exercise: int
     optimization: str
     adam_optimization: AdamOptimization
-    noise: float # Noise in [0, 1] to add to the inputs 
+    denoising_autoencoder: DenoisingAutoencoder 
 
     class Config:
         env_file_encoding = "utf-8"

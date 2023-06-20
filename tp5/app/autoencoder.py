@@ -5,7 +5,6 @@ from settings import settings
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-
 class Autoencoder:
     def __init__(self, inputs: np.array, hidden_nodes: int, latent_dim: int):
         self.inputs = inputs

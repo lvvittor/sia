@@ -29,7 +29,7 @@ def feature_scaling(
     return (numerator / denominator) * (to_int[1] - to_int[0]) + to_int[0]
 
 
-def visualize_character(character: np.array):
+def visualize_character(character: np.array, title: str = None):
 	sns.heatmap(character.reshape(7, 5), cmap='Greys', vmin=0, vmax=1)
-	plt.savefig(f"{settings.Config.output_path}/character.png")
+	plt.savefig(f"{settings.Config.output_path}/character-{title}.png")
 	plt.show()
