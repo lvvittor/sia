@@ -64,8 +64,8 @@ def _denoising_autoencoder(inputs: np.array):
             print(f"Finished iteration {iteration + 1} of {settings.denoising_autoencoder.train_iterations} with MSE {noise_iteration_mses[-1]} and noise {noise}")
 
         mses_by_noise_level.append(noise_iteration_mses)
-    
-    # Configurar el estilo y las paletas de color de Matplotlib
+
+    # Plot the MSEs for each noise level
     plt.rcParams.update({
         "font.size": 50,
         "axes.labelsize": 50,
@@ -75,8 +75,7 @@ def _denoising_autoencoder(inputs: np.array):
         "legend.fontsize": 40
     })
 
-    # Crear el gráfico de barras con Matplotlib
-    fig, ax = plt.subplots(figsize=(30, 30))  # Ajusta el tamaño de la figura según tus necesidades
+    fig, ax = plt.subplots(figsize=(30, 30))
     ax.boxplot(mses_by_noise_level)
     ax.set_xticklabels([f"{noise:.2f}" for noise in noises])
 
@@ -85,7 +84,7 @@ def _denoising_autoencoder(inputs: np.array):
     plt.ylabel("MSE")
     
     plt.grid(True)
-    plt.savefig(settings.Config.output_path + "/distances.png")
+    plt.savefig(settings.Config.output_path + "/mses.png")
     plt.show()
 
 
