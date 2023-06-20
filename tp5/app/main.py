@@ -50,7 +50,6 @@ def _denoising_autoencoder(inputs: np.array):
             autoencoder.train(settings.epochs)
             O = autoencoder.predict(inputs)
 
-
             # Generate Gaussian noise with the desired noise level
             noise = np.random.normal(loc=0, scale=noise, size=inputs.shape)
             noisy_inputs = inputs + noise
@@ -88,8 +87,6 @@ def _denoising_autoencoder(inputs: np.array):
     plt.grid(True)
     plt.savefig(settings.Config.output_path + "/distances.png")
     plt.show()
-
-    # print(f"Distance of the vectors: {np.mean(distances)}")
 
 
 
