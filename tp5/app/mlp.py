@@ -6,85 +6,83 @@ class MLP():
     """Multilayer perceptron class (1 hidden layer and 1 output layer)"""
 
     def __init__(
-        self, input_dim: int, hidden_nodes: int, output_nodes: int, output_activation_func: str = "sigmoid"
+        self, layers: list[int], output_activation_func: str = "sigmoid"
     ):        
         self.learning_rate = settings.learning_rate
 
-        # +1 for bias term on each layer
-        self.weights = [
-            np.random.randn(hidden_nodes, input_dim + 1),
-            np.random.randn(output_nodes, hidden_nodes + 1)
-        ]
-
-        # Momentum optimization
-        self.previous_deltas = [np.zeros(self.weights[0].shape), np.zeros(self.weights[1].shape)]
+        # +1 in the column dim to account for bias term on each layer
+        self.weights = [np.random.randn(layers[i + 1], layers[i] + 1) for i in range(len(layers) - 1)]
 
         self.output_activation_func = output_activation_func
 
+        # Momentum optimization
+        self.previous_deltas = [np.zeros(weight.shape) for weight in self.weights]
+
         # ADAM optimization
-        self.m_dw = np.zeros((hidden_nodes, input_dim + 1))    # auxiliary weights for the hidden layer
-        self.v_dw = np.zeros((hidden_nodes, input_dim + 1))
-        self.m_dW = np.zeros((output_nodes, hidden_nodes + 1)) # auxiliary weights for the output layer
-        self.v_dW = np.zeros((output_nodes, hidden_nodes + 1))
+        self.m = [np.zeros((layers[i + 1], layers[i] + 1)) for i in range(len(layers) - 1)]
+        self.v = [np.zeros((layers[i + 1], layers[i] + 1)) for i in range(len(layers) - 1)]
 
 
     def feed_forward(self, inputs):
         # Add neuron with constant output 1 to inputs, to account for bias
         X = np.insert(inputs, 0, 1, axis=1)
 
-        h1 = self.weights[0].dot(X.T)
+        V = [X.T]
+        H = []
 
-        # Hidden layer output
-        V1 = self._relu(h1)
-        V1 = np.insert(V1, 0, 1, axis=0) # add bias to hidden layer output
+        # Iterate over hidden layers
+        for i, w in enumerate(self.weights[:-1]):
+            h = w.dot(V[i])
+            v = self._relu(h)
+            v = np.insert(v, 0, 1, axis=0) # add bias to hidden layer output
+            H.append(h)
+            V.append(v)
 
-        h2 = self.weights[1].dot(V1)
+        hO = self.weights[-1].dot(V[-1]) # (35, 17) x (17, 32) = (35, 32)
 
         # Output layer output
-        O = self._activation_func(h2, self.output_activation_func)
+        O = self._activation_func(hO, self.output_activation_func)
 
-        return h1, V1, h2, O.T # transpose to (N, output_nodes)
+        return H, V, hO, O.T # omit inputs in V, transpose O to (N, output_nodes)
 
 
-    def backward_propagation(self, epoch, inputs, h1, V1, h2, prev_delta_sum):
-        output_errors = prev_delta_sum.T # (output_nodes, N)
-        X = np.insert(inputs, 0, 1, axis=1) # add bias to inputs
-        
+    def backward_propagation(self, epoch, H, V, hO, prev_delta_sum):
         # Update output layer weights
-        dO = output_errors * self._activation_derivative(h2, self.output_activation_func)
-        dW = self.learning_rate * dO.dot(V1.T)
+        dO = prev_delta_sum.T * self._activation_derivative(hO, self.output_activation_func)
+        dW = self.learning_rate * dO.dot(V[-1].T)
         
-        # Update hidden layer weights
-        output_layer_delta_sum = dO.T.dot(self.weights[1][:, 1:]) # remove bias from output layer weights
-        dV1 = output_layer_delta_sum.T * self._relu_derivative(h1)
-        dw = self.learning_rate * dV1.dot(X)
+        dV = dO
+        dw = [dW]
 
-        hidden_layer_delta_sum = dV1.T.dot(self.weights[0][:, 1:]) # remove bias from hidden layer weights
+        # Iterate backwards over hidden layers
+        for i in reversed(range(len(self.weights) - 1)):
+            prev_layer_delta_sum = dV.T.dot(self.weights[i+1][:, 1:]) # remove bias from output layer weights
+            dV = prev_layer_delta_sum.T * self._relu_derivative(H[i])
+            # Note that V[i] is the output of the (i-1)-th hidden layer since V[0] is the input (and len(V) = len(H) + 1)
+            dw.insert(0, self.learning_rate * dV.dot(V[i].T)) # insert at the beginning to keep the order
+
+        prev_layer_delta_sum = dV.T.dot(self.weights[0][:, 1:]) # remove bias from hidden layer weights
 
         # Momentum optimization
         if settings.optimization == "momentum":
-            self.previous_deltas = [dw.copy(), dW.copy()]
-            dW -= 0.9 * self.previous_deltas[1]
-            dw -= 0.9 * self.previous_deltas[0]
+            for i in range(len(dw)):
+                _dw = dw[i].copy()
+                dw[i] -= 0.9 * self.previous_deltas[i]
+                self.previous_deltas[i] = _dw
         # ADAM optimization
         elif settings.optimization == "adam":
-            self.m_dw = settings.adam_optimization.beta1 * self.m_dw + (1 - settings.adam_optimization.beta1) * dw
-            self.m_dW = settings.adam_optimization.beta1 * self.m_dW + (1 - settings.adam_optimization.beta1) * dW
-            self.v_dw = settings.adam_optimization.beta2 * self.v_dw + (1 - settings.adam_optimization.beta2) * (dw ** 2)
-            self.v_dW = settings.adam_optimization.beta2 * self.v_dW + (1 - settings.adam_optimization.beta2) * (dW ** 2)
+            for i in range(len(dw)): # iterate over layers
+                self.m[i] = settings.adam_optimization.beta1 * self.m[i] + (1 - settings.adam_optimization.beta1) * dw[i]
+                self.v[i] = settings.adam_optimization.beta2 * self.v[i] + (1 - settings.adam_optimization.beta2) * (dw[i] ** 2)
+                m_hat = self.m[i] / (1 - settings.adam_optimization.beta1**epoch)
+                v_hat = self.v[i] / (1 - settings.adam_optimization.beta1**epoch)
+                dw[i] = self.learning_rate * m_hat / (np.sqrt(v_hat) + settings.adam_optimization.epsilon)
 
-            m_dw_corrected = self.m_dw / (1 - settings.adam_optimization.beta1**epoch)
-            m_dW_corrected = self.m_dW / (1 - settings.adam_optimization.beta1**epoch)
-            v_dw_corrected = self.v_dw / (1 - settings.adam_optimization.beta2**epoch)
-            v_dW_corrected = self.v_dW / (1 - settings.adam_optimization.beta2**epoch)
+        # Update weights
+        for i in range(len(dw)):
+            self.weights[i] -= dw[i]
 
-            dw = self.learning_rate * m_dw_corrected / (np.sqrt(v_dw_corrected) + settings.adam_optimization.epsilon)
-            dW = self.learning_rate * m_dW_corrected / (np.sqrt(v_dW_corrected) + settings.adam_optimization.epsilon)
-
-        self.weights[1] -= dW
-        self.weights[0] -= dw
-
-        return hidden_layer_delta_sum
+        return prev_layer_delta_sum
 
 
     def _relu(self, V):
