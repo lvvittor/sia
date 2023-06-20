@@ -14,6 +14,9 @@ def exercise_1():
 	# Check if the error is of at most 1 pixel per character
     O = autoencoder.predict(inputs)
 
+    print(f"Latent vector: {len(autoencoder.latent_vector)}")
+    autoencoder.visualize_latent_space()
+
     incorrect_inputs = 0
     for i in range(inputs.shape[0]):
         if np.sum(np.abs(inputs[i] - O[i])) > 1:
