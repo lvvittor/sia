@@ -6,39 +6,42 @@ from autoencoder import Autoencoder
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+
 def exercise_1():
     inputs = parse_characters(f"{settings.Config.data_path}/font.txt")
-        
+
     autoencoder = Autoencoder(inputs, 16, 2)
 
     autoencoder.train(settings.epochs)
-    
+
     O = autoencoder.predict(inputs)
 
     # Check if the error is of at most 1 pixel per character
     incorrect_inputs = np.sum(np.sum(np.abs(inputs - O), axis=1) > 1)
-	
+
     if settings.verbose:
         # This MUST output 0 incorrect inputs if we don't add noise to the inputs
         print(f"Incorrect inputs: {incorrect_inputs} (out of {inputs.shape[0]})")
         print(f"Patience: {autoencoder.patience}")
-        
+
         # Visualize the latent space and save it to a file
         autoencoder.visualize_latent_space()
 
-    # Apply some noise to the inputs (only if it's configured to add noise), 
+    # Apply some noise to the inputs (only if it's configured to add noise),
     # so the autoencoder can learn to denoise (i.e Denoising Autoencoder)
     if settings.denoising_autoencoder.noise > 0:
         _denoising_autoencoder(inputs)
-	
+
 
 def _denoising_autoencoder(inputs: np.array):
     """
-        Create a denoising autoencoder and train it by adding noise the given inputs.
+    Create a denoising autoencoder and train it by adding noise the given inputs.
     """
     # Generate a list of noise levels to add to the inputs
-    step = (1 - settings.denoising_autoencoder.noise) / settings.denoising_autoencoder.train_iterations
-    noises = np.arange(settings.denoising_autoencoder.noise, 1, step) 
+    step = (
+        1 - settings.denoising_autoencoder.noise
+    ) / settings.denoising_autoencoder.train_iterations
+    noises = np.arange(settings.denoising_autoencoder.noise, 1, step)
 
     # Mean Square error for the original and the denoised outputs
     mses_by_noise_level = []
@@ -61,19 +64,24 @@ def _denoising_autoencoder(inputs: np.array):
             # Mean Square error for the original and the denoised outputs
             noise_iteration_mses.append(np.mean(np.square(O - noisy_O)))
 
-            print(f"Finished iteration {iteration + 1} of {settings.denoising_autoencoder.train_iterations} with MSE {noise_iteration_mses[-1]} and noise {noise}")
+            if settings.verbose:
+                print(
+                    f"Finished iteration {iteration + 1} of {settings.denoising_autoencoder.train_iterations} with MSE {noise_iteration_mses[-1]} and noise {noise}"
+                )
 
         mses_by_noise_level.append(noise_iteration_mses)
 
     # Plot the MSEs for each noise level
-    plt.rcParams.update({
-        "font.size": 50,
-        "axes.labelsize": 50,
-        "axes.titlesize": 60,
-        "xtick.labelsize": 40,
-        "ytick.labelsize": 40,
-        "legend.fontsize": 40
-    })
+    plt.rcParams.update(
+        {
+            "font.size": 50,
+            "axes.labelsize": 50,
+            "axes.titlesize": 60,
+            "xtick.labelsize": 40,
+            "ytick.labelsize": 40,
+            "legend.fontsize": 40,
+        }
+    )
 
     fig, ax = plt.subplots(figsize=(30, 30))
     ax.boxplot(mses_by_noise_level)
@@ -82,16 +90,15 @@ def _denoising_autoencoder(inputs: np.array):
     plt.title("MSE between the original and the denoised outputs")
     plt.xlabel("Noise level")
     plt.ylabel("MSE")
-    
+
     plt.grid(True)
     plt.savefig(settings.Config.output_path + "/mses.png")
     plt.show()
 
 
-
 if __name__ == "__main__":
-	match settings.exercise:
-		case 1:
-			exercise_1()
-		case _:
-			raise ValueError(f"Invalid exercise number: {settings.exercise}")
+    match settings.exercise:
+        case 1:
+            exercise_1()
+        case _:
+            raise ValueError(f"Invalid exercise number: {settings.exercise}")
