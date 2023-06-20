@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 def exercise_1():
     inputs = parse_characters(f"{settings.Config.data_path}/font.txt")
 
-    autoencoder = Autoencoder(inputs, 16, 2)
+    autoencoder = Autoencoder(inputs, [16], 2)
 
     autoencoder.train(settings.epochs)
 

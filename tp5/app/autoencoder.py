@@ -5,13 +5,14 @@ from settings import settings
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-class Autoencoder:
-    def __init__(self, inputs: np.array, hidden_nodes: int, latent_dim: int, expected_output: np.array = None):
+
+class Autoencoder():
+    def __init__(self, inputs: np.array, hidden_nodes: list[int], latent_dim: int, expected_output: np.array = None):
         self.inputs = inputs
 
-        self.encoder = MLP(inputs.shape[1], hidden_nodes, latent_dim, "linear")
+        self.encoder = MLP([inputs.shape[1], *hidden_nodes, latent_dim], "linear")
 
-        self.decoder = MLP(latent_dim, hidden_nodes, inputs.shape[1], "sigmoid")
+        self.decoder = MLP([latent_dim, *hidden_nodes, inputs.shape[1]], "sigmoid")
 
         # Error through epochs for plotting and early stopping
         self.losses = np.array([])  # every 1000 epochs
@@ -32,26 +33,22 @@ class Autoencoder:
     def train(self, epochs: int):
         for epoch in range(1, epochs):
             # Forward pass
-            h1, V1, h2, self.latent_vector = self.encoder.feed_forward(self.inputs)
-            h3, V3, h4, O = self.decoder.feed_forward(self.latent_vector)
+            H_enc, V_enc, hO_enc, self.latent_vector = self.encoder.feed_forward(self.inputs)
+            H_dec, V_dec, hO_dec, O = self.decoder.feed_forward(self.latent_vector)
 
             # Backward pass
             error = self._binary_cross_entropy_derivative(
                 O
             )  # error = dE/dO, where E is the loss function (e.g. binary cross entropy or MSE)
 
-            delta_sum = self.decoder.backward_propagation(
-                epoch, self.latent_vector, h3, V3, h4, error
-            )
-            self.encoder.backward_propagation(epoch, self.inputs, h1, V1, h2, delta_sum)
-
+            delta_sum = self.decoder.backward_propagation(epoch, H_dec, V_dec, hO_dec, error)
+            self.encoder.backward_propagation(epoch, H_enc, V_enc, hO_enc, delta_sum)
+            
             if epoch % 1000 == 0:
                 loss = self._binary_cross_entropy(O)
                 self.losses = np.append(self.losses, loss)
-                if settings.verbose:
-                    print(f"{epoch=} ; error={loss}\n")
-                if self.early_stopping():
-                    break
+                if settings.verbose: print(f"{epoch=} ; error={loss}\n")
+                if self.early_stopping(): break
 
     def early_stopping(self, threshold: float = 0.01) -> bool:
         """Check if the loss didn't decrease by at least 1%."""
