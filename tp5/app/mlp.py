@@ -38,7 +38,7 @@ class MLP():
             H.append(h)
             V.append(v)
 
-        hO = self.weights[-1].dot(V[-1]) # (35, 17) x (17, 32) = (35, 32)
+        hO = self.weights[-1].dot(V[-1])
 
         # Output layer output
         O = self._activation_func(hO, self.output_activation_func)
@@ -65,13 +65,13 @@ class MLP():
 
         # Momentum optimization
         if settings.optimization == "momentum":
-            for i in range(len(dw)):
+            for i in range(len(self.weights)):
                 _dw = dw[i].copy()
                 dw[i] -= 0.9 * self.previous_deltas[i]
                 self.previous_deltas[i] = _dw
         # ADAM optimization
         elif settings.optimization == "adam":
-            for i in range(len(dw)): # iterate over layers
+            for i in range(len(self.weights)): # iterate over layers
                 self.m[i] = settings.adam_optimization.beta1 * self.m[i] + (1 - settings.adam_optimization.beta1) * dw[i]
                 self.v[i] = settings.adam_optimization.beta2 * self.v[i] + (1 - settings.adam_optimization.beta2) * (dw[i] ** 2)
                 m_hat = self.m[i] / (1 - settings.adam_optimization.beta1**epoch)
@@ -79,7 +79,7 @@ class MLP():
                 dw[i] = self.learning_rate * m_hat / (np.sqrt(v_hat) + settings.adam_optimization.epsilon)
 
         # Update weights
-        for i in range(len(dw)):
+        for i in range(len(self.weights)):
             self.weights[i] -= dw[i]
 
         return prev_layer_delta_sum
