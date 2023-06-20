@@ -1,13 +1,14 @@
 {
   "learning_rate": 0.001,
-  "verbose": false,
+  "verbose": true,
   "epochs": 50000,
   "exercise": 1,
   "optimization": "adam",
   "denoising_autoencoder": {
-    "noise": 1e-20,
+    "noise": 0,
     "train_iterations": 5
   },
+  "latent_space_points_to_add": 1,
   "adam_optimization": {
     "beta1": 0.9,
     "beta2": 0.999,

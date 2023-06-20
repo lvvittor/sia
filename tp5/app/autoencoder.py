@@ -80,6 +80,7 @@ class Autoencoder:
         return 2 * (O - self.inputs)
 
     def visualize_latent_space(self):
+        plt.figure()
         sns.set_palette(sns.color_palette("viridis"))
         sns.set_theme(style="white")
         sns.set(font_scale=5, rc={"figure.figsize": (20, 20)}, style="whitegrid")

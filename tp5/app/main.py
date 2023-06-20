@@ -1,11 +1,10 @@
 import numpy as np
 
 from settings import settings
-from utils import parse_characters
+from utils import parse_characters, visualize_character
 from autoencoder import Autoencoder
 import seaborn as sns
 import matplotlib.pyplot as plt
-
 
 def exercise_1():
     inputs = parse_characters(f"{settings.Config.data_path}/font.txt")
@@ -13,6 +12,27 @@ def exercise_1():
     autoencoder = Autoencoder(inputs, 16, 2)
 
     autoencoder.train(settings.epochs)
+
+    if settings.latent_space_points_to_add > 0:
+        middle_points = np.zeros((settings.latent_space_points_to_add, 2))
+        for i in range(settings.latent_space_points_to_add):
+            indices = np.random.randint(0, len(autoencoder.latent_vector), size=2)
+            p1, p2 = autoencoder.latent_vector[indices]
+            middle_points[i] = (p1 + p2) / 2
+            # middle_points[i] = (np.random.uniform(-10, 10), np.random.uniform(-5, 5))
+
+            if settings.verbose:
+                print(f"Added {middle_points[i]} to the latent space")
+        
+        modified_latent_vector = np.concatenate((autoencoder.latent_vector, middle_points))
+
+        if settings.verbose:
+            print(f"Modified latent space is: {modified_latent_vector}")
+
+        _, _, _, O = autoencoder.decoder.feed_forward(modified_latent_vector)
+
+        for i, o in enumerate(O):
+            visualize_character(o, title=f"{i}")
 
     O = autoencoder.predict(inputs)
 
@@ -31,7 +51,6 @@ def exercise_1():
     # so the autoencoder can learn to denoise (i.e Denoising Autoencoder)
     if settings.denoising_autoencoder.noise > 0:
         _denoising_autoencoder(inputs)
-
 
 def _denoising_autoencoder(inputs: np.array):
     """

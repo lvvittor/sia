@@ -30,6 +30,9 @@ def feature_scaling(
 
 
 def visualize_character(character: np.array, title: str = None):
-	sns.heatmap(character.reshape(7, 5), cmap='Greys', vmin=0, vmax=1)
-	plt.savefig(f"{settings.Config.output_path}/character-{title}.png")
-	plt.show()
+    sns.set(font_scale=5, rc={"figure.figsize": (20, 20)}, style="whitegrid")
+    plt.figure()
+    sns.heatmap(character.reshape(7, 5), cmap='Greys', vmin=0, vmax=1)
+    
+    plt.savefig(f"{settings.Config.output_path}/character-{title}.png")
+    plt.show()

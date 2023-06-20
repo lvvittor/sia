@@ -44,6 +44,7 @@ class Settings(BaseSettings):
     optimization: str
     adam_optimization: AdamOptimization
     denoising_autoencoder: DenoisingAutoencoder 
+    latent_space_points_to_add: int
 
     class Config:
         env_file_encoding = "utf-8"
