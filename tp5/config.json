@@ -5,10 +5,11 @@
   "exercise": 1,
   "optimization": "adam",
   "denoising_autoencoder": {
-    "noise": 0,
-    "train_iterations": 5
+    "train_noise": 0.2,
+    "predict_rounds": 5,
+    "predict_noises": [0.1, 0.3, 0.5, 0.7, 0.9]
   },
-  "latent_space_points_to_add": 1,
+  "latent_space_points_to_add": 0,
   "adam_optimization": {
     "beta1": 0.9,
     "beta2": 0.999,

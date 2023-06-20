@@ -6,7 +6,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 class Autoencoder:
-    def __init__(self, inputs: np.array, hidden_nodes: int, latent_dim: int):
+    def __init__(self, inputs: np.array, hidden_nodes: int, latent_dim: int, expected_output: np.array = None):
         self.inputs = inputs
 
         self.encoder = MLP(inputs.shape[1], hidden_nodes, latent_dim, "linear")
@@ -18,6 +18,8 @@ class Autoencoder:
         self.patience = 10  # early stopping patience
 
         self._latent_vector = np.array([])
+
+        self.expected_output =  expected_output if expected_output is not None else self.inputs
 
     @property
     def latent_vector(self):
@@ -52,34 +54,40 @@ class Autoencoder:
                     break
 
     def early_stopping(self, threshold: float = 0.01) -> bool:
+        """Check if the loss didn't decrease by at least 1%."""
         if self.losses.shape[0] < 2:
             return False
-        # Early stopping if the loss didn't decrease by at least 1%
         early_stop = self.losses[-1] > self.losses[-2] * (1 - threshold)
         if early_stop:
             self.patience -= 1
         return self.patience == 0
 
     def predict(self, inputs: np.array):
+        """Predict the output for the given inputs."""
         _, _, _, self.latent_vector = self.encoder.feed_forward(inputs)
         _, _, _, O = self.decoder.feed_forward(self.latent_vector)
         return np.where(O < 0.5, 0, 1)  # threshold output to 0 or 1
 
     def _binary_cross_entropy(self, O, epsilon=1e-15):
+        """Compute the binary cross entropy loss function."""
         P = np.clip(O, epsilon, 1 - epsilon)  # avoid division by 0
-        return np.mean(-self.inputs * np.log(P) - (1 - self.inputs) * np.log(1 - P))
+        return np.mean(-self.expected_output * np.log(P) - (1 - self.expected_output) * np.log(1 - P))
 
     def _binary_cross_entropy_derivative(self, O, epsilon=1e-7):
+        """Compute the derivative of the binary cross entropy loss function."""
         P = np.clip(O, epsilon, 1 - epsilon)  # avoid division by 0
-        return (P - self.inputs) / (P * (1 - P))
+        return (P - self.expected_output) / (P * (1 - P))
 
     def _mse(self, O):
-        return np.mean(np.square(self.inputs - O))
+        """Compute the mean squared error loss function."""
+        return np.mean(np.square(self.expected_output - O))
 
     def _mse_derivative(self, O):
-        return 2 * (O - self.inputs)
+        """Compute the derivative of the mean squared error loss function."""
+        return 2 * (O - self.expected_output)
 
     def visualize_latent_space(self):
+        """Visualize the latent space and save it to a file."""
         plt.figure()
         sns.set_palette(sns.color_palette("viridis"))
         sns.set_theme(style="white")

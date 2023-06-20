@@ -28,6 +28,30 @@ def feature_scaling(
     denominator = from_int[1] - from_int[0]
     return (numerator / denominator) * (to_int[1] - to_int[0]) + to_int[0]
 
+def add_noise(array: np.array, noise_level: float) -> np.array:
+    """Add Gaussian noise to the given array.
+
+    Args:
+        array: Array to add noise to
+        noise_level: Noise level in [0, 1]
+
+    Returns:
+        A new array with added noise
+    """
+    return np.clip(array + np.random.normal(loc=0, scale=noise_level, size=array.shape), 0, 1)
+
+def mse(expected: np.array, actual: np.array) -> float:
+    """Compute the Mean Squared Error between the expected and actual values.
+
+    Args:
+        expected: Expected values
+        actual: Actual values
+
+    Returns:
+        The MSE between the expected and actual values
+    """
+    return np.mean(np.square(expected - actual))
+
 
 def visualize_character(character: np.array, title: str = None):
     sns.set(font_scale=5, rc={"figure.figsize": (20, 20)}, style="whitegrid")

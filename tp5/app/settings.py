@@ -20,8 +20,9 @@ class AdamOptimization(BaseModel):
     epsilon: float
 
 class DenoisingAutoencoder(BaseModel):
-    noise: float # Noise in [0, 1] to add to the inputs 
-    train_iterations: int # Number of iterations to train the autoencoder for computing the percentage difference
+    train_noise: float # Noise in [0, 1] to add to the inputs 
+    predict_rounds: int # Number of prediction rounds to do
+    predict_noises: list[float] # Noise levels to use for the prediction rounds
 
 class Settings(BaseSettings):
     """
