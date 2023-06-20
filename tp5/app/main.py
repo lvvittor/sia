@@ -31,7 +31,7 @@ def exercise_1():
         if np.sum(np.abs(inputs[i] - O[i])) > 1:
             incorrect_inputs += 1
 	
-    # This MUST output 0 incorrect inputs
+    # This MUST output 0 incorrect inputs if we don't add noise to the inputs
     print(f"Incorrect inputs: {incorrect_inputs} (out of {inputs.shape[0]})")
     print(f"Patience: {autoencoder.patience}")
 
