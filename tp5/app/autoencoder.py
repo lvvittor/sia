@@ -1,10 +1,9 @@
 import numpy as np
-
-from mlp import MLP
-from settings import settings
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+from mlp import MLP
+from settings import settings
 
 class Autoencoder():
     def __init__(self, inputs: np.array, hidden_nodes: list[int], latent_dim: int, expected_output: np.array = None):
@@ -18,37 +17,27 @@ class Autoencoder():
         self.losses = np.array([])  # every 1000 epochs
         self.patience = 10  # early stopping patience
 
-        self._latent_vector = np.array([])
-
         self.expected_output =  expected_output if expected_output is not None else self.inputs
 
-    @property
-    def latent_vector(self):
-        return self._latent_vector
-
-    @latent_vector.setter
-    def latent_vector(self, value):
-        self._latent_vector = value
 
     def train(self, epochs: int):
         for epoch in range(1, epochs):
             # Forward pass
-            H_enc, V_enc, hO_enc, self.latent_vector = self.encoder.feed_forward(self.inputs)
-            H_dec, V_dec, hO_dec, O = self.decoder.feed_forward(self.latent_vector)
+            H_enc, V_enc, hO_enc, latent_vector = self.encoder.feed_forward(self.inputs)
+            H_dec, V_dec, hO_dec, O = self.decoder.feed_forward(latent_vector)
 
             # Backward pass
-            error = self._binary_cross_entropy_derivative(
-                O
-            )  # error = dE/dO, where E is the loss function (e.g. binary cross entropy or MSE)
+            error = self._binary_cross_entropy_derivative(self.expected_output, O) # error = dE/dO, where E is the loss function (e.g. binary cross entropy or MSE)
 
             delta_sum = self.decoder.backward_propagation(epoch, H_dec, V_dec, hO_dec, error)
             self.encoder.backward_propagation(epoch, H_enc, V_enc, hO_enc, delta_sum)
             
             if epoch % 1000 == 0:
-                loss = self._binary_cross_entropy(O)
+                loss = self._binary_cross_entropy(self.expected_output, O)
                 self.losses = np.append(self.losses, loss)
                 if settings.verbose: print(f"{epoch=} ; error={loss}\n")
                 if self.early_stopping(): break
+
 
     def early_stopping(self, threshold: float = 0.01) -> bool:
         """Check if the loss didn't decrease by at least 1%."""
@@ -59,29 +48,31 @@ class Autoencoder():
             self.patience -= 1
         return self.patience == 0
 
+
     def predict(self, inputs: np.array):
         """Predict the output for the given inputs."""
-        _, _, _, self.latent_vector = self.encoder.feed_forward(inputs)
-        _, _, _, O = self.decoder.feed_forward(self.latent_vector)
+        _, _, _, latent_vector = self.encoder.feed_forward(inputs)
+        _, _, _, O = self.decoder.feed_forward(latent_vector)
         return np.where(O < 0.5, 0, 1)  # threshold output to 0 or 1
 
-    def _binary_cross_entropy(self, O, epsilon=1e-15):
-        """Compute the binary cross entropy loss function."""
-        P = np.clip(O, epsilon, 1 - epsilon)  # avoid log(0)
-        return np.mean(-self.expected_output * np.log(P) - (1 - self.expected_output) * np.log(1 - P))
 
-    def _binary_cross_entropy_derivative(self, O, epsilon=1e-7):
-        """Compute the derivative of the binary cross entropy loss function."""
-        P = np.clip(O, epsilon, 1 - epsilon)  # avoid division by 0
-        return (P - self.expected_output) / (P * (1 - P))
+    def _binary_cross_entropy(self, Y, O, epsilon=1e-15):
+        P = np.clip(O, epsilon, 1 - epsilon) # avoid division by 0
+        return np.mean(-Y * np.log(P) - (1 - Y) * np.log(1 - P))
 
-    def _mse(self, O):
-        """Compute the mean squared error loss function."""
-        return np.mean(np.square(self.expected_output - O))
 
-    def _mse_derivative(self, O):
-        """Compute the derivative of the mean squared error loss function."""
-        return 2 * (O - self.expected_output)
+    def _binary_cross_entropy_derivative(self, Y, O, epsilon=1e-7):
+        P = np.clip(O, epsilon, 1 - epsilon) # avoid division by 0
+        return (P - Y) / (P * (1 - P))
+
+
+    def _mse(self, Y, O):
+        return np.mean(np.square(Y - O))
+
+
+    def _mse_derivative(self, Y, O):
+        return 2 * (O - Y)
+
 
     def visualize_latent_space(self):
         """Visualize the latent space and save it to a file."""
@@ -90,9 +81,11 @@ class Autoencoder():
         sns.set_theme(style="white")
         sns.set(font_scale=2, rc={"figure.figsize": (80, 80)}, style="whitegrid")
 
+        _, _, _, latent_vector = self.encoder.feed_forward(self.inputs)
+
         ax = sns.scatterplot(
-            x=self.latent_vector[:, 0],
-            y=self.latent_vector[:, 1],
+            x=latent_vector[:, 0],
+            y=latent_vector[:, 1],
             marker="o",
             s=100,
             legend=False,

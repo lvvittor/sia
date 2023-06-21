@@ -1,10 +1,11 @@
 import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 from settings import settings
 from utils import add_noise, parse_characters, visualize_character, binary_cross_entropy, visualize_characters
 from autoencoder import Autoencoder
-import seaborn as sns
-import matplotlib.pyplot as plt
+from variational_autoencoder import VariationalAutoencoder
 
 def exercise_1():
     inputs = parse_characters(f"{settings.Config.data_path}/font.txt")
@@ -118,9 +119,32 @@ def _denoising_autoencoder(original_inputs: np.array) -> None:
     plt.show()
 
 
+def exercise_2():
+    inputs = parse_characters(f"{settings.Config.data_path}/font.txt")
+
+    vae = VariationalAutoencoder(inputs, [16], 2)
+
+    vae.train(settings.epochs)
+
+    latent_space = vae.predict_latent(inputs)
+    labels = ['`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}', '~', 'DEL']
+    vae.visualize_latent_space(latent_space, labels)
+    vae.visualize_all_digits()
+
+    O = vae.predict([[-0.25, -1.2], [-0.6, 0.5], [1, -0.3], [0.25, 0.8]])
+    visualize_character(O[0], "blue")
+    visualize_character(O[1], "green")
+    visualize_character(O[2], "orange")
+    visualize_character(O[3], "purple")
+	
+    print(f"Finished training with patience: {vae.patience}")
+
+
 if __name__ == "__main__":
     match settings.exercise:
         case 1:
             exercise_1()
+        case 2:
+            exercise_2()
         case _:
             raise ValueError(f"Invalid exercise number: {settings.exercise}")

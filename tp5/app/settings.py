@@ -4,7 +4,6 @@ from pydantic import BaseSettings, BaseModel
 from pathlib import Path
 import json
 
-
 def json_config_settings_source(settings: BaseSettings) -> dict[str, Any]:
     """
     A simple settings source that loads variables from a JSON file

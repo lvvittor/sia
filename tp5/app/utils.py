@@ -1,7 +1,7 @@
-from typing import List
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+from typing import List
 
 from settings import settings
 
@@ -21,13 +21,6 @@ def parse_characters(path: str):
 
     return np.array(character_images, dtype=float)
 
-
-def feature_scaling(
-    value: float, from_int: tuple[float, float], to_int: tuple[float, float]
-) -> float:
-    numerator = value - from_int[0]
-    denominator = from_int[1] - from_int[0]
-    return (numerator / denominator) * (to_int[1] - to_int[0]) + to_int[0]
 
 def add_noise(array: np.array, noise_level: float) -> np.array:
     """Add Gaussian noise to the given array.
