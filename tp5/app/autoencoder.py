@@ -24,13 +24,13 @@ class Autoencoder():
             H_dec, V_dec, hO_dec, O = self.decoder.feed_forward(latent_vector)
 
             # Backward pass
-            error = self._binary_cross_entropy_derivative(O) # error = dE/dO, where E is the loss function (e.g. binary cross entropy or MSE)
+            error = self._binary_cross_entropy_derivative(self.inputs, O) # error = dE/dO, where E is the loss function (e.g. binary cross entropy or MSE)
 
             delta_sum = self.decoder.backward_propagation(epoch, H_dec, V_dec, hO_dec, error)
             self.encoder.backward_propagation(epoch, H_enc, V_enc, hO_enc, delta_sum)
             
             if epoch % 1000 == 0:
-                loss = self._binary_cross_entropy(O)
+                loss = self._binary_cross_entropy(self.inputs, O)
                 self.losses = np.append(self.losses, loss)
                 if settings.verbose: print(f"{epoch=} ; error={loss}\n")
                 if self.early_stopping(): break
@@ -50,19 +50,19 @@ class Autoencoder():
         return np.where(O < 0.5, 0, 1) # threshold output to 0 or 1
 
 
-    def _binary_cross_entropy(self, O, epsilon=1e-15):
+    def _binary_cross_entropy(self, Y, O, epsilon=1e-15):
         P = np.clip(O, epsilon, 1 - epsilon) # avoid division by 0
-        return np.mean(-self.inputs * np.log(P) - (1 - self.inputs) * np.log(1 - P))
+        return np.mean(-Y * np.log(P) - (1 - Y) * np.log(1 - P))
 
 
-    def _binary_cross_entropy_derivative(self, O, epsilon=1e-7):
+    def _binary_cross_entropy_derivative(self, Y, O, epsilon=1e-7):
         P = np.clip(O, epsilon, 1 - epsilon) # avoid division by 0
-        return (P - self.inputs) / (P * (1 - P))
+        return (P - Y) / (P * (1 - P))
 
 
-    def _mse(self, O):
-        return np.mean(np.square(self.inputs - O))
+    def _mse(self, Y, O):
+        return np.mean(np.square(Y - O))
 
 
-    def _mse_derivative(self, O):
-        return 2 * (O - self.inputs)
+    def _mse_derivative(self, Y, O):
+        return 2 * (O - Y)
