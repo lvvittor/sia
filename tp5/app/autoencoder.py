@@ -88,13 +88,13 @@ class Autoencoder():
         plt.figure()
         sns.set_palette(sns.color_palette("viridis"))
         sns.set_theme(style="white")
-        sns.set(font_scale=5, rc={"figure.figsize": (20, 20)}, style="whitegrid")
+        sns.set(font_scale=2, rc={"figure.figsize": (80, 80)}, style="whitegrid")
 
         ax = sns.scatterplot(
             x=self.latent_vector[:, 0],
             y=self.latent_vector[:, 1],
             marker="o",
-            s=500,
+            s=100,
             legend=False,
         )
 

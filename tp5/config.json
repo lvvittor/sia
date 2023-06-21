@@ -1,20 +1,20 @@
 {
   "learning_rate": 0.001,
-  "verbose": false,
+  "verbose": true,
   "epochs": 50000,
   "exercise": 1,
   "optimization": "adam",
   "denoising_autoencoder": {
     "execute": false,
-    "train_noise": 0.1,
+    "train_noise": 0.2,
     "predict_rounds": 5,
-    "data_augmentation_factor": 500,
+    "data_augmentation_factor": 10,
     "predict_noises": [0.1, 0.3, 0.5, 0.7, 0.9]
   },
   "middle_point": {
     "execute": true,
-    "first_input_index": 12,
-    "second_input_index": 28
+    "first_input_index": 5,
+    "second_input_index": 15
   },
   "adam_optimization": {
     "beta1": 0.9,

@@ -60,8 +60,9 @@ def _denoising_autoencoder(original_inputs: np.array) -> None:
     """
         
     # Train the denoising autoencoder with noisy inputs and the original inputs as expected outputs)
-    noisy_inputs = add_noise(original_inputs, noise_level=settings.denoising_autoencoder.train_noise)
-    autoencoder = Autoencoder(inputs=noisy_inputs, hidden_nodes=[16], latent_dim=7, expected_output=original_inputs)
+    original_inputs_repeated = np.repeat(original_inputs, settings.denoising_autoencoder.data_augmentation_factor, axis=0)
+    noisy_inputs = add_noise(original_inputs_repeated, noise_level=settings.denoising_autoencoder.train_noise)
+    autoencoder = Autoencoder(inputs=noisy_inputs, hidden_nodes=[16], latent_dim=7, expected_output=original_inputs_repeated)
     autoencoder.train(settings.epochs)
 
     # Now that the autoencoder is trained, we can use it to denoise different noisy inputs
