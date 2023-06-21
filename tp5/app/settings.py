@@ -4,7 +4,6 @@ from pydantic import BaseSettings, BaseModel
 from pathlib import Path
 import json
 
-
 def json_config_settings_source(settings: BaseSettings) -> dict[str, Any]:
     """
     A simple settings source that loads variables from a JSON file
@@ -18,6 +17,18 @@ class AdamOptimization(BaseModel):
     beta1: float
     beta2: float
     epsilon: float
+
+class DenoisingAutoencoder(BaseModel):
+    train_noise: float # Noise in [0, 1] to add to the inputs 
+    data_augmentation_factor: int # Number of times augmented the training data 
+    predict_rounds: int # Number of prediction rounds to do
+    predict_noises: list[float] # Noise levels to use for the prediction rounds
+    execute: bool # Whether to execute the denoising autoencoder or not
+
+class MiddlePoint(BaseModel):
+    execute: bool # Whether to execute the middle point or not
+    first_input_index: int # Index of the first input to use
+    second_input_index: int # Index of the second input to use
 
 class Settings(BaseSettings):
     """
@@ -39,6 +50,8 @@ class Settings(BaseSettings):
     exercise: int
     optimization: str
     adam_optimization: AdamOptimization
+    denoising_autoencoder: DenoisingAutoencoder 
+    middle_point: MiddlePoint
 
     class Config:
         env_file_encoding = "utf-8"
