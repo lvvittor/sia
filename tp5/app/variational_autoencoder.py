@@ -12,6 +12,10 @@ class VariationalAutoencoder(Autoencoder):
         # The output layer of the encoder will output the mean and variance of the latent vector
         self.encoder = MLP([inputs.shape[1], *hidden_nodes, latent_dim * 2], "linear")
 
+        # Save losses for plotting
+        self.kl_losses = np.array([])
+        self.rec_losses = np.array([])
+
 
     def train(self, epochs: int):
         for epoch in range(1, epochs):
@@ -28,7 +32,7 @@ class VariationalAutoencoder(Autoencoder):
             H_dec, V_dec, hO_dec, O = self.decoder.feed_forward(z)
 
             # Backward pass
-            rec_loss, kl_loss, d_reconstruction_loss, d_kl_loss = self._vae_loss(self.inputs, O, z_mean, z_log_var)
+            rec_loss, kl_loss, d_reconstruction_loss = self._vae_loss(self.inputs, O, z_mean, z_log_var)
 
             # Reference:
             # - https://github.com/pometa0507/Variational-Autoencoder-Numpy/blob/master/VAE_Numpy.ipynb
@@ -37,8 +41,8 @@ class VariationalAutoencoder(Autoencoder):
             delta_sum = self.decoder.backward_propagation(epoch, H_dec, V_dec, hO_dec, d_reconstruction_loss)
 
             # First half of the gradients are for the mean, second half for the variance
-            kl_gradients = np.append(z_mean, 0.5 * (np.exp(z_log_var) - 1), axis=1)
-            rec_gradients = np.append(delta_sum, 0.5 * delta_sum * epsilon * np.exp(z_log_var / 2), axis=1)
+            kl_gradients = np.append(z_mean, 0.5 * (np.exp(z_log_var) - 1), axis=1) # partial derivative of `KL_divergence` w.r.t. z_mean (left) and z_log_var (right)
+            rec_gradients = np.append(delta_sum, delta_sum * epsilon * np.exp(z_log_var * 0.5) * 0.5, axis=1) # delta_sum * partial derivative of `sampling` w.r.t. z_mean (left) and z_log_var (right)
             gradients = kl_gradients + rec_gradients
 
             self.encoder.backward_propagation(epoch, H_enc, V_enc, hO_enc, gradients)
@@ -46,8 +50,19 @@ class VariationalAutoencoder(Autoencoder):
             if epoch % 1000 == 0:
                 total_loss = np.mean(rec_loss + kl_loss)
                 self.losses = np.append(self.losses, total_loss)
+                self.kl_losses = np.append(self.kl_losses, kl_loss)
+                self.rec_losses = np.append(self.rec_losses, rec_loss)
                 if settings.verbose: print(f"{epoch=} ; error={total_loss} (rec={rec_loss} ; kl={kl_loss})\n")
-                # if self.early_stopping(): break
+                if self.early_stopping(): break
+    
+
+    def early_stopping(self, threshold: float = 0.01) -> bool:
+        if self.losses.shape[0] < 2: return False
+        # Early stopping if none of the losses decreases by at least 1%
+        early_stop_kl = self.kl_losses[-1] > self.kl_losses[-2] * (1 - threshold)
+        early_stop_rec = self.rec_losses[-1] > self.rec_losses[-2] * (1 - threshold)
+        if early_stop_kl and early_stop_rec: self.patience -= 1
+        return self.patience == 0
 
 
     def sampling(self, z_mean: np.array, z_log_variance: np.array):
@@ -66,17 +81,13 @@ class VariationalAutoencoder(Autoencoder):
 
         # Gradient loss
         d_reconstruction_loss = self._binary_cross_entropy_derivative(X, X_gen)
-        d_kl_loss = self._kl_divergence_derivative(z_mean, z_log_var)
 
-        return reconstruction_loss, kl_loss, d_reconstruction_loss, d_kl_loss
+        return reconstruction_loss, kl_loss, d_reconstruction_loss
     
 
     def _kl_divergence(self, z_mean: np.array, z_log_var: np.array):
+        # KL divergence is -0.5 * (1 + log_var - mean^2 - exp(log_var)), we take the mean over the batch
         return -0.5 * np.mean(np.sum(1 + z_log_var - np.square(z_mean) - np.exp(z_log_var), axis=-1))
-
-
-    def _kl_divergence_derivative(self, z_mean: np.array, z_log_var: np.array):
-        return -0.5 * (1 + z_log_var - np.square(z_mean) - np.exp(z_log_var))
 
 
     def predict(self, inputs: np.array):
