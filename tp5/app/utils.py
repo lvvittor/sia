@@ -57,7 +57,7 @@ def visualize_character(character: np.array, title: str = None):
     sns.heatmap(character.reshape(7, 5), cmap='Greys', vmin=0, vmax=1)
     
     plt.savefig(f"{settings.Config.output_path}/character-{title}.png")
-    plt.show()
+    plt.close()
 
 def visualize_characters(characters: List[np.array], suptitle: str = "Denoising Autoencoder", titles: List[str] = None, filename: str = "characters.png"):
     sns.set(font_scale=15, rc={"figure.figsize": (100, 55)}, style="whitegrid")
@@ -84,4 +84,4 @@ def visualize_characters(characters: List[np.array], suptitle: str = "Denoising 
         fig.suptitle(suptitle)
     
     plt.savefig(f"{settings.Config.output_path}/characters-{filename}.png")
-    plt.show()
+    plt.close()

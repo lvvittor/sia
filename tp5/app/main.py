@@ -42,8 +42,9 @@ def exercise_1():
         print(f"Incorrect inputs: {incorrect_inputs} (out of {inputs.shape[0]})")
         print(f"Patience: {autoencoder.patience}")
 
-        # Visualize the latent space and save it to a file
-        autoencoder.visualize_latent_space()
+    labels = ['`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}', '~', 'DEL']
+    # Visualize the latent space and save it to a file
+    autoencoder.visualize_latent_space(labels)
 
     # Apply some noise to the inputs (only if it's configured to add noise),
     # so the autoencoder can learn to denoise (i.e Denoising Autoencoder)
@@ -116,7 +117,7 @@ def _denoising_autoencoder(original_inputs: np.array) -> None:
 
     plt.grid(True)
     plt.savefig(settings.Config.output_path + "/binary-cross-entropy.png")
-    plt.show()
+    plt.close()
 
 
 def exercise_2():
