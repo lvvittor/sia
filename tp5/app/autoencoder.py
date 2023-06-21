@@ -67,7 +67,7 @@ class Autoencoder():
 
     def _binary_cross_entropy(self, O, epsilon=1e-15):
         """Compute the binary cross entropy loss function."""
-        P = np.clip(O, epsilon, 1 - epsilon)  # avoid division by 0
+        P = np.clip(O, epsilon, 1 - epsilon)  # avoid log(0)
         return np.mean(-self.expected_output * np.log(P) - (1 - self.expected_output) * np.log(1 - P))
 
     def _binary_cross_entropy_derivative(self, O, epsilon=1e-7):

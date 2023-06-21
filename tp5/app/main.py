@@ -1,7 +1,7 @@
 import numpy as np
 
 from settings import settings
-from utils import add_noise, parse_characters, visualize_character, mse
+from utils import add_noise, parse_characters, visualize_character, binary_cross_entropy, visualize_characters
 from autoencoder import Autoencoder
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -49,7 +49,7 @@ def exercise_1():
 
     # Apply some noise to the inputs (only if it's configured to add noise),
     # so the autoencoder can learn to denoise (i.e Denoising Autoencoder)
-    if settings.denoising_autoencoder.train_noise > 0:
+    if settings.denoising_autoencoder.execute:
         _denoising_autoencoder(inputs)
 
 def _denoising_autoencoder(original_inputs: np.array) -> None:
@@ -61,42 +61,39 @@ def _denoising_autoencoder(original_inputs: np.array) -> None:
         Returns:
             None
     """
-
+        
     # Train the denoising autoencoder with noisy inputs and the original inputs as expected outputs)
     noisy_inputs = add_noise(original_inputs, noise_level=settings.denoising_autoencoder.train_noise)
-    autoencoder = Autoencoder(inputs=noisy_inputs, hidden_nodes=16, latent_dim=2, expected_output=original_inputs)
+    autoencoder = Autoencoder(inputs=noisy_inputs, hidden_nodes=[16], latent_dim=7, expected_output=original_inputs)
     autoencoder.train(settings.epochs)
 
     # Now that the autoencoder is trained, we can use it to denoise different noisy inputs
 
-    mses_by_noise_level = []
+    binary_cross_entropies_by_noise_level = []
     for iteration in range(settings.denoising_autoencoder.predict_rounds):
-        noise_iteration_mses = []
+        noise_iteration_binary_cross_entropies = []
         for noise in settings.denoising_autoencoder.predict_noises:
             
             # Predict the denoised inputs and compute the MSE between the original and the denoised inputs
             noisy_inputs = add_noise(original_inputs, noise_level=noise)
             predicted_denoised_inputs = autoencoder.predict(noisy_inputs)
-            noise_iteration_mses.append(mse(original_inputs, predicted_denoised_inputs))
+            noise_iteration_binary_cross_entropies.append(binary_cross_entropy(original_inputs, predicted_denoised_inputs))
 
             if settings.verbose:
                 print(
-                    f"Finished iteration {iteration + 1} of {settings.denoising_autoencoder.predict_rounds} with MSE {noise_iteration_mses[-1]} and noise {noise}"
+                    f"Finished iteration {iteration + 1} of {settings.denoising_autoencoder.predict_rounds} with Binary Cross Entropy {noise_iteration_binary_cross_entropies[-1]} and noise {noise}"
                 )
-                # Visualize the original and denoised inputs for the last iteration
-                if iteration == settings.denoising_autoencoder.predict_rounds - 1:
-                    for i, (original_input, noisy_input, predicted_denoised_input) in enumerate(zip(original_inputs, noisy_inputs, predicted_denoised_inputs)):
-                        if i < 5: # Only visualize the first 5 characters
-                                # print(f"Visualizing character {i}")
-                                # print(f"Original input: {original_input}")
-                                # print(f"Noisy input: {noisy_input}")
-                                # print(f"Predicted denoised input: {predicted_denoised_input}")
-                            visualize_character(original_input, title=f"{i}-original-iteration-{iteration}")
-                            visualize_character(noisy_input, title=f"{i}-noisy:{noise}-iteration-{iteration}")
-                            visualize_character(predicted_denoised_input, title=f"{i}-denoised:{noise}-iteration-{iteration}")
+
+            # Visualize the original and denoised inputs for the last iteration
+            if iteration == settings.denoising_autoencoder.predict_rounds - 1:
+                for i, (original_input, noisy_input, predicted_denoised_input) in enumerate(zip(original_inputs, noisy_inputs, predicted_denoised_inputs)):
+                    if i < 5: # Only visualize the first 5 characters
+                            characters = [original_input, noisy_input, predicted_denoised_input]
+                            titles = [f"original", f"noisy:{noise}", f"denoised"]
+                            visualize_characters(characters, titles, filename=f"iteration-{iteration}-noise-{noise}-character-{i}")
 
 
-        mses_by_noise_level.append(noise_iteration_mses)
+        binary_cross_entropies_by_noise_level.append(noise_iteration_binary_cross_entropies)
 
     # Plot the MSEs for each noise level
     plt.rcParams.update(
@@ -111,15 +108,15 @@ def _denoising_autoencoder(original_inputs: np.array) -> None:
     )
 
     fig, ax = plt.subplots(figsize=(30, 30))
-    ax.boxplot(mses_by_noise_level)
+    ax.boxplot(binary_cross_entropies_by_noise_level)
     ax.set_xticklabels([f"{noise:.2f}" for noise in settings.denoising_autoencoder.predict_noises])
 
-    plt.title("MSE between the original and the denoised outputs")
+    plt.title("Binary Cross Entropy between the original and the denoised outputs")
     plt.xlabel("Noise level")
-    plt.ylabel("MSE")
+    plt.ylabel("Binary Cross Entropy")
 
     plt.grid(True)
-    plt.savefig(settings.Config.output_path + "/mses.png")
+    plt.savefig(settings.Config.output_path + "/binary-cross-entropy.png")
     plt.show()
 
 

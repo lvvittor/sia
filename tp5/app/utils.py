@@ -1,3 +1,4 @@
+from typing import List
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -52,6 +53,10 @@ def mse(expected: np.array, actual: np.array) -> float:
     """
     return np.mean(np.square(expected - actual))
 
+def binary_cross_entropy(expected: np.array, actual: np.array, epsilon=1e-15):
+    """Compute the binary cross entropy loss function."""
+    P = np.clip(actual, epsilon, 1 - epsilon)  # avoid log(0)
+    return np.mean(-expected * np.log(P) - (1 - expected) * np.log(1 - P))
 
 def visualize_character(character: np.array, title: str = None):
     sns.set(font_scale=5, rc={"figure.figsize": (20, 20)}, style="whitegrid")
@@ -59,4 +64,31 @@ def visualize_character(character: np.array, title: str = None):
     sns.heatmap(character.reshape(7, 5), cmap='Greys', vmin=0, vmax=1)
     
     plt.savefig(f"{settings.Config.output_path}/character-{title}.png")
+    plt.show()
+
+def visualize_characters(characters: List[np.array], titles: List[str] = None, filename: str = "characters.png"):
+    sns.set(font_scale=15, rc={"figure.figsize": (100, 55)}, style="whitegrid")
+    plt.figure()
+    num_characters = len(characters)
+    num_rows = int(np.ceil(num_characters / 3))
+    num_cols = min(num_characters, 3)
+    
+    fig, axes = plt.subplots(num_rows, num_cols)
+    fig.subplots_adjust(hspace=1)
+
+    cbar_ax = fig.add_axes([0.93, 0.15, 0.02, 0.7])
+    
+    for i, character in enumerate(characters):
+        row = i // num_cols
+        col = i % num_cols
+        
+        ax = axes[row, col] if num_rows > 1 else axes[col]
+        ax.set_title(titles[i]) if titles else None
+        sns.heatmap(character.reshape(7, 5), cmap='Greys', vmin=0, vmax=1, ax=ax, cbar=i == 0, cbar_ax=None if i else cbar_ax)
+        ax.axis('off')
+    
+    if titles:
+        fig.suptitle("Denoising Autoencoder")
+    
+    plt.savefig(f"{settings.Config.output_path}/characters-{filename}.png")
     plt.show()

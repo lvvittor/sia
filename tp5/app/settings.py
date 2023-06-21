@@ -21,8 +21,10 @@ class AdamOptimization(BaseModel):
 
 class DenoisingAutoencoder(BaseModel):
     train_noise: float # Noise in [0, 1] to add to the inputs 
+    data_augmentation_factor: int # Number of times augmented the training data 
     predict_rounds: int # Number of prediction rounds to do
     predict_noises: list[float] # Noise levels to use for the prediction rounds
+    execute: bool # Whether to execute the denoising autoencoder or not
 
 class Settings(BaseSettings):
     """
