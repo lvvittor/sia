@@ -3,6 +3,7 @@ import numpy as np
 from settings import settings
 from utils import parse_characters
 from autoencoder import Autoencoder
+from variational_autoencoder import VariationalAutoencoder
 
 def exercise_1():
     inputs = parse_characters(f"{settings.Config.data_path}/font.txt")
@@ -24,9 +25,21 @@ def exercise_1():
     print(f"Patience: {autoencoder.patience}")
 
 
+def exercise_2():
+    inputs = parse_characters(f"{settings.Config.data_path}/font.txt")
+
+    vae = VariationalAutoencoder(inputs, [16], 2)
+
+    vae.train(settings.epochs)
+	
+    print(f"Finished training with patience: {vae.patience}")
+
+
 if __name__ == "__main__":
-	match settings.exercise:
-		case 1:
-			exercise_1()
-		case _:
-			raise ValueError(f"Invalid exercise number: {settings.exercise}")
+    match settings.exercise:
+        case 1:
+            exercise_1()
+        case 2:
+            exercise_2()
+        case _:
+            raise ValueError(f"Invalid exercise number: {settings.exercise}")
