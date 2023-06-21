@@ -1,7 +1,7 @@
 import numpy as np
 
 from settings import settings
-from utils import parse_characters
+from utils import parse_characters, visualize_character
 from autoencoder import Autoencoder
 from variational_autoencoder import VariationalAutoencoder
 
@@ -31,6 +31,17 @@ def exercise_2():
     vae = VariationalAutoencoder(inputs, [16], 2)
 
     vae.train(settings.epochs)
+
+    latent_space = vae.predict_latent(inputs)
+    labels = ['`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}', '~', 'DEL']
+    vae.visualize_latent_space(latent_space, labels)
+    vae.visualize_all_digits()
+
+    O = vae.predict([[-0.25, -1.2], [-0.6, 0.5], [1, -0.3], [0.25, 0.8]])
+    visualize_character(O[0], "characterB")
+    visualize_character(O[1], "characterG")
+    visualize_character(O[2], "characterO")
+    visualize_character(O[3], "characterP")
 	
     print(f"Finished training with patience: {vae.patience}")
 

@@ -21,15 +21,9 @@ def parse_characters(path: str):
     return np.array(character_images, dtype=float)
 
 
-def feature_scaling(
-    value: float, from_int: tuple[float, float], to_int: tuple[float, float]
-) -> float:
-    numerator = value - from_int[0]
-    denominator = from_int[1] - from_int[0]
-    return (numerator / denominator) * (to_int[1] - to_int[0]) + to_int[0]
-
-
-def visualize_character(character: np.array):
-	sns.heatmap(character.reshape(7, 5), cmap='Greys', vmin=0, vmax=1)
-	plt.savefig(f"{settings.Config.output_path}/character.png")
-	plt.show()
+def visualize_character(character: np.array, filename: str = "character"):
+    sns.set(font_scale=5, rc={"figure.figsize": (20, 20)}, style="whitegrid")
+    plt.figure()
+    sns.heatmap(character.reshape(7, 5), cmap='Greys', vmin=0, vmax=1)
+    plt.savefig(f"{settings.Config.output_path}/{filename}.png")
+    plt.close()
