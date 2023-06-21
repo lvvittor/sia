@@ -74,26 +74,26 @@ class Autoencoder():
         return 2 * (O - Y)
 
 
-    def visualize_latent_space(self):
+    def visualize_latent_space(self, labels):
         """Visualize the latent space and save it to a file."""
-        plt.figure()
         sns.set_palette(sns.color_palette("viridis"))
         sns.set_theme(style="white")
-        sns.set(font_scale=2, rc={"figure.figsize": (80, 80)}, style="whitegrid")
-
+        sns.set(font_scale=5, rc={"figure.figsize": (20, 20)}, style="whitegrid")
         _, _, _, latent_vector = self.encoder.feed_forward(self.inputs)
-
         ax = sns.scatterplot(
             x=latent_vector[:, 0],
             y=latent_vector[:, 1],
             marker="o",
-            s=100,
+            s=500,
             legend=False,
+            color="red"
         )
+    
+        for i, (x, y) in enumerate(zip(latent_vector[:, 0], latent_vector[:, 1])):
+            plt.text(x, y+1.15, labels[i], fontsize=24, ha='right', va='top')
 
-        plt.title("Latent space")
-        ax.set_xlabel("$\mu$")
-        ax.set_ylabel("$\sigma$")
+        ax.invert_yaxis()
         plt.grid(True)
+        plt.tight_layout()
         plt.savefig(settings.Config.output_path + "/latent_space.png")
-        plt.show()
+        plt.close()
