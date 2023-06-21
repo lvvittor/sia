@@ -13,26 +13,23 @@ def exercise_1():
 
     autoencoder.train(settings.epochs)
 
-    if settings.latent_space_points_to_add > 0:
-        middle_points = np.zeros((settings.latent_space_points_to_add, 2))
-        for i in range(settings.latent_space_points_to_add):
-            indices = np.random.randint(0, len(autoencoder.latent_vector), size=2)
-            p1, p2 = autoencoder.latent_vector[indices]
-            middle_points[i] = (p1 + p2) / 2
-            # middle_points[i] = (np.random.uniform(-10, 10), np.random.uniform(-5, 5))
+    if settings.middle_point.execute:    
+        # Feed forward the encoder with the selected 2 inputs
+        _, _, _, p = autoencoder.encoder.feed_forward(np.array([inputs[settings.middle_point.first_input_index], inputs[settings.middle_point.second_input_index]]))
 
-            if settings.verbose:
-                print(f"Added {middle_points[i]} to the latent space")
-        
-        # modified_latent_vector = np.concatenate((autoencoder.latent_vector, middle_points))
+        # Compute the middle point between the 2 points
+        middle_point = np.array((p[0] + p[1]) / 2)
+        _, _, _, decoded_p = autoencoder.decoder.feed_forward(np.array([p[0], p[1], middle_point]))
 
         if settings.verbose:
-            print(f"Modified latent space is: {middle_points}")
+            print(f"Feed forward the encoder with the first 2 inputs: {inputs[:2]}")
+            print(f"Output of the encoder: {p}")
+            print(f"Point for the input of the decoder: {middle_point}")
+            print(f"Output of the decoder: {decoded_p}")
 
-        _, _, _, O = autoencoder.decoder.feed_forward(middle_points)
-
-        for i, o in enumerate(O):
-            visualize_character(o, title=f"{i}")
+        characters = [decoded_p[0], decoded_p[1], decoded_p[2]]
+        titles = [f"Character {settings.middle_point.first_input_index + 1}", f"Character {settings.middle_point.second_input_index + 1}", f"Middle point"]
+        visualize_characters(characters, suptitle="Middle point", titles=titles, filename=f"middle-point-{settings.middle_point.first_input_index}-{settings.middle_point.second_input_index}")
 
     O = autoencoder.predict(inputs)
 

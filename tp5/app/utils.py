@@ -66,7 +66,7 @@ def visualize_character(character: np.array, title: str = None):
     plt.savefig(f"{settings.Config.output_path}/character-{title}.png")
     plt.show()
 
-def visualize_characters(characters: List[np.array], titles: List[str] = None, filename: str = "characters.png"):
+def visualize_characters(characters: List[np.array], suptitle: str = "Denoising Autoencoder", titles: List[str] = None, filename: str = "characters.png"):
     sns.set(font_scale=15, rc={"figure.figsize": (100, 55)}, style="whitegrid")
     plt.figure()
     num_characters = len(characters)
@@ -88,7 +88,7 @@ def visualize_characters(characters: List[np.array], titles: List[str] = None, f
         ax.axis('off')
     
     if titles:
-        fig.suptitle("Denoising Autoencoder")
+        fig.suptitle(suptitle)
     
     plt.savefig(f"{settings.Config.output_path}/characters-{filename}.png")
     plt.show()

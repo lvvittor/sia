@@ -26,6 +26,11 @@ class DenoisingAutoencoder(BaseModel):
     predict_noises: list[float] # Noise levels to use for the prediction rounds
     execute: bool # Whether to execute the denoising autoencoder or not
 
+class MiddlePoint(BaseModel):
+    execute: bool # Whether to execute the middle point or not
+    first_input_index: int # Index of the first input to use
+    second_input_index: int # Index of the second input to use
+
 class Settings(BaseSettings):
     """
     Settings for the application.
@@ -47,7 +52,7 @@ class Settings(BaseSettings):
     optimization: str
     adam_optimization: AdamOptimization
     denoising_autoencoder: DenoisingAutoencoder 
-    latent_space_points_to_add: int
+    middle_point: MiddlePoint
 
     class Config:
         env_file_encoding = "utf-8"

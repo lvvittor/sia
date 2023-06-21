@@ -5,13 +5,17 @@
   "exercise": 1,
   "optimization": "adam",
   "denoising_autoencoder": {
-    "execute": true,
+    "execute": false,
     "train_noise": 0.1,
     "predict_rounds": 5,
     "data_augmentation_factor": 500,
     "predict_noises": [0.1, 0.3, 0.5, 0.7, 0.9]
   },
-  "latent_space_points_to_add": 0,
+  "middle_point": {
+    "execute": true,
+    "first_input_index": 12,
+    "second_input_index": 28
+  },
   "adam_optimization": {
     "beta1": 0.9,
     "beta2": 0.999,
