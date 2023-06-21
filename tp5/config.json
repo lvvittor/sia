@@ -4,8 +4,9 @@
   "epochs": 50000,
   "exercise": 2,
   "optimization": "adam",
+  "loss_function": "bce",
   "denoising_autoencoder": {
-    "execute": false,
+    "execute": true,
     "train_noise": 0.2,
     "predict_rounds": 5,
     "data_augmentation_factor": 10,

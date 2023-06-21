@@ -14,6 +14,8 @@ def exercise_1():
 
     autoencoder.train(settings.epochs)
 
+    autoencoder.visualize_loss()
+
     if settings.middle_point.execute:    
         # Feed forward the encoder with the selected 2 inputs
         _, _, _, p = autoencoder.encoder.feed_forward(np.array([inputs[settings.middle_point.first_input_index], inputs[settings.middle_point.second_input_index]]))

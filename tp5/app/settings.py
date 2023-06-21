@@ -49,6 +49,7 @@ class Settings(BaseSettings):
     epochs: int
     exercise: int
     optimization: str
+    loss_function: str
     adam_optimization: AdamOptimization
     denoising_autoencoder: DenoisingAutoencoder 
     middle_point: MiddlePoint

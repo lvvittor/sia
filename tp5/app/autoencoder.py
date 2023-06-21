@@ -17,7 +17,9 @@ class Autoencoder():
         self.losses = np.array([])  # every 1000 epochs
         self.patience = 10  # early stopping patience
 
-        self.expected_output =  expected_output if expected_output is not None else self.inputs
+        # Parametrize this to work for the denoising autoencoder.
+        # The normal one will use the same input as output.
+        self.expected_output = expected_output if expected_output is not None else self.inputs
 
 
     def train(self, epochs: int):
@@ -27,13 +29,13 @@ class Autoencoder():
             H_dec, V_dec, hO_dec, O = self.decoder.feed_forward(latent_vector)
 
             # Backward pass
-            error = self._binary_cross_entropy_derivative(self.expected_output, O) # error = dE/dO, where E is the loss function (e.g. binary cross entropy or MSE)
+            error = self.loss_derivative(self.expected_output, O) # error = dE/dO, where E is the loss function (e.g. binary cross entropy or MSE)
 
             delta_sum = self.decoder.backward_propagation(epoch, H_dec, V_dec, hO_dec, error)
             self.encoder.backward_propagation(epoch, H_enc, V_enc, hO_enc, delta_sum)
             
             if epoch % 1000 == 0:
-                loss = self._binary_cross_entropy(self.expected_output, O)
+                loss = self.loss(self.expected_output, O)
                 self.losses = np.append(self.losses, loss)
                 if settings.verbose: print(f"{epoch=} ; error={loss}\n")
                 if self.early_stopping(): break
@@ -56,6 +58,22 @@ class Autoencoder():
         return np.where(O < 0.5, 0, 1)  # threshold output to 0 or 1
 
 
+    def loss(self, expected: np.array, actual: np.array):
+        match settings.loss_function:
+            case "bce":
+                return self._binary_cross_entropy(expected, actual)
+            case "mse":
+                return self._mse(expected, actual)
+
+
+    def loss_derivative(self, expected: np.array, actual: np.array):
+        match settings.loss_function:
+            case "bce":
+                return self._binary_cross_entropy_derivative(expected, actual)
+            case "mse":
+                return self._mse_derivative(expected, actual)
+
+
     def _binary_cross_entropy(self, Y, O, epsilon=1e-15):
         P = np.clip(O, epsilon, 1 - epsilon) # avoid division by 0
         return np.mean(-Y * np.log(P) - (1 - Y) * np.log(1 - P))
@@ -72,6 +90,18 @@ class Autoencoder():
 
     def _mse_derivative(self, Y, O):
         return 2 * (O - Y)
+
+
+    def visualize_loss(self):
+        """Visualize the loss through epochs and save it to a file."""
+        plt.plot(self.losses, marker="o", markersize=4)
+        plt.yscale("log")
+        plt.xlabel("Epochs (thousands)")
+        plt.ylabel("Loss")
+        plt.grid(True)
+        plt.tight_layout()
+        plt.savefig(settings.Config.output_path + "/autoencoder_loss.png")
+        plt.close()
 
 
     def visualize_latent_space(self, labels):
