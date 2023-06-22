@@ -13,6 +13,7 @@ def boxplot(variables_data, standardized=None):
 	plt.title(f"{standardized} Standardized features")
 	plt.savefig(f"{settings.Config.output_path}/{standardized}StandardizedBoxplot.png")
 	plt.show()
+	plt.clf()
 
 
 def biplot(countries, variables_data, pca, scaled = False):
@@ -47,6 +48,7 @@ def biplot(countries, variables_data, pca, scaled = False):
 	plt.grid()
 	plt.savefig(settings.Config.output_path+"/biplot.png")
 	plt.show()
+	plt.clf()
 
 
 def variable_value_scatter(variables, values):
@@ -60,6 +62,7 @@ def variable_value_scatter(variables, values):
 	plt.tight_layout()
 	plt.savefig(settings.Config.output_path+"/oja_components.png")
 	plt.show()
+	plt.clf()
 	
 
 def component_barplot(countries, variables_data, component, filename):
@@ -75,6 +78,7 @@ def component_barplot(countries, variables_data, component, filename):
 
 	plt.savefig(settings.Config.output_path+"/" + filename + ".png")
 	plt.show()
+	plt.clf()
 
 def hopfield_gif(initial_state, states_vector, width, height, duration):
 	# Convertir la matriz inicial en una imagen
@@ -141,6 +145,7 @@ def country_heatmap(countries, winner_neurons, k):
 	plt.tight_layout()
 	plt.savefig(f"{settings.Config.output_path}/country_heatmap.png")
 	plt.show()
+	plt.clf()
 
 
 def u_matrix(umatrix):
@@ -157,4 +162,5 @@ def u_matrix(umatrix):
 	plt.savefig(f"{settings.Config.output_path}/u_matrix.png")
 
 	plt.show()
+	plt.clf()
   
