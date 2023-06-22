@@ -1,8 +1,8 @@
 {
   "learning_rate": 0.001,
-  "verbose": true,
+  "verbose": false,
   "epochs": 50000,
-  "exercise": 2,
+  "exercise": 1,
   "optimization": "adam",
   "loss_function": "bce",
   "denoising_autoencoder": {
@@ -13,7 +13,7 @@
     "predict_noises": [0.1, 0.3, 0.5, 0.7, 0.9]
   },
   "middle_point": {
-    "execute": true,
+    "execute": false,
     "first_input_index": 5,
     "second_input_index": 15
   },

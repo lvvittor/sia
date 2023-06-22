@@ -46,3 +46,4 @@ def visualize_3d(inputs):
 
     # Show the plot
     plt.show()
+    plt.clf()
