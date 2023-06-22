@@ -20,37 +20,42 @@ class VariationalAutoencoder(Autoencoder):
         self.rec_losses = np.array([])
 
 
-    def train(self, epochs: int):
+    def train(self, epochs: int, batch_size: int):
+        np.random.shuffle(self.inputs)
+
         for epoch in range(1, epochs):
-            # Forward pass
-            H_enc, V_enc, hO_enc, O_enc = self.encoder.feed_forward(self.inputs)
+            for idx in np.arange(0, len(self.inputs), batch_size):
+                x = self.inputs[idx: idx+batch_size]
 
-            # Stochastic layer
-            latent_dim = O_enc.shape[1] // 2
-            # Encoder output layer is split in two: half for mean, half for variance
-            z_mean = O_enc[:, :latent_dim]                # mean of latent vector
-            z_log_var = O_enc[:, latent_dim:]             # log variance of latent vector
-            epsilon, z = self.sampling(z_mean, z_log_var) # reparametrization trick
+                # Forward pass
+                H_enc, V_enc, hO_enc, O_enc = self.encoder.feed_forward(x)
 
-            H_dec, V_dec, hO_dec, O = self.decoder.feed_forward(z)
+                # Stochastic layer
+                latent_dim = O_enc.shape[1] // 2
+                # Encoder output layer is split in two: half for mean, half for variance
+                z_mean = O_enc[:, :latent_dim]                # mean of latent vector
+                z_log_var = O_enc[:, latent_dim:]             # log variance of latent vector
+                epsilon, z = self.sampling(z_mean, z_log_var) # reparametrization trick
 
-            # Backward pass
-            rec_loss, kl_loss, d_reconstruction_loss = self._vae_loss(self.inputs, O, z_mean, z_log_var)
+                H_dec, V_dec, hO_dec, O = self.decoder.feed_forward(z)
 
-            # Reference:
-            # - https://github.com/pometa0507/Variational-Autoencoder-Numpy/blob/master/VAE_Numpy.ipynb
-            # - https://github.com/abhayran/VAE-numpy/blob/main/vae.py#L56
-            # - https://github.com/iqDF/Numpy-Variational-Autoencoder/blob/master/vae/models/encoder_model.py#L91
-            delta_sum = self.decoder.backward_propagation(epoch, H_dec, V_dec, hO_dec, d_reconstruction_loss)
+                # Backward pass
+                rec_loss, kl_loss, d_reconstruction_loss = self._vae_loss(x, O, z_mean, z_log_var)
 
-            # First half of the gradients are for the mean, second half for the variance
-            kl_gradients = np.append(z_mean, 0.5 * (np.exp(z_log_var) - 1), axis=1) # partial derivative of `KL_divergence` w.r.t. z_mean (left) and z_log_var (right)
-            rec_gradients = np.append(delta_sum, delta_sum * epsilon * np.exp(z_log_var * 0.5) * 0.5, axis=1) # delta_sum * partial derivative of `sampling` w.r.t. z_mean (left) and z_log_var (right)
-            gradients = kl_gradients + rec_gradients
+                # Reference:
+                # - https://github.com/pometa0507/Variational-Autoencoder-Numpy/blob/master/VAE_Numpy.ipynb
+                # - https://github.com/abhayran/VAE-numpy/blob/main/vae.py#L56
+                # - https://github.com/iqDF/Numpy-Variational-Autoencoder/blob/master/vae/models/encoder_model.py#L91
+                delta_sum = self.decoder.backward_propagation(epoch, H_dec, V_dec, hO_dec, d_reconstruction_loss)
 
-            self.encoder.backward_propagation(epoch, H_enc, V_enc, hO_enc, gradients)
+                # First half of the gradients are for the mean, second half for the variance
+                kl_gradients = np.append(z_mean, 0.5 * (np.exp(z_log_var) - 1), axis=1) # partial derivative of `KL_divergence` w.r.t. z_mean (left) and z_log_var (right)
+                rec_gradients = np.append(delta_sum, delta_sum * epsilon * np.exp(z_log_var * 0.5) * 0.5, axis=1) # delta_sum * partial derivative of `sampling` w.r.t. z_mean (left) and z_log_var (right)
+                gradients = kl_gradients + rec_gradients
 
-            if epoch % 1000 == 0:
+                self.encoder.backward_propagation(epoch, H_enc, V_enc, hO_enc, gradients)
+
+            if epoch % 5 == 0:
                 total_loss = np.mean(rec_loss + kl_loss)
                 self.losses = np.append(self.losses, total_loss)
                 self.kl_losses = np.append(self.kl_losses, kl_loss)
@@ -114,6 +119,9 @@ class VariationalAutoencoder(Autoencoder):
         sns.set_theme(style="white")
         sns.set(font_scale=5, rc={"figure.figsize": (20, 20)}, style="whitegrid")
         predict_latent_space = np.array([[-0.25, -1.5], [-1.0, 0.5], [1, -0.5], [0.25, 1.1]])
+        # Remove outliers
+        latent_space = latent_space[np.all(latent_space < 1000, axis=1)]
+        latent_space = latent_space[np.all(latent_space > -1000, axis=1)]
         ax = sns.scatterplot(
             x=latent_space[:, 0],
             y=latent_space[:, 1],
@@ -121,18 +129,6 @@ class VariationalAutoencoder(Autoencoder):
             s=500,
             legend=False,
             color="red"
-        )
-    
-        for i, (x, y) in enumerate(zip(latent_space[:, 0], latent_space[:, 1])):
-            plt.text(x, y+0.07, labels[i], fontsize=24, ha='right', va='top')
-
-        ax = sns.scatterplot(
-            x=predict_latent_space[:, 0],
-            y=predict_latent_space[:, 1],
-            marker="o",
-            s=500,
-            legend=False,
-            color=['blue', 'green', 'orange', 'purple']
         )
 
         ax.set_xlabel("x")
@@ -146,9 +142,9 @@ class VariationalAutoencoder(Autoencoder):
 
     def visualize_all_digits(self):
         n = 20  # figure with 20x20 digits
-        digit_x = 7
-        digit_y = 5
-        spacing = 2  # Space between images
+        digit_x = 28
+        digit_y = 28
+        spacing = 0  # Space between images
         
         figure = np.zeros((digit_x * n + spacing * (n-1), digit_y * n + spacing * (n-1)))
 
@@ -159,7 +155,7 @@ class VariationalAutoencoder(Autoencoder):
             for j, xi in enumerate(grid_y):
                 z_sample = np.array([[xi, yi]])
                 x_decoded = self.predict(z_sample)
-                digit = x_decoded[0].reshape(digit_x, digit_y)
+                digit = x_decoded[0][:784].reshape(digit_x, digit_y)
 
                 # Calculate start and end positions for each image in the added space
                 start_x = i * (digit_x + spacing)

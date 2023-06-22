@@ -121,22 +121,14 @@ def _denoising_autoencoder(original_inputs: np.array) -> None:
 
 
 def exercise_2():
-    inputs = parse_characters(f"{settings.Config.data_path}/font.txt")
-
-    vae = VariationalAutoencoder(inputs, [16], 2)
-
-    vae.train(settings.epochs)
-
+    inputs = parse_characters(f"{settings.Config.data_path}/MNIST_train.txt")
+    vae = VariationalAutoencoder(inputs, [256], 2)
+    batch_size = 100
+    vae.train(settings.epochs, batch_size)
     latent_space = vae.predict_latent(inputs)
-    labels = ['`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}', '~', 'DEL']
-    vae.visualize_latent_space(latent_space, labels)
+    labels = []
     vae.visualize_all_digits()
-
-    O = vae.predict([[-0.25, -1.2], [-0.6, 0.5], [1, -0.3], [0.25, 0.8]])
-    visualize_character(O[0], "blue")
-    visualize_character(O[1], "green")
-    visualize_character(O[2], "orange")
-    visualize_character(O[3], "purple")
+    vae.visualize_latent_space(latent_space, labels)
 	
     print(f"Finished training with patience: {vae.patience}")
 

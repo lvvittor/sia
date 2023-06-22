@@ -22,6 +22,22 @@ def parse_characters(path: str):
     return np.array(character_images, dtype=float)
 
 
+def parse_mnist_characters(path: str):
+    with open(path, 'r') as f:
+        data = f.read().splitlines()  # read the file and split into lines
+
+    character_images = []
+
+    for i, line in enumerate(data):
+        char_img = []  # create a new char_img array
+        numbers = line.strip().split(",")  # remove trailing spaces and split into individual numbers
+        numbers = [int(number)/255 for number in numbers]
+        char_img.extend(numbers)  # add the numbers to the current char_img
+        character_images.append(char_img)  # add the char_img to the list of character_images
+
+    return np.array(character_images, dtype=float)
+
+
 def add_noise(array: np.array, noise_level: float) -> np.array:
     """Add Gaussian noise to the given array.
 
@@ -57,7 +73,7 @@ def visualize_character(character: np.array, title: str = None):
     sns.heatmap(character.reshape(7, 5), cmap='Greys', vmin=0, vmax=1)
     
     plt.savefig(f"{settings.Config.output_path}/character-{title}.png")
-    plt.close()
+    plt.show()
 
 def visualize_characters(characters: List[np.array], suptitle: str = "Denoising Autoencoder", titles: List[str] = None, filename: str = "characters.png"):
     sns.set(font_scale=15, rc={"figure.figsize": (100, 55)}, style="whitegrid")
@@ -84,4 +100,5 @@ def visualize_characters(characters: List[np.array], suptitle: str = "Denoising 
         fig.suptitle(suptitle)
     
     plt.savefig(f"{settings.Config.output_path}/characters-{filename}.png")
+    plt.show()
     plt.close()

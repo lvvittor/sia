@@ -80,6 +80,7 @@ class Autoencoder():
         sns.set_theme(style="white")
         sns.set(font_scale=5, rc={"figure.figsize": (20, 20)}, style="whitegrid")
         _, _, _, latent_vector = self.encoder.feed_forward(self.inputs)
+        plt.figure()
         ax = sns.scatterplot(
             x=latent_vector[:, 0],
             y=latent_vector[:, 1],
